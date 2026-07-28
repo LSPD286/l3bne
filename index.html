@@ -1,845 +1,802 @@
-<html lang="ar" dir="rtl">
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>غرفة القيادة | Joint Forces</title>
+<title>ليجند تاون 🎪</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#07090b;
-  --panel:#0e1215;
-  --panel2:#141a1e;
-  --line:#232b30;
-  --steel:#8fa0aa;
-  --crimson:#a83232;
-  --crimson-light:#d9615f;
-  --amber:#c98a2e;
-  --amber-light:#e8b25c;
-  --text:#e6ecef;
-  --muted:#7c8890;
-  --ok:#3c7d6b;
+  --bg:#150F2E; --panel:#1F1745; --panel2:#271C56;
+  --gold:#F5B93D; --coral:#FF6F59; --teal:#2FD8C7; --cream:#FBF6EC;
+  --muted:#A99FC9; --danger:#FF4D6D;
 }
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo',sans-serif;}
-body{ background:var(--bg); color:var(--text); height:100vh; overflow:hidden; display:flex; flex-direction:column; }
-
-/* ===== Top bar ===== */
-.topnav{
-  background:var(--panel); border-bottom:1px solid var(--line);
-  display:flex; align-items:center; gap:8px; padding:0 20px; height:64px; flex-shrink:0;
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:radial-gradient(circle at 15% 10%, rgba(245,185,61,.10), transparent 40%),
+    radial-gradient(circle at 85% 90%, rgba(47,216,199,.10), transparent 40%), var(--bg);
+  color:var(--cream); font-family:'Tajawal',sans-serif; min-height:100vh;
 }
-.brand{ display:flex; align-items:center; gap:10px; padding-left:18px; border-left:1px solid var(--line); margin-left:6px;}
-.brand svg{ width:34px; height:34px; }
-.brand-txt b{ display:block; color:var(--amber-light); font-size:14.5px; }
-.brand-txt span{ display:block; color:var(--muted); font-size:10px; letter-spacing:1px;}
-
-.tabs{ display:flex; gap:4px; flex:1; overflow-x:auto; }
-.tab-btn{
-  background:transparent; border:1px solid transparent; color:var(--steel); font-weight:700; font-size:13px;
-  padding:9px 14px; border-radius:8px; cursor:pointer; white-space:nowrap; display:flex; gap:6px; align-items:center;
+.display{font-family:'Lalezar',cursive;}
+#app{min-height:100vh;}
+.center-wrap{max-width:520px;margin:0 auto;padding:20px 16px 60px;}
+ 
+.marquee-wrap{position:relative;text-align:center;margin:10px 0 22px;}
+.marquee-title{font-size:42px;color:var(--gold);text-shadow:0 0 12px rgba(245,185,61,.55),0 0 2px #fff;padding:6px 30px;position:relative;display:inline-block;}
+.bulbs{position:absolute;inset:0;pointer-events:none;}
+.bulb{position:absolute;width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px 2px rgba(245,185,61,.8);animation:blink 1.4s infinite ease-in-out;}
+@keyframes blink{0%,100%{opacity:.25;}50%{opacity:1;}}
+.subtitle{color:var(--muted);font-size:14px;margin-top:2px;}
+.perforation{height:1px;margin:14px 0;background:repeating-linear-gradient(90deg,var(--muted) 0 8px,transparent 8px 16px);opacity:.4;}
+ 
+.card{background:var(--panel);border:1.5px dashed rgba(245,185,61,.35);border-radius:18px;padding:18px;margin-bottom:14px;}
+.card.solid{border-style:solid;border-color:rgba(255,255,255,.08);}
+ 
+.btn{font-family:'Tajawal';font-weight:700;font-size:15px;border:none;border-radius:12px;padding:13px 16px;cursor:pointer;color:var(--bg);background:var(--gold);width:100%;transition:transform .12s ease;}
+.btn:active{transform:scale(.97);}
+.btn:disabled{opacity:.35;cursor:not-allowed;}
+.btn.coral{background:var(--coral);color:#fff;}
+.btn.teal{background:var(--teal);color:#0c2a27;}
+.btn.ghost{background:transparent;color:var(--cream);border:1.5px solid rgba(255,255,255,.25);}
+.btn.small{width:auto;padding:9px 14px;font-size:13px;}
+.row{display:flex;gap:10px;}
+.row > *{flex:1;}
+ 
+input[type=text]{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,.15);background:var(--panel2);color:var(--cream);font-family:'Tajawal';font-size:15px;}
+input[type=text]:focus{outline:2px solid var(--teal);}
+input[type=text].code-input{text-align:center;letter-spacing:6px;font-family:'Lalezar';font-size:22px;text-transform:uppercase;}
+ 
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;}
+.iconbtn{background:var(--panel2);border:1px solid rgba(255,255,255,.1);color:var(--cream);border-radius:10px;padding:8px 12px;font-size:13px;cursor:pointer;font-weight:700;}
+ 
+.gate-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.gate{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1.5px solid rgba(255,255,255,.08);border-radius:16px;padding:16px 10px;text-align:center;cursor:pointer;}
+.gate.disabled{opacity:.35;cursor:not-allowed;}
+.gate .emoji{font-size:28px;display:block;margin-bottom:6px;}
+.gate .name{font-family:'Lalezar';font-size:17px;}
+.gate .tag{font-size:11px;color:var(--muted);margin-top:2px;}
+ 
+.cover{text-align:center;padding:30px 16px;}
+.cover .big-emoji{font-size:52px;display:block;margin-bottom:10px;}
+.letter-badge{width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,var(--gold),#c9911e);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-family:'Lalezar';font-size:40px;color:var(--bg);box-shadow:0 0 24px rgba(245,185,61,.5);}
+.timer{font-family:'Lalezar';font-size:28px;color:var(--teal);text-align:center;margin-bottom:8px;}
+.cat-label{font-size:13px;color:var(--muted);margin:8px 0 4px;}
+table.cmp{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px;}
+table.cmp th,table.cmp td{border:1px solid rgba(255,255,255,.1);padding:6px;text-align:center;}
+table.cmp th{background:var(--panel2);}
+.opt-btn{display:block;width:100%;text-align:right;background:var(--panel2);color:var(--cream);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;font-family:'Tajawal';font-size:14px;}
+.opt-btn.correct{background:rgba(47,216,199,.25);border-color:var(--teal);}
+.opt-btn.wrong{background:rgba(255,77,109,.25);border-color:var(--danger);}
+.forbidden-word{display:inline-block;background:rgba(255,77,109,.15);color:var(--coral);border:1px solid var(--coral);border-radius:8px;padding:4px 10px;margin:4px;font-size:14px;}
+canvas{background:#fff;border-radius:14px;touch-action:none;width:100%;display:block;}
+img.live-canvas{width:100%;border-radius:14px;background:#fff;display:block;}
+.pill{display:inline-block;background:var(--panel2);color:var(--muted);border-radius:20px;padding:4px 12px;font-size:12px;margin-bottom:6px;}
+.footer-note{text-align:center;color:var(--muted);font-size:11px;margin-top:24px;}
+.badge{display:inline-block;background:var(--panel2);color:var(--gold);border-radius:8px;padding:3px 10px;font-size:12px;margin-inline-start:6px;}
+ 
+/* room layout */
+.roomLayout{direction:ltr;display:flex;min-height:100vh;}
+.sidebar{direction:rtl;width:230px;flex-shrink:0;background:var(--panel);border-inline-end:1.5px dashed rgba(245,185,61,.3);padding:16px 12px;}
+.sidebar h3{font-family:'Lalezar';color:var(--gold);font-size:18px;margin:0 0 4px;}
+.sidebar .code{font-family:'Lalezar';font-size:22px;letter-spacing:4px;color:var(--teal);text-align:center;background:var(--panel2);border-radius:10px;padding:8px;margin-bottom:12px;}
+.plist{list-style:none;padding:0;margin:0;}
+.plist li{display:flex;justify-content:space-between;align-items:center;background:var(--panel2);border-radius:10px;padding:8px 10px;margin-bottom:6px;font-size:13px;}
+.plist .pts{color:var(--gold);font-weight:900;font-size:12px;}
+.main{direction:rtl;flex:1;padding:18px 16px 60px;max-width:640px;}
+@media (max-width:720px){
+  .roomLayout{direction:rtl;flex-direction:column;}
+  .sidebar{width:100%;border-inline-end:none;border-bottom:1.5px dashed rgba(245,185,61,.3);}
+  .main{max-width:100%;}
 }
-.tab-btn:hover{ background:var(--panel2); color:var(--text); }
-.tab-btn.active{ background:var(--crimson); color:#fff; }
-
-.top-right{ display:flex; align-items:center; gap:8px; }
-.top-right input{ width:150px; margin:0; padding:8px 10px; font-size:12px; }
-.pill{
-  padding:8px 13px; background:var(--panel2); border:1px solid var(--amber); color:var(--amber-light);
-  border-radius:18px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap;
-}
-.pill:hover{ background:var(--amber); color:#20140a; }
-.session{ font-size:11.5px; color:var(--muted); white-space:nowrap; }
-.session b{ color:var(--amber-light); }
-
-/* ===== Body ===== */
-.body-wrap{ flex:1; display:flex; overflow:hidden; }
-.stage{ flex:1; overflow-y:auto; padding:24px 28px; }
-.rail{
-  width:230px; background:var(--panel); border-right:1px solid var(--line); padding:20px; overflow-y:auto; flex-shrink:0;
-}
-.rail h4{ color:var(--amber-light); font-size:12.5px; margin-bottom:10px; }
-.rail .stat-row{ display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--line); font-size:12px; color:var(--steel);}
-.rail .stat-row b{ color:var(--text); }
-
-.page{ display:none !important; }
-.page.active{ display:block !important; animation:fade .3s ease; }
-@keyframes fade{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
-
-.grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-@media(max-width:1000px){ .grid-2{grid-template-columns:1fr;} }
-
-.panel{ background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:20px; margin-bottom:18px; }
-.panel-title{ font-size:15px; color:var(--amber-light); font-weight:700; margin-bottom:14px; border-bottom:1px solid var(--line); padding-bottom:9px;}
-
-input,select,textarea{ width:100%; padding:10px 13px; margin-bottom:11px; background:var(--panel2); border:1px solid var(--line); border-radius:6px; color:var(--text); font-size:13px;}
-input:focus,select:focus,textarea:focus{ outline:none; border-color:var(--amber); }
-
-.btn{ width:100%; padding:10px; background:linear-gradient(135deg,#1a1210,#141a1e); border:1px solid var(--amber); border-radius:6px; color:var(--amber-light); font-weight:700; cursor:pointer;}
-.btn:hover{ background:var(--amber); color:#20140a; }
-.btn.red{ border-color:var(--crimson-light); color:var(--crimson-light); }
-.btn.red:hover{ background:var(--crimson-light); color:#1a0d0d; }
-.btn.small{ width:auto; padding:6px 12px; font-size:11.5px; }
-.btn.ghost{ background:transparent; }
-.btn.link-btn{ display:inline-block; text-decoration:none; text-align:center; }
-
-.card{ background:var(--panel2); border:1px solid var(--line); border-radius:8px; padding:14px; margin-bottom:11px;}
-.card h4{ color:var(--amber-light); font-size:14px; margin-bottom:5px;}
-.card p{ font-size:12px; color:#c8ccd0; margin:3px 0;}
-.tag{ font-size:10px; padding:2px 8px; border-radius:9px; border:1px solid var(--line); color:var(--muted); margin-right:4px;}
-.tag.ok{ border-color:var(--ok); color:#8fd0bd;}
-.tag.warn{ border-color:var(--amber); color:var(--amber-light);}
-.tag.danger{ border-color:var(--crimson-light); color:var(--crimson-light);}
-.del{ background:rgba(168,50,50,.15); border:1px solid var(--crimson-light); color:var(--crimson-light); padding:3px 9px; border-radius:4px; font-size:10.5px; cursor:pointer;}
-.del:hover{ background:var(--crimson-light); color:#fff;}
-.locked{ background:repeating-linear-gradient(45deg,#161113,#161113 8px,#1c1517 8px,#1c1517 16px); border:1px dashed var(--amber); border-radius:6px; padding:12px; text-align:center; color:var(--muted); font-size:12px;}
-.list{ max-height:440px; overflow-y:auto; }
-
-table{ width:100%; border-collapse:collapse; margin-top:8px;}
-th{ background:var(--panel2); color:var(--amber-light); padding:8px; font-size:12px; text-align:right;}
-td{ padding:8px; border-bottom:1px solid var(--line); font-size:12px;}
-
-.hero{ background:linear-gradient(120deg,#12191c,#0b0e10 60%); border:1px solid var(--line); border-radius:10px; padding:26px; margin-bottom:20px;}
-.hero b{ color:var(--amber-light); font-size:20px; display:block; margin-bottom:8px;}
-.hero span{ color:var(--muted); font-size:13px; line-height:1.9; display:block; max-width:680px;}
-
-.uniform-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
-@media(max-width:900px){ .uniform-grid{grid-template-columns:1fr 1fr;} }
-.uni{ background:var(--panel2); border:1px solid var(--line); border-radius:8px; padding:14px; text-align:center;}
-.uni .sw{ width:100%; height:54px; border-radius:6px; margin-bottom:8px;}
-.uni h4{ color:var(--amber-light); font-size:13px; margin-bottom:5px;}
-.uni p{ font-size:11px; color:var(--muted); line-height:1.6;}
-
-.map-toolbar{ display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap; align-items:center;}
-.map-toolbar button{ width:auto; padding:8px 14px;}
-#mapViewport{ width:100%; height:480px; overflow:hidden; position:relative; border:1px solid var(--line); border-radius:8px; background:#0a0c0e; cursor:grab;}
-#mapViewport.dragging{ cursor:grabbing;}
-#mapViewport.readonly{ cursor:default; }
-#mapInner{ position:absolute; top:0; left:0; transform-origin:0 0;}
-.pin{ position:absolute; transform:translate(-50%,-100%); font-size:19px; cursor:pointer;}
-.pin-label{ position:absolute; top:100%; left:50%; transform:translateX(-50%); white-space:nowrap; background:#0a0c0e; border:1px solid var(--amber); color:var(--amber-light); font-size:10px; padding:2px 6px; border-radius:4px; margin-top:2px;}
-
-.modal-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:50; align-items:center; justify-content:center;}
-.modal-overlay.open{ display:flex; }
-.modal-box{ background:var(--panel); border:1px solid var(--amber); border-radius:10px; padding:22px; width:340px; max-width:90vw;}
-.modal-box h3{ color:var(--amber-light); margin-bottom:12px; font-size:14.5px;}
-.close-modal{ background:none; border:none; color:var(--muted); cursor:pointer; font-size:12.5px; margin-top:2px;}
-
-.map-layout{ display:flex; gap:18px; align-items:flex-start; }
-.map-main{ flex:1; min-width:0; }
-.map-side{ width:250px; flex-shrink:0; }
-@media(max-width:1000px){ .map-layout{ flex-direction:column;} .map-side{ width:100%; } }
-
-.member-row{ display:flex; align-items:center; justify-content:space-between; padding:9px 10px; background:var(--panel2); border:1px solid var(--line); border-radius:6px; margin-bottom:8px; cursor:pointer; }
-.member-row:hover{ border-color:var(--amber); }
-.member-row .mname{ font-size:12.5px; color:var(--text); }
-.member-row .mname small{ display:block; color:var(--muted); font-size:10px; }
-.badge-leader{ font-size:9.5px; padding:2px 7px; border-radius:8px; border:1px solid var(--amber); color:var(--amber-light); margin-right:5px;}
-.badge-ctl{ font-size:9.5px; padding:2px 7px; border-radius:8px; border:1px solid var(--ok); color:#8fd0bd; margin-right:5px;}
-
-.group-card{ background:var(--panel2); border:1px solid var(--line); border-radius:8px; padding:14px; margin-bottom:11px; display:flex; align-items:center; justify-content:space-between; gap:10px;}
-.group-card h4{ color:var(--amber-light); font-size:14px; margin-bottom:3px;}
-.group-card p{ font-size:11px; color:var(--muted);}
-.gate-note{ font-size:11.5px; color:var(--muted); line-height:1.8; margin-bottom:12px;}
-
-::-webkit-scrollbar{ width:7px; }
-::-webkit-scrollbar-thumb{ background:var(--line); border-radius:4px; }
 </style>
 </head>
 <body>
-
-<div class="topnav">
-  <div class="brand">
-    <svg viewBox="0 0 100 100"><polygon points="50,4 92,26 92,60 50,96 8,60 8,26" fill="none" stroke="#c98a2e" stroke-width="4"/><path d="M50 26 L60 48 L50 74 L40 48 Z" fill="#c98a2e"/></svg>
-    <div class="brand-txt"><b>غرفة القيادة</b><span>JOINT FORCES</span></div>
-  </div>
-  <div class="tabs" id="tabs">
-    <button class="tab-btn active" data-page="opsPage" onclick="go('opsPage')">📻 غرفة العمليات</button>
-    <button class="tab-btn" data-page="mapPage" onclick="go('mapPage')">🗺️ الخريطة</button>
-    <button class="tab-btn" data-page="wantedPage" onclick="go('wantedPage')">🎯 المطلوبين</button>
-    <button class="tab-btn" data-page="upcomingPage" onclick="go('upcomingPage')">📆 المهام القادمة</button>
-    <button class="tab-btn" data-page="distPage" onclick="go('distPage')">📑 المناوبات</button>
-    <button class="tab-btn" data-page="investPage" onclick="go('investPage')">🔍 التحقيق</button>
-    <button class="tab-btn" data-page="uniformPage" onclick="go('uniformPage')">🎖️ اللبس</button>
-  </div>
-  <div class="top-right">
-    <input id="loginEmail" placeholder="بريدك الإلكتروني">
-    <button class="pill" onclick="loginByEmail()">دخول</button>
-    <span class="session" id="sessionBadge">غير مسجل</span>
-    <button class="pill" onclick="openModal('ranksModal')">➕ الرتب</button>
-  </div>
-</div>
-
-<div class="body-wrap">
-  <div class="rail">
-    <h4>الحالة العامة</h4>
-    <div class="stat-row"><span>عمليات جارية</span><b id="statOps">0</b></div>
-    <div class="stat-row"><span>مطلوبون كبار</span><b id="statWanted">0</b></div>
-    <div class="stat-row"><span>مهام قادمة</span><b id="statMissions">0</b></div>
-    <div class="stat-row"><span>عناصر بالمناوبة</span><b id="statDuty">0</b></div>
-    <h4 style="margin-top:20px;">تنبيه</h4>
-    <p style="font-size:11.5px; color:var(--muted); line-height:1.8;">تسجيل الدخول بالبريد هنا لأغراض تنظيم الرول بلاي فقط، وليس حماية أمنية حقيقية.</p>
-  </div>
-
-  <div class="stage">
-
-    <div id="opsPage" class="page active">
-      <div class="hero">
-        <b>غرفة العمليات المشتركة</b>
-        <span>تابع كل العمليات الجارية والمخطط لها، وأضف عملية جديدة مع تحديد الوحدات المشاركة وحالتها.</span>
-      </div>
-      <div class="grid-2">
-        <div class="panel">
-          <div class="panel-title">تسجيل عملية جديدة</div>
-          <input id="opTitle" placeholder="🆔 عنوان العملية">
-          <input id="opUnits" placeholder="👥 الوحدات المشاركة">
-          <select id="opStatus">
-            <option value="تخطيط">📝 مرحلة التخطيط</option>
-            <option value="جارية">🟢 جارية</option>
-            <option value="منتهية">✅ منتهية</option>
-          </select>
-          <textarea id="opNotes" placeholder="📝 موجز العملية" style="height:85px;"></textarea>
-          <label style="display:flex; gap:8px; align-items:center; margin-bottom:11px; cursor:pointer; font-size:12px; color:var(--muted);">
-            <input id="opClassified" type="checkbox" style="width:auto; margin:0;"> سري (رتبة قائد فريق فأعلى)
-          </label>
-          <button class="btn" id="addOp">حفظ العملية</button>
-        </div>
-        <div class="panel"><div class="panel-title">العمليات المسجلة</div><div id="opsList" class="list"></div></div>
-      </div>
-    </div>
-
-    <div id="mapPage" class="page">
-
-      <!-- بوابة إنشاء / دخول مجموعة -->
-      <div id="mapGate">
-        <div class="hero">
-          <b>خريطة المجموعة</b>
-          <span>كل مجموعة لها خريطتها الخاصة. مسؤول المجموعة هو من يتحكم بالتكبير والتصغير والدبابيس، وبإمكانه منح صلاحية التحكم لأي عضو يريده. أنشئ مجموعة جديدة أو ادخل مجموعة موجودة.</span>
-        </div>
-        <div class="grid-2">
-          <div class="panel">
-            <div class="panel-title">إنشاء مجموعة</div>
-            <p class="gate-note">أدخل اسمك ثم اسم المجموعة. ستكون تلقائيًا مسؤول هذه المجموعة.</p>
-            <input id="gateNameCreate" placeholder="👤 اسمك">
-            <input id="newGroupName" placeholder="🆕 اسم المجموعة">
-            <button class="btn" id="createGroupBtn">إنشاء المجموعة والدخول كمسؤول</button>
-          </div>
-          <div class="panel">
-            <div class="panel-title">دخول مجموعة</div>
-            <p class="gate-note">أدخل اسمك ثم اختر مجموعة من القائمة للانضمام إليها.</p>
-            <input id="gateNameJoin" placeholder="👤 اسمك">
-            <div id="groupsList" class="list"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- محتوى الخريطة داخل المجموعة -->
-      <div id="mapGroupView" style="display:none;">
-        <div class="hero" style="padding:16px 20px;">
-          <span style="color:var(--amber-light); font-weight:700; font-size:14px;">🗺️ مجموعة: <span id="curGroupName"></span></span>
-          <span style="margin-top:6px;">أنت: <b id="curMyRole" style="color:var(--amber-light);"></b> — <button class="pill" style="margin-top:8px;" onclick="leaveGroup()">🚪 مغادرة المجموعة</button></span>
-        </div>
-        <div class="map-layout">
-          <div class="map-main">
-            <div class="panel">
-              <div class="panel-title">الخريطة التكتيكية للمجموعة</div>
-              <div class="map-toolbar">
-                <button class="btn" onclick="zoomMap(1.2)">تكبير +</button>
-                <button class="btn" onclick="zoomMap(0.8)">تصغير -</button>
-                <button class="btn" onclick="resetMap()">إعادة ضبط</button>
-                <button class="btn" id="toggleMapModeBtn" onclick="toggleMapMode()">🌍 عرض خريطة GTA5 الحقيقية</button>
-                <span style="align-self:center; font-size:11.5px; color:var(--muted);" id="mapPermNote">اضغط لإضافة دبوس، اسحب للتحريك، عجلة الفأرة للتكبير</span>
-              </div>
-
-              <div id="tacticalMapWrap">
-                <div id="mapViewport"><div id="mapInner">
-                  <svg width="1400" height="1000" viewBox="0 0 1400 1000">
-                    <rect width="1400" height="1000" fill="#0a0c0e"/>
-                    <defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0 L0 0 0 40" fill="none" stroke="#161c20" stroke-width="1"/></pattern></defs>
-                    <rect width="1400" height="1000" fill="url(#grid)"/>
-                    <rect x="520" y="330" width="360" height="260" rx="14" fill="#161c20" stroke="#c98a2e"/><text x="700" y="465" fill="#e8b25c" font-size="22" text-anchor="middle">وسط المدينة</text>
-                    <rect x="900" y="250" width="260" height="180" rx="14" fill="#161c20" stroke="#c98a2e"/><text x="1030" y="345" fill="#e8b25c" font-size="18" text-anchor="middle">الأحياء الراقية</text>
-                    <rect x="220" y="240" width="260" height="200" rx="14" fill="#161c20" stroke="#c98a2e"/><text x="350" y="345" fill="#e8b25c" font-size="18" text-anchor="middle">المنطقة الصناعية</text>
-                    <rect x="120" y="600" width="300" height="220" rx="14" fill="#161c20" stroke="#c98a2e"/><text x="270" y="715" fill="#e8b25c" font-size="18" text-anchor="middle">الأحياء الجنوبية</text>
-                    <rect x="500" y="700" width="340" height="220" rx="14" fill="#161c20" stroke="#c98a2e"/><text x="670" y="815" fill="#e8b25c" font-size="18" text-anchor="middle">الساحل</text>
-                    <rect x="950" y="600" width="300" height="240" rx="14" fill="#161c20" stroke="#c98a2e"/><text x="1100" y="725" fill="#e8b25c" font-size="18" text-anchor="middle">الريف والمزارع</text>
-                    <rect x="1000" y="60" width="320" height="160" rx="14" fill="#161c20" stroke="#c98a2e"/><text x="1160" y="145" fill="#e8b25c" font-size="18" text-anchor="middle">القاعدة العسكرية</text>
-                    <rect x="60" y="60" width="280" height="150" rx="14" fill="#161c20" stroke="#c98a2e"/><text x="200" y="140" fill="#e8b25c" font-size="18" text-anchor="middle">المطار</text>
-                    <path d="M400 440 L520 460" stroke="#c98a2e" stroke-width="3"/>
-                    <path d="M880 460 L1000 350" stroke="#c98a2e" stroke-width="3"/>
-                    <path d="M600 590 L650 700" stroke="#c98a2e" stroke-width="3"/>
-                    <path d="M840 590 L1050 610" stroke="#c98a2e" stroke-width="3"/>
-                    <path d="M700 330 L700 210" stroke="#c98a2e" stroke-width="3"/>
-                  </svg>
-                </div></div>
-              </div>
-
-              <div id="gtaMapWrap" style="display:none;">
-                <div style="border:1px solid var(--line); border-radius:8px; overflow:hidden; height:600px;">
-                  <iframe id="gtaMapFrame" src="https://gta-5-map.com/" style="width:100%; height:100%; border:0;" loading="lazy"></iframe>
-                </div>
-                <p class="gate-note" style="margin-top:8px;">هذه خريطة GTA5 الحقيقية معروضة داخل التطبيق مباشرة للاطّلاع والتنقل. لا يمكن وضع دبابيس المجموعة عليها لأنها موقع خارجي منفصل — للدبابيس المشتركة استخدمي "الخريطة التكتيكية".</p>
-              </div>
-            </div>
-          </div>
-          <div class="map-side">
-            <div class="panel">
-              <div class="panel-title">أعضاء المجموعة</div>
-              <div id="membersList" class="list"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <div id="wantedPage" class="page">
-      <div class="grid-2">
-        <div class="panel">
-          <div class="panel-title">تسجيل مطلوب كبير</div>
-          <input id="wName" placeholder="👤 الاسم / الاسم المستعار">
-          <input id="wCharge" placeholder="⚖️ التهم">
-          <select id="wDanger"><option value="متوسط">🟡 متوسط</option><option value="عالي">🟠 عالي</option><option value="أقصى">🔴 أقصى</option></select>
-          <input id="wLocation" placeholder="📍 آخر موقع مرصود (سري)">
-          <button class="btn red" id="addWanted">تعميم المطلوب</button>
-        </div>
-        <div class="panel"><div class="panel-title" style="color:var(--crimson-light);">قائمة كبار المطلوبين</div><div id="wantedList" class="list"></div></div>
-      </div>
-    </div>
-
-    <div id="upcomingPage" class="page">
-      <div class="grid-2">
-        <div class="panel">
-          <div class="panel-title">جدولة مهمة قادمة</div>
-          <input id="upTitle" placeholder="🆔 عنوان المهمة">
-          <input id="upDate" type="date"><input id="upTime" type="time">
-          <textarea id="upBrief" placeholder="📝 موجز المهمة" style="height:85px;"></textarea>
-          <button class="btn" id="addUpcoming">إضافة للجدول</button>
-        </div>
-        <div class="panel"><div class="panel-title">المهام المجدولة</div><div id="upcomingList" class="list"></div></div>
-      </div>
-    </div>
-
-    <div id="distPage" class="page">
-      <div class="grid-2">
-        <div class="panel">
-          <div class="panel-title">توزيع مناوبة</div>
-          <input id="distName" placeholder="👤 اسم العنصر">
-          <input id="distUnit" placeholder="🎯 الوحدة">
-          <select id="distShift"><option value="الصباحية">☀️ الصباحية</option><option value="المسائية">🌆 المسائية</option><option value="الليلية">🌙 الليلية</option></select>
-          <input id="distZone" placeholder="📍 منطقة التغطية">
-          <button class="btn" id="addDist">حفظ التوزيع</button>
-        </div>
-        <div class="panel">
-          <div class="panel-title">جدول المناوبات</div>
-          <table><thead><tr><th>الاسم</th><th>الوحدة</th><th>الفترة</th><th>المنطقة</th><th>-</th></tr></thead><tbody id="distTable"></tbody></table>
-        </div>
-      </div>
-    </div>
-
-    <div id="investPage" class="page">
-      <div class="grid-2">
-        <div class="panel">
-          <div class="panel-title">فتح ملف تحقيق</div>
-          <input id="invCase" placeholder="🆔 رقم/عنوان القضية">
-          <input id="invLead" placeholder="👮 المحقق المسؤول">
-          <select id="invStatus"><option value="مفتوحة">🟢 مفتوحة</option><option value="قيد المتابعة">🟠 قيد المتابعة</option><option value="مغلقة">⚪ مغلقة</option></select>
-          <textarea id="invNotes" placeholder="📝 تفاصيل القضية" style="height:85px;"></textarea>
-          <label style="display:flex; gap:8px; align-items:center; margin-bottom:11px; cursor:pointer; font-size:12px; color:var(--muted);">
-            <input id="invClassified" type="checkbox" style="width:auto; margin:0;"> سري (رتبة قائد فريق فأعلى)
-          </label>
-          <button class="btn" id="addInvest">حفظ القضية</button>
-        </div>
-        <div class="panel"><div class="panel-title">القضايا المسجلة</div><div id="investList" class="list"></div></div>
-      </div>
-    </div>
-
-    <div id="uniformPage" class="page">
-      <div class="panel">
-        <div class="panel-title">اللبس الرسمي للوحدات المشتركة</div>
-        <div class="uniform-grid" id="uniformGrid"></div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<div class="modal-overlay" id="ranksModal">
-  <div class="modal-box">
-    <h3>➕ إضافة عنصر لسجل الرتب</h3>
-    <input id="rankAdminCode" type="password" placeholder="رمز صلاحية الإدارة">
-    <input id="rankEmail" placeholder="البريد الإلكتروني">
-    <input id="rankName" placeholder="الاسم">
-    <select id="rankLevel">
-      <option value="1">فرد</option><option value="2">مشرف</option><option value="3">قائد فريق</option><option value="4">نائب قائد</option><option value="5">القائد العام</option>
-    </select>
-    <button class="btn" onclick="addRank()">حفظ</button>
-    <button class="close-modal" onclick="closeModal('ranksModal')">إغلاق</button>
-  </div>
-</div>
-
+<div id="app"></div>
+ 
 <script>
-const ADMIN_CODE = "1029";
-let currentUser = { email:null, level:0, name:null };
-
-/* ===== تخزين دائم مشترك ===== */
-async function loadArr(key, shared=true){ try{ const r = await window.storage.get(key, shared); return r ? JSON.parse(r.value) : []; }catch(e){ return []; } }
-async function saveArr(key, arr, shared=true){ try{ await window.storage.set(key, JSON.stringify(arr), shared); }catch(e){ console.error(e); } }
-async function loadObj(key, shared=true){ try{ const r = await window.storage.get(key, shared); return r ? JSON.parse(r.value) : null; }catch(e){ return null; } }
-async function saveObj(key, obj, shared=true){ try{ await window.storage.set(key, JSON.stringify(obj), shared); }catch(e){ console.error(e); } }
-function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
-
-/* هوية شخصية دائمة لهذا الجهاز/الحساب (تُستخدم للعضوية والصلاحيات) */
-async function myUid(){
-  let id = await loadObj('jf_my_uid', false);
-  if(!id){ id = uid(); await saveObj('jf_my_uid', id, false); }
-  return id;
-}
-
-/* ===== تنقل ===== */
-window.go = function(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelector(`.tab-btn[data-page="${id}"]`).classList.add('active');
-  if(id==='mapPage'){ checkGroupGate(); }
-};
-window.openModal = (id)=>document.getElementById(id).classList.add('open');
-window.closeModal = (id)=>document.getElementById(id).classList.remove('open');
-
-/* ===== الرتب وتسجيل الدخول ===== */
-window.addRank = async function(){
-  const code = document.getElementById('rankAdminCode').value;
-  const email = document.getElementById('rankEmail').value.trim().toLowerCase();
-  const name = document.getElementById('rankName').value.trim();
-  const level = parseInt(document.getElementById('rankLevel').value);
-  if(code !== ADMIN_CODE){ alert('رمز الإدارة غير صحيح.'); return; }
-  if(!email || !name){ alert('أكمل البريد والاسم.'); return; }
-  const list = await loadArr('jf_ranks');
-  list.push({ id:uid(), email, name, level });
-  await saveArr('jf_ranks', list);
-  document.getElementById('rankAdminCode').value='';
-  document.getElementById('rankEmail').value='';
-  document.getElementById('rankName').value='';
-  closeModal('ranksModal');
-  alert('تمت إضافة الرتبة.');
-};
-
-window.loginByEmail = async function(){
-  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-  if(!email) return;
-  const list = await loadArr('jf_ranks');
-  const found = list.find(r=>r.email===email);
-  const levelNames = {1:'فرد',2:'مشرف',3:'قائد فريق',4:'نائب قائد',5:'القائد العام'};
-  if(!found){
-    currentUser = { email:null, level:0, name:null };
-    document.getElementById('sessionBadge').innerText = 'لا يوجد سجل بهذا البريد';
-  } else {
-    currentUser = { email, level:found.level, name:found.name };
-    document.getElementById('sessionBadge').innerHTML = `مسجل: <b>${found.name}</b> (${levelNames[found.level]})`;
-  }
-  renderInvest(); renderOps(); renderWanted();
-};
-
-function lockedBox(minLevel){
-  const levelNames = {1:'فرد',2:'مشرف',3:'قائد فريق',4:'نائب قائد',5:'القائد العام'};
-  return `<div class="locked">🔒 محتوى مصنّف — يتطلب رتبة "${levelNames[minLevel]}" فأعلى</div>`;
-}
-
-/* ===== اللبس (ثابت) ===== */
-const uniforms = [
-  { name:'وحدة القيادة', color:'#c98a2e', desc:'بدلة رسمية داكنة بشارات، تُلبس بالمكتب والمؤتمرات الرسمية.' },
-  { name:'فرقة الاقتحام (Alpha)', color:'#33393e', desc:'بدلة تكتيكية سوداء كاملة، خوذة وحماية، للمداهمات.' },
-  { name:'فرقة الإسناد (Bravo)', color:'#3f4a44', desc:'زي ميداني، لتأمين المحيط والدعم اللوجستي.' },
-  { name:'وحدة التحقيق', color:'#4a3f33', desc:'زي مدني رسمي مع شارة مثبتة، للاستجواب وجمع الأدلة.' },
-  { name:'وحدة الكلاب (K9)', color:'#5a3f2a', desc:'زي ميداني مقوّى للتعامل مع الكلاب المدرّبة.' },
-  { name:'الدعم الجوي', color:'#2e4552', desc:'بدلة طيران داكنة لطواقم المروحية والمراقبة الجوية.' },
+/* ============ DATA (same content banks) ============ */
+const LETTERS_POOL = ['ا','ب','ت','ث','ج','ح','خ','د','ر','ز','س','ش','ص','ط','ع','غ','ف','ق','ك','ل','م','ن','ه','و','ي'];
+const LETTER_CATEGORIES = ['ولد','بنت','حيوان','نبات','جماد','بلاد'];
+ 
+const TRIVIA = [
+  {q:'ما هي عاصمة السعودية؟',o:['جدة','الرياض','مكة','الدمام'],a:1},
+  {q:'كم عدد قارات العالم؟',o:['5','6','7','8'],a:2},
+  {q:'ما هو أكبر كوكب في المجموعة الشمسية؟',o:['الأرض','المريخ','المشتري','زحل'],a:2},
+  {q:'في أي قارة تقع مصر؟',o:['آسيا','أفريقيا','أوروبا','أمريكا'],a:1},
+  {q:'كم عدد أركان الإسلام؟',o:['3','4','5','6'],a:2},
+  {q:'ما هو أسرع حيوان بري؟',o:['الأسد','الفهد','النمر','الحصان'],a:1},
+  {q:'كم عدد أيام السنة الكبيسة؟',o:['364','365','366','367'],a:2},
+  {q:'ما هو أطول نهر معروف في العالم؟',o:['النيل','دجلة','الفرات','الأمازون'],a:0},
+  {q:'كم عدد اللاعبين الأساسيين في فريق كرة القدم؟',o:['9','10','11','12'],a:2},
+  {q:'ما هو الغاز الأكثر وفرة في الغلاف الجوي؟',o:['الأكسجين','النيتروجين','الهيدروجين','الكربون'],a:1},
+  {q:'في أي مدينة يقع برج إيفل؟',o:['لندن','باريس','روما','برلين'],a:1},
+  {q:'كم عدد حروف اللغة العربية؟',o:['26','27','28','29'],a:2},
+  {q:'ما هو أصغر كوكب في المجموعة الشمسية؟',o:['المريخ','عطارد','الزهرة','بلوتو'],a:1},
+  {q:'ما هي عملة اليابان؟',o:['الين','الوون','اليوان','الدولار'],a:0},
+  {q:'كم عدد ألوان قوس قزح؟',o:['5','6','7','8'],a:2},
+  {q:'ما اسم أكبر محيط في العالم؟',o:['الأطلسي','الهندي','الهادئ','المتجمد'],a:2},
+  {q:'كم عدد قطع الشطرنج لكل لاعب؟',o:['14','15','16','17'],a:2},
+  {q:'ما هو الحيوان المعروف بملك الغابة؟',o:['النمر','الأسد','الفيل','الدب'],a:1},
+  {q:'كم عدد أضلاع المثلث؟',o:['2','3','4','5'],a:1},
+  {q:'ما هي أكبر صحراء حارة في العالم؟',o:['الربع الخالي','كالاهاري','جوبي','الصحراء الكبرى'],a:3},
+  {q:'كم عدد فصول السنة؟',o:['2','3','4','5'],a:2},
+  {q:'ما هو الغاز الذي يتنفسه الإنسان أساساً؟',o:['ثاني أكسيد الكربون','الأكسجين','النيتروجين','الهيليوم'],a:1},
+  {q:'في أي عام هبط أول إنسان على القمر؟',o:['1965','1969','1972','1959'],a:1},
+  {q:'كم عدد أيام الأسبوع؟',o:['5','6','7','8'],a:2},
 ];
-(function renderUniforms(){
-  const box = document.getElementById('uniformGrid'); box.innerHTML='';
-  uniforms.forEach(u=>{
-    const d = document.createElement('div'); d.className='uni';
-    d.innerHTML = `<div class="sw" style="background:${u.color}"></div><h4>${u.name}</h4><p>${u.desc}</p>`;
-    box.appendChild(d);
-  });
-})();
-
-/* ===== غرفة العمليات ===== */
-async function renderOps(){
-  const list = await loadArr('jf_operations');
-  const box = document.getElementById('opsList'); box.innerHTML='';
-  document.getElementById('statOps').innerText = list.filter(i=>i.status==='جارية').length;
-  list.slice().reverse().forEach(item=>{
-    const div = document.createElement('div'); div.className='card';
-    if(item.classified && currentUser.level < 3){
-      div.innerHTML = `<h4>📻 ${item.title} <span class="tag warn">سري</span></h4>` + lockedBox(3);
+ 
+const LIAR_WORDS = [
+  {cat:'مهنة',w:'طبيب'},{cat:'مهنة',w:'معلم'},{cat:'حيوان',w:'أسد'},{cat:'حيوان',w:'جمل'},
+  {cat:'بلد',w:'مصر'},{cat:'بلد',w:'اليابان'},{cat:'أكلة',w:'كبسة'},{cat:'أكلة',w:'بيتزا'},
+  {cat:'رياضة',w:'كرة القدم'},{cat:'رياضة',w:'السباحة'},{cat:'مكان',w:'المطار'},{cat:'مكان',w:'المستشفى'},
+  {cat:'فاكهة',w:'تفاح'},{cat:'فاكهة',w:'مانجو'},{cat:'وسيلة نقل',w:'طائرة'},{cat:'وسيلة نقل',w:'دراجة'},
+  {cat:'مشروب',w:'قهوة'},{cat:'مشروب',w:'شاي'}
+];
+ 
+const DRAW_WORDS = ['شمس','قمر','نجمة','شجرة','بيت','سيارة','طائرة','سمكة','قطة','كلب','فيل','تفاحة',
+  'موزة','كرة','ساعة','مظلة','نظارة','قلم','كتاب','هاتف','مفتاح','باب','نافذة','جبل','بحر','سحابة',
+  'مطر','ثلج','نار','زهرة'];
+ 
+const PASSWORD_WORDS = [
+  {w:'قهوة',f:['مشروب','كافيين','فنجان']},{w:'مدرسة',f:['طلاب','معلم','دراسة']},
+  {w:'سيارة',f:['طريق','عجلة','قيادة']},{w:'هاتف',f:['اتصال','رسالة','شاشة']},
+  {w:'شمس',f:['نهار','حرارة','ضوء']},{w:'قمر',f:['ليل','نجوم','سماء']},
+  {w:'مطعم',f:['أكل','طاولة','نادل']},{w:'مستشفى',f:['طبيب','مريض','دواء']},
+  {w:'كرة القدم',f:['ملعب','هدف','لاعب']},{w:'مطار',f:['طائرة','سفر','جواز']},
+  {w:'بحر',f:['ماء','موج','سمك']},{w:'مدينة',f:['شوارع','مباني','سكان']},
+  {w:'كتاب',f:['صفحات','قراءة','مؤلف']},{w:'حاسوب',f:['شاشة','لوحة','برنامج']},
+  {w:'مطبخ',f:['طبخ','فرن','أكل']},{w:'حديقة',f:['أشجار','ورد','ألعاب']},
+  {w:'فندق',f:['غرفة','نزيل','استقبال']},{w:'جامعة',f:['طلاب','أستاذ','شهادة']}
+];
+ 
+const GAMES = [
+  {id:'letters',emoji:'🔤',name:'حروف عزيز',tag:'حرف وفئات'},
+  {id:'liar',emoji:'🎭',name:'الكذابين',tag:'اكتشف الكذاب'},
+  {id:'trivia',emoji:'🧠',name:'أسئلة وتخمين',tag:'اختبر معلوماتك'},
+  {id:'draw',emoji:'✏️',name:'خمن الرسمة',tag:'ارسم وخمّن'},
+  {id:'password',emoji:'🔒',name:'كلمة السر',tag:'وصف بدون قول الكلمة'},
+];
+ 
+/* ============ SESSION (in-memory only) ============ */
+let myId = null;
+let myName = '';
+let roomCode = null;
+let room = null;
+let pollTimer = null;
+let localAnswers = {};   // letters game scratch (local before submit)
+let localGuess = '';     // draw/password guess scratch
+let iAmDrawingNow = false;
+let uploadTimer = null;
+ 
+function el(){return document.getElementById('app');}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function rand(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function randomId(){return 'p_'+Math.random().toString(36).slice(2,10);}
+function randomCode(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let c='';for(let i=0;i<4;i++)c+=chars[Math.floor(Math.random()*chars.length)];
+  return c;
+}
+function findPlayer(r,id){return r.players.find(p=>p.id===id);}
+function isLeader(){return room && room.leaderId===myId;}
+ 
+/* ============ STORAGE HELPERS ============ */
+async function saveRoom(r){
+  r.updatedAt = Date.now();
+  await window.storage.set('room:'+roomCode, JSON.stringify(r), true);
+  room = r;
+}
+async function fetchRoom(){
+  try{
+    const res = await window.storage.get('room:'+roomCode, true);
+    if(res && res.value){ room = JSON.parse(res.value); }
+  }catch(e){ /* room may not exist */ }
+}
+// read-modify-write helper to reduce race conditions
+async function updateRoom(mutator){
+  try{
+    const res = await window.storage.get('room:'+roomCode, true);
+    let r = res && res.value ? JSON.parse(res.value) : room;
+    mutator(r);
+    await saveRoom(r);
+  }catch(e){
+    console.error('updateRoom failed', e);
+  }
+}
+ 
+/* ============ LANDING SCREEN ============ */
+let landingMode = 'home'; // home | create | join
+let landingName = '';
+let landingCode = '';
+ 
+function renderLanding(){
+  el().innerHTML = `
+    <div class="center-wrap">
+      <div class="marquee-wrap">
+        <div class="bulbs">
+          ${Array.from({length:10}).map((_,i)=>{
+            const ang=i/10*2*Math.PI; const r=90;
+            const x=110+Math.cos(ang)*r, y=30+Math.sin(ang)*22;
+            return `<div class="bulb" style="left:${x}px;top:${y}px;animation-delay:${(i*0.13).toFixed(2)}s"></div>`;
+          }).join('')}
+        </div>
+        <div class="marquee-title display">ليجند تاون</div>
+        <div class="subtitle">مدينة الألعاب الجماعية 🎪 كل واحد من جهازه الخاص</div>
+      </div>
+ 
+      ${landingMode==='home' ? `
+        <div class="card">
+          <button class="btn" onclick="landingMode='create';render();">🎫 أنشئ مجموعة جديدة</button>
+          <div style="height:10px;"></div>
+          <button class="btn ghost" onclick="landingMode='join';render();">🚪 انضم لمجموعة</button>
+        </div>
+        <div class="footer-note">شارك رابط هذه الصفحة مع أصحابك، وكل واحد يدخل من جهازه</div>
+      ` : ''}
+ 
+      ${landingMode==='create' ? `
+        <div class="card">
+          <div class="display" style="font-size:20px;color:var(--teal);margin-bottom:10px;">👑 أنشئ مجموعتك</div>
+          <input type="text" id="createNameField" placeholder="اسمك" maxlength="14" value="${landingName}" oninput="landingName=this.value">
+          <button class="btn" style="margin-top:10px;" onclick="doCreateRoom()">إنشاء 🎉</button>
+          <button class="btn ghost" style="margin-top:8px;" onclick="landingMode='home';render();">رجوع</button>
+        </div>
+      ` : ''}
+ 
+      ${landingMode==='join' ? `
+        <div class="card">
+          <div class="display" style="font-size:20px;color:var(--teal);margin-bottom:10px;">🚪 انضم لمجموعة</div>
+          <input type="text" id="joinNameField" placeholder="اسمك" maxlength="14" value="${landingName}" oninput="landingName=this.value">
+          <div style="height:8px;"></div>
+          <input type="text" class="code-input" id="joinCodeField" placeholder="كود" maxlength="4" value="${landingCode}" oninput="landingCode=this.value.toUpperCase()">
+          <button class="btn" style="margin-top:10px;" onclick="doJoinRoom()">انضمام 🙋</button>
+          <button class="btn ghost" style="margin-top:8px;" onclick="landingMode='home';render();">رجوع</button>
+          <div id="joinError" style="color:var(--danger);font-size:13px;margin-top:8px;"></div>
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+ 
+async function doCreateRoom(){
+  const name = (landingName||'').trim();
+  if(!name) return;
+  myId = randomId(); myName = name; roomCode = randomCode();
+  const r = {
+    code: roomCode, leaderId: myId,
+    players: [{id:myId, name, score:0}],
+    screen:'lobby', game:{}, updatedAt: Date.now()
+  };
+  await saveRoom(r);
+  startPolling();
+  renderRoom();
+}
+ 
+async function doJoinRoom(){
+  const name = (landingName||'').trim();
+  const code = (landingCode||'').trim().toUpperCase();
+  const errEl = document.getElementById('joinError');
+  if(!name || code.length<4){ if(errEl) errEl.textContent='اكتب اسمك وكود المجموعة كامل'; return; }
+  try{
+    const res = await window.storage.get('room:'+code, true);
+    if(!res || !res.value){ if(errEl) errEl.textContent='ما لقيت مجموعة بهذا الكود'; return; }
+    let r = JSON.parse(res.value);
+    if(r.players.some(p=>p.name===name)){ if(errEl) errEl.textContent='فيه لاعب بنفس الاسم، جرب اسم ثاني'; return; }
+    if(r.players.length>=8){ if(errEl) errEl.textContent='المجموعة مليانة'; return; }
+    myId = randomId(); myName = name; roomCode = code;
+    r.players.push({id:myId, name, score:0});
+    await saveRoom(r);
+    startPolling();
+    renderRoom();
+  }catch(e){
+    if(errEl) errEl.textContent='صار خطأ، جرب مرة ثانية';
+  }
+}
+ 
+/* ============ POLLING ============ */
+function startPolling(){
+  if(pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(tick, 1500);
+}
+async function tick(){
+  if(!roomCode) return;
+  await fetchRoom();
+  if(!room) return;
+  updateSidebar();
+  const iAmActivelyDrawing = room.screen==='draw' && room.game && !room.game.winnerId
+    && room.players[room.game.drawerIdx % room.players.length].id===myId;
+  if(iAmActivelyDrawing) return; // don't disturb the drawer's own canvas
+  const active = document.activeElement;
+  const isTyping = active && active.tagName==='INPUT';
+  if(isTyping){ patchLiveBits(); return; }
+  renderRoom();
+}
+function patchLiveBits(){
+  const img = document.getElementById('liveCanvasImg');
+  if(img && room.game && room.game.canvasData) img.src = room.game.canvasData;
+}
+ 
+/* ============ ROOM SHELL ============ */
+function updateSidebar(){
+  const sb = document.getElementById('sidebarList');
+  if(!sb || !room) return;
+  sb.innerHTML = room.players.map(p=>`
+    <li><span>${p.id===room.leaderId?'👑 ':''}${p.name}${p.id===myId?' (أنت)':''}</span><span class="pts">${p.score}</span></li>
+  `).join('');
+}
+function roomShell(innerHtml){
+  return `
+    <div class="roomLayout">
+      <div class="sidebar">
+        <h3>👥 المجموعة</h3>
+        <div class="code">${room.code}</div>
+        <ul class="plist" id="sidebarList">
+          ${room.players.map(p=>`
+            <li><span>${p.id===room.leaderId?'👑 ':''}${p.name}${p.id===myId?' (أنت)':''}</span><span class="pts">${p.score}</span></li>
+          `).join('')}
+        </ul>
+        <div class="footer-note" style="text-align:right;">شارك الكود مع أصحابك للانضمام</div>
+      </div>
+      <div class="main">${innerHtml}</div>
+    </div>`;
+}
+function topbar(title){
+  return `<div class="topbar">
+    <button class="iconbtn" onclick="goLobby()">🏠 الرئيسية</button>
+    <div class="display" style="font-size:20px;color:var(--gold)">${title}</div>
+    <div class="badge">${isLeader()?'أنت القائد 👑':'لاعب'}</div>
+  </div>`;
+}
+function goLobby(){ updateRoom(r=>{r.screen='lobby';}); renderRoom(); }
+ 
+/* ============ MASTER RENDER ============ */
+function render(){
+  if(!room) renderLanding();
+  else renderRoom();
+}
+function renderRoom(){
+  if(!room){ renderLanding(); return; }
+  let inner='';
+  if(room.screen==='lobby') inner = lobbyHtml();
+  else if(room.screen==='letters') inner = lettersHtml();
+  else if(room.screen==='liar') inner = liarHtml();
+  else if(room.screen==='trivia') inner = triviaHtml();
+  else if(room.screen==='draw') inner = drawHtml();
+  else if(room.screen==='password') inner = passwordHtml();
+  el().innerHTML = roomShell(inner);
+  if(room.screen==='draw') afterDrawRender();
+}
+ 
+/* ============ LOBBY ============ */
+function lobbyHtml(){
+  const enoughPlayers = room.players.length>=2;
+  return `
+    ${topbar('المدينة')}
+    <div class="perforation"></div>
+    ${isLeader() ? `
+      <div class="gate-grid">
+        ${GAMES.map(g=>`
+          <div class="gate ${enoughPlayers?'':'disabled'}" onclick="${enoughPlayers?`launchGame('${g.id}')`:''}">
+            <span class="emoji">${g.emoji}</span>
+            <div class="name display">${g.name}</div>
+            <div class="tag">${g.tag}</div>
+          </div>`).join('')}
+      </div>
+      ${!enoughPlayers?`<div class="footer-note">لازم لاعبين اثنين ع الأقل عشان تبدأ</div>`:''}
+    ` : `
+      <div class="card" style="text-align:center;">
+        <span style="font-size:40px;">⏳</span>
+        <div style="color:var(--muted);margin-top:8px;">بانتظار القائد يختار لعبة...</div>
+      </div>
+    `}
+  `;
+}
+function launchGame(id){
+  updateRoom(r=>{
+    r.screen = id;
+    if(id==='letters') startLettersRound(r);
+    if(id==='liar') startLiarRound(r);
+    if(id==='trivia') startTriviaGame(r);
+    if(id==='draw') startDrawRound(r);
+    if(id==='password') startPasswordRound(r);
+  }).then(renderRoom);
+}
+ 
+/* ============================================================
+   حروف عزيز
+   ============================================================ */
+function startLettersRound(r){
+  r.game = { phase:'answering', letter: rand(LETTERS_POOL), categories: LETTER_CATEGORIES,
+    startedAt: Date.now(), duration:60, answers:{} };
+  localAnswers = {};
+}
+function lettersHtml(){
+  const g = room.game;
+  if(g.phase==='answering'){
+    const submitted = Object.keys(g.answers||{}).length;
+    const already = g.answers[myId];
+    if(!localAnswers.__init){ localAnswers = already ? {...already} : {}; localAnswers.__init=true; }
+    return `
+      ${topbar('حروف عزيز')}
+      <div class="card" style="text-align:center;">
+        <div class="letter-badge">${g.letter}</div>
+        <div style="color:var(--muted);font-size:13px;">${submitted}/${room.players.length} أرسلوا إجاباتهم</div>
+      </div>
+      <div class="card">
+        ${already ? `<div style="text-align:center;color:var(--teal);margin-bottom:8px;">✅ أرسلت إجاباتك — تقدر تعدلها وترسل مرة ثانية</div>` : ''}
+        ${g.categories.map(c=>`
+          <div class="cat-label">${c}</div>
+          <input type="text" value="${localAnswers[c]||''}" oninput="localAnswers['${c}']=this.value">
+        `).join('')}
+        <button class="btn coral" style="margin-top:10px;" onclick="submitLetters()">📨 أرسل إجاباتي</button>
+      </div>
+      ${isLeader()?`<button class="btn" onclick="compareLetters()">📊 قارنوا الإجابات الحين</button>`:''}
+    `;
+  }
+  if(g.phase==='compare'){
+    return `
+      ${topbar('حروف عزيز')}
+      <div class="card">
+        <div style="overflow-x:auto;">
+        <table class="cmp">
+          <tr><th>الفئة</th>${room.players.map(p=>`<th>${p.name}</th>`).join('')}</tr>
+          ${g.categories.map(c=>`
+            <tr><td>${c}</td>${room.players.map(p=>`<td>${(g.answers[p.id]&&g.answers[p.id][c])||'—'}</td>`).join('')}</tr>
+          `).join('')}
+        </table>
+        </div>
+        ${isLeader()?`
+          <div class="perforation"></div>
+          <div style="color:var(--muted);font-size:13px;margin-bottom:6px;">وزّع النقاط: فريدة = 10، مكررة = 5</div>
+          ${room.players.map(p=>`
+            <div class="row" style="align-items:center;margin-bottom:6px;">
+              <span style="flex:2;">${p.name}</span>
+              <button class="btn small ghost" style="flex:1;" onclick="giveLettersScore('${p.id}',5)">+5</button>
+              <button class="btn small teal" style="flex:1;" onclick="giveLettersScore('${p.id}',10)">+10</button>
+            </div>
+          `).join('')}
+          <button class="btn" style="margin-top:10px;" onclick="launchGame('letters')">🔄 جولة جديدة</button>
+        `:`<div class="footer-note">القائد يوزع النقاط الحين</div>`}
+      </div>
+    `;
+  }
+}
+function submitLetters(){
+  const mine = {...localAnswers}; delete mine.__init;
+  updateRoom(r=>{ r.game.answers[myId] = mine; }).then(renderRoom);
+}
+function compareLetters(){ updateRoom(r=>{ r.game.phase='compare'; }).then(renderRoom); }
+function giveLettersScore(pid,pts){
+  updateRoom(r=>{ const p=findPlayer(r,pid); if(p) p.score+=pts; }).then(renderRoom);
+}
+ 
+/* ============================================================
+   الكذابين
+   ============================================================ */
+function startLiarRound(r){
+  const wordObj = rand(LIAR_WORDS);
+  const liarIdx = Math.floor(Math.random()*r.players.length);
+  r.game = { phase:'reveal', word:wordObj.w, cat:wordObj.cat, liarId:r.players[liarIdx].id, votes:{} };
+}
+function liarHtml(){
+  const g = room.game;
+  const isMeLiar = g.liarId===myId;
+  if(g.phase==='reveal'){
+    return `
+      ${topbar('الكذابين')}
+      <div class="card cover">
+        ${isMeLiar ? `
+          <span class="big-emoji">🤫</span>
+          <div class="display" style="font-size:22px;color:var(--danger);">أنت الكذاب!</div>
+          <div style="color:var(--muted);margin-top:8px;">حاول تندمج بالكلام ولا تنكشف 😏<br>الفئة: <b>${g.cat}</b></div>
+        ` : `
+          <span class="big-emoji">✅</span>
+          <div style="color:var(--muted);">الفئة: ${g.cat}</div>
+          <div class="display" style="font-size:28px;color:var(--gold);margin:8px 0;">${g.word}</div>
+          <div style="color:var(--muted);font-size:13px;">صفوا الكلمة بالكلام بدون ما تقولوها صراحة</div>
+        `}
+      </div>
+      ${isLeader()?`<button class="btn" onclick="openLiarVote()">🗳️ افتحوا التصويت</button>`:`<div class="footer-note">تكلموا صوتياً، والقائد بيفتح التصويت</div>`}
+    `;
+  }
+  if(g.phase==='vote'){
+    const myVote = g.votes[myId];
+    const votedCount = Object.keys(g.votes||{}).length;
+    return `
+      ${topbar('الكذابين')}
+      <div class="card" style="text-align:center;">
+        <div style="color:var(--muted);margin-bottom:8px;">مين برأيك الكذاب؟ (${votedCount}/${room.players.length} صوّتوا)</div>
+        ${room.players.map(p=>`
+          <button class="opt-btn ${myVote===p.id?'wrong':''}" onclick="castLiarVote('${p.id}')">${p.name}</button>
+        `).join('')}
+      </div>
+      ${isLeader()?`<button class="btn coral" onclick="revealLiarResult()">🔍 كشف النتيجة</button>`:''}
+    `;
+  }
+  if(g.phase==='result'){
+    const tally = {};
+    room.players.forEach(p=>tally[p.id]=0);
+    Object.values(g.votes||{}).forEach(v=>{ if(tally[v]!==undefined) tally[v]++; });
+    let topId=null, topCount=-1;
+    for(const pid in tally){ if(tally[pid]>topCount){topCount=tally[pid];topId=pid;} }
+    const caught = topId===g.liarId;
+    const liarName = findPlayer(room,g.liarId)?.name || '؟';
+    return `
+      ${topbar('الكذابين')}
+      <div class="card" style="text-align:center;">
+        <span class="big-emoji">${caught?'🎉':'😬'}</span>
+        <div class="display" style="font-size:20px;">${caught?'انكشف الكذاب!':'الكذاب فلت!'}</div>
+        <div style="margin:10px 0;color:var(--muted);">الكذاب كان: <b style="color:var(--gold)">${liarName}</b></div>
+        <div style="color:var(--muted);">الكلمة: <b style="color:var(--teal)">${g.word}</b></div>
+        ${isLeader()?`<button class="btn" style="margin-top:10px;" onclick="launchGame('liar')">🔄 جولة جديدة</button>`:`<div class="footer-note">القائد يبدأ جولة جديدة</div>`}
+      </div>
+    `;
+  }
+}
+function openLiarVote(){ updateRoom(r=>{ r.game.phase='vote'; r.game.votes={}; }).then(renderRoom); }
+function castLiarVote(pid){ updateRoom(r=>{ r.game.votes[myId]=pid; }).then(renderRoom); }
+function revealLiarResult(){
+  updateRoom(r=>{
+    const g=r.game;
+    const tally={}; r.players.forEach(p=>tally[p.id]=0);
+    Object.values(g.votes||{}).forEach(v=>{ if(tally[v]!==undefined) tally[v]++; });
+    let topId=null, topCount=-1;
+    for(const pid in tally){ if(tally[pid]>topCount){topCount=tally[pid];topId=pid;} }
+    const caught = topId===g.liarId;
+    if(caught){
+      Object.entries(g.votes).forEach(([voter,accused])=>{
+        if(accused===g.liarId){ const p=findPlayer(r,voter); if(p) p.score+=10; }
+      });
     } else {
-      const tc = item.status==='جارية'?'ok':(item.status==='منتهية'?'':'warn');
-      div.innerHTML = `<h4>📻 ${item.title} <span class="tag ${tc}">${item.status}</span></h4><p>👥 ${item.units}</p><p>📝 ${item.notes||'—'}</p><button class="del" onclick="delItem('jf_operations','${item.id}',renderOps)">أرشفة</button>`;
+      const liar=findPlayer(r,g.liarId); if(liar) liar.score+=15;
     }
-    box.appendChild(div);
-  });
+    g.phase='result';
+  }).then(renderRoom);
 }
-document.getElementById('addOp').addEventListener('click', async ()=>{
-  const title = document.getElementById('opTitle').value.trim();
-  const units = document.getElementById('opUnits').value.trim();
-  const status = document.getElementById('opStatus').value;
-  const notes = document.getElementById('opNotes').value.trim();
-  const classified = document.getElementById('opClassified').checked;
-  if(!title){ alert('أدخل عنوان العملية.'); return; }
-  const list = await loadArr('jf_operations');
-  list.push({ id:uid(), title, units, status, notes, classified });
-  await saveArr('jf_operations', list);
-  document.getElementById('opTitle').value=''; document.getElementById('opUnits').value='';
-  document.getElementById('opNotes').value=''; document.getElementById('opClassified').checked=false;
-  renderOps();
-});
-
-/* ===== المطلوبين الكبار ===== */
-async function renderWanted(){
-  const list = await loadArr('jf_wanted_major');
-  const box = document.getElementById('wantedList'); box.innerHTML='';
-  document.getElementById('statWanted').innerText = list.length;
-  list.slice().reverse().forEach(item=>{
-    const div = document.createElement('div'); div.className='card';
-    const tc = item.danger==='أقصى'?'danger':(item.danger==='عالي'?'warn':'');
-    const loc = (currentUser.level>=4) ? `<p>📍 آخر موقع: ${item.location||'غير متوفر'}</p>` : lockedBox(4);
-    div.innerHTML = `<h4>🎯 ${item.name} <span class="tag ${tc}">خطورة ${item.danger}</span></h4><p>⚖️ ${item.charge}</p>${loc}<button class="del" onclick="delItem('jf_wanted_major','${item.id}',renderWanted)">تم القبض</button>`;
-    box.appendChild(div);
-  });
+ 
+/* ============================================================
+   أسئلة وتخمين
+   ============================================================ */
+function startTriviaGame(r){
+  r.game = { phase:'question', order: shuffle(TRIVIA), qIndex:0, answers:{} };
 }
-document.getElementById('addWanted').addEventListener('click', async ()=>{
-  const name = document.getElementById('wName').value.trim();
-  const charge = document.getElementById('wCharge').value.trim();
-  const danger = document.getElementById('wDanger').value;
-  const location = document.getElementById('wLocation').value.trim();
-  if(!name||!charge){ alert('أكمل الاسم والتهم.'); return; }
-  const list = await loadArr('jf_wanted_major');
-  list.push({ id:uid(), name, charge, danger, location });
-  await saveArr('jf_wanted_major', list);
-  document.getElementById('wName').value=''; document.getElementById('wCharge').value=''; document.getElementById('wLocation').value='';
-  renderWanted();
-});
-
-/* ===== المهام القادمة ===== */
-async function renderUpcoming(){
-  const list = await loadArr('jf_upcoming');
-  const box = document.getElementById('upcomingList'); box.innerHTML='';
-  document.getElementById('statMissions').innerText = list.length;
-  list.slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).forEach(item=>{
-    const div = document.createElement('div'); div.className='card';
-    div.innerHTML = `<h4>📆 ${item.title}</h4><p>🗓️ ${item.date} — ${item.time}</p><p>📝 ${item.brief||'—'}</p><button class="del" onclick="delItem('jf_upcoming','${item.id}',renderUpcoming)">حذف</button>`;
-    box.appendChild(div);
-  });
+function triviaHtml(){
+  const g = room.game;
+  if(g.phase==='end'){
+    const sorted=[...room.players].sort((a,b)=>b.score-a.score);
+    return `
+      ${topbar('أسئلة وتخمين')}
+      <div class="card" style="text-align:center;">
+        <span class="big-emoji">🏁</span>
+        <div class="display" style="font-size:20px;margin-bottom:8px;">خلصت الأسئلة!</div>
+        <ol style="text-align:right;">${sorted.map(p=>`<li>${p.name} — ${p.score}</li>`).join('')}</ol>
+        ${isLeader()?`<button class="btn" onclick="launchGame('trivia')">🔄 من جديد</button>`:''}
+      </div>`;
+  }
+  const q = g.order[g.qIndex];
+  const myAns = g.answers[myId];
+  const answeredCount = Object.keys(g.answers||{}).length;
+  return `
+    ${topbar('أسئلة وتخمين')}
+    <div class="card">
+      <div style="text-align:center;color:var(--muted);margin-bottom:6px;">سؤال ${g.qIndex+1}/${g.order.length} — ${answeredCount}/${room.players.length} أجابوا</div>
+      <div class="display" style="font-size:18px;margin-bottom:12px;text-align:center;">${q.q}</div>
+      ${q.o.map((opt,i)=>{
+        let cls='';
+        if(myAns!==undefined){ if(i===q.a) cls='correct'; else if(i===myAns) cls='wrong'; }
+        return `<button class="opt-btn ${cls}" ${myAns!==undefined?'disabled':''} onclick="answerTrivia(${i})">${opt}</button>`;
+      }).join('')}
+      ${isLeader()?`<button class="btn" style="margin-top:8px;" onclick="nextTrivia()">التالي ⬅️</button>`:''}
+    </div>`;
 }
-document.getElementById('addUpcoming').addEventListener('click', async ()=>{
-  const title = document.getElementById('upTitle').value.trim();
-  const date = document.getElementById('upDate').value;
-  const time = document.getElementById('upTime').value;
-  const brief = document.getElementById('upBrief').value.trim();
-  if(!title||!date){ alert('أكمل العنوان والتاريخ.'); return; }
-  const list = await loadArr('jf_upcoming');
-  list.push({ id:uid(), title, date, time, brief });
-  await saveArr('jf_upcoming', list);
-  document.getElementById('upTitle').value=''; document.getElementById('upDate').value='';
-  document.getElementById('upTime').value=''; document.getElementById('upBrief').value='';
-  renderUpcoming();
-});
-
-/* ===== المناوبات ===== */
-async function renderDist(){
-  const list = await loadArr('jf_duty');
-  const tbody = document.getElementById('distTable'); tbody.innerHTML='';
-  document.getElementById('statDuty').innerText = list.length;
-  list.forEach(d=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${d.name}</td><td>${d.unit}</td><td>${d.shift}</td><td>${d.zone}</td><td><button class="del" onclick="delItem('jf_duty','${d.id}',renderDist)">حذف</button></td>`;
-    tbody.appendChild(tr);
-  });
+function answerTrivia(i){
+  updateRoom(r=>{
+    const g=r.game;
+    if(g.answers[myId]!==undefined) return;
+    g.answers[myId]=i;
+    const q=g.order[g.qIndex];
+    if(i===q.a){ const me=findPlayer(r,myId); if(me) me.score+=10; }
+  }).then(renderRoom);
 }
-document.getElementById('addDist').addEventListener('click', async ()=>{
-  const name = document.getElementById('distName').value.trim();
-  const unit = document.getElementById('distUnit').value.trim();
-  const shift = document.getElementById('distShift').value;
-  const zone = document.getElementById('distZone').value.trim();
-  if(!name||!unit){ alert('أكمل الاسم والوحدة.'); return; }
-  const list = await loadArr('jf_duty');
-  list.push({ id:uid(), name, unit, shift, zone });
-  await saveArr('jf_duty', list);
-  document.getElementById('distName').value=''; document.getElementById('distUnit').value=''; document.getElementById('distZone').value='';
-  renderDist();
-});
-
-/* ===== التحقيق ===== */
-async function renderInvest(){
-  const list = await loadArr('jf_investigations');
-  const box = document.getElementById('investList'); box.innerHTML='';
-  list.slice().reverse().forEach(item=>{
-    const div = document.createElement('div'); div.className='card';
-    if(item.classified && currentUser.level < 3){
-      div.innerHTML = `<h4>🔍 ${item.caseTitle} <span class="tag warn">سري</span></h4>` + lockedBox(3);
-    } else {
-      const tc = item.status==='مفتوحة'?'ok':(item.status==='مغلقة'?'':'warn');
-      div.innerHTML = `<h4>🔍 ${item.caseTitle} <span class="tag ${tc}">${item.status}</span></h4><p>👮 ${item.lead}</p><p>📝 ${item.notes||'—'}</p><button class="del" onclick="delItem('jf_investigations','${item.id}',renderInvest)">أرشفة</button>`;
+function nextTrivia(){
+  updateRoom(r=>{
+    const g=r.game;
+    g.qIndex++; g.answers={};
+    if(g.qIndex>=g.order.length) g.phase='end';
+  }).then(renderRoom);
+}
+ 
+/* ============================================================
+   خمن الرسمة
+   ============================================================ */
+function startDrawRound(r){
+  r.game = { phase:'drawing', order: shuffle(DRAW_WORDS), di:0, drawerIdx:0,
+    word: null, canvasData:null, winnerId:null, startedAt: Date.now(), duration:90 };
+  r.game.word = r.game.order[0];
+  localGuess='';
+}
+function currentDrawerId(){ return room.players[room.game.drawerIdx % room.players.length].id; }
+function drawHtml(){
+  const g = room.game;
+  const drawerId = currentDrawerId();
+  const iAmDrawer = drawerId===myId;
+  iAmDrawingNow = iAmDrawer && !g.winnerId;
+  const drawerName = findPlayer(room,drawerId)?.name || '؟';
+ 
+  if(g.winnerId){
+    const winnerName = findPlayer(room,g.winnerId)?.name || '؟';
+    return `
+      ${topbar('خمن الرسمة')}
+      <div class="card" style="text-align:center;">
+        <span class="big-emoji">🎉</span>
+        <div class="display" style="font-size:20px;">${winnerName} خمّن صح!</div>
+        <div style="color:var(--muted);margin:8px 0;">الكلمة كانت: <b style="color:var(--gold)">${g.word}</b></div>
+        ${isLeader()?`<button class="btn" onclick="nextDrawRound()">التالي ➡️</button>`:`<div class="footer-note">القائد ينتقل للجولة التالية</div>`}
+      </div>`;
+  }
+ 
+  if(iAmDrawer){
+    return `
+      ${topbar('خمن الرسمة')}
+      <div class="card" style="text-align:center;">
+        <div style="color:var(--muted);">كلمتك:</div>
+        <div class="display" style="font-size:26px;color:var(--gold);margin:6px 0 10px;">${g.word}</div>
+        <canvas id="drawCanvas" width="500" height="360"></canvas>
+        <div class="row" style="margin-top:8px;">
+          <button class="btn ghost small" onclick="clearCanvas()">🧹 مسح</button>
+          ${isLeader()?`<button class="btn coral small" onclick="nextDrawRound()">⏭️ تخطي</button>`:''}
+        </div>
+      </div>`;
+  }
+  return `
+    ${topbar('خمن الرسمة')}
+    <div class="card" style="text-align:center;">
+      <div style="color:var(--muted);margin-bottom:8px;">${drawerName} يرسم الحين ✏️</div>
+      ${g.canvasData ? `<img class="live-canvas" id="liveCanvasImg" src="${g.canvasData}">` : `<div style="padding:60px 0;color:var(--muted);">بانتظار أول خط...</div>`}
+      <div class="row" style="margin-top:10px;">
+        <input type="text" id="guessField" placeholder="خمّن الكلمة..." value="${localGuess}" oninput="localGuess=this.value">
+        <button class="btn small teal" onclick="submitDrawGuess()">خمّن</button>
+      </div>
+      ${isLeader()?`<button class="btn ghost small" style="margin-top:8px;" onclick="nextDrawRound()">⏭️ تخطي الجولة</button>`:''}
+    </div>`;
+}
+function afterDrawRender(){
+  if(iAmDrawingNow) setupCanvas();
+}
+function setupCanvas(){
+  const c=document.getElementById('drawCanvas');
+  if(!c) return;
+  const ctx=c.getContext('2d');
+  ctx.lineWidth=5; ctx.lineCap='round'; ctx.strokeStyle='#150F2E';
+  let drawing=false;
+  function pos(e){
+    const r=c.getBoundingClientRect();
+    const cx=c.width/r.width, cy=c.height/r.height;
+    const point=e.touches?e.touches[0]:e;
+    return {x:(point.clientX-r.left)*cx, y:(point.clientY-r.top)*cy};
+  }
+  function start(e){drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);e.preventDefault();}
+  function move(e){if(!drawing)return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();e.preventDefault();scheduleUpload();}
+  function end(){drawing=false;scheduleUpload();}
+  c.onmousedown=start;c.onmousemove=move;c.onmouseup=end;c.onmouseleave=end;
+  c.ontouchstart=start;c.ontouchmove=move;c.ontouchend=end;
+}
+function scheduleUpload(){
+  if(uploadTimer) return;
+  uploadTimer = setTimeout(()=>{
+    uploadTimer=null;
+    const c=document.getElementById('drawCanvas');
+    if(!c) return;
+    const dataUrl = c.toDataURL('image/jpeg',0.5);
+    updateRoom(r=>{ if(r.game && !r.game.winnerId) r.game.canvasData = dataUrl; });
+  }, 900);
+}
+function clearCanvas(){
+  const c=document.getElementById('drawCanvas');
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  scheduleUpload();
+}
+function submitDrawGuess(){
+  const guess = (localGuess||'').trim();
+  if(!guess) return;
+  updateRoom(r=>{
+    const g=r.game;
+    if(g.winnerId) return;
+    if(guess === g.word.trim()){
+      g.winnerId = myId;
+      const me=findPlayer(r,myId); if(me) me.score+=8;
+      const drawer=findPlayer(r,currentDrawerIdFor(r)); if(drawer) drawer.score+=4;
     }
-    box.appendChild(div);
-  });
+  }).then(()=>{ localGuess=''; iAmDrawingNow=false; renderRoom(); });
 }
-document.getElementById('addInvest').addEventListener('click', async ()=>{
-  const caseTitle = document.getElementById('invCase').value.trim();
-  const lead = document.getElementById('invLead').value.trim();
-  const status = document.getElementById('invStatus').value;
-  const notes = document.getElementById('invNotes').value.trim();
-  const classified = document.getElementById('invClassified').checked;
-  if(!caseTitle||!lead){ alert('أكمل رقم القضية والمحقق.'); return; }
-  const list = await loadArr('jf_investigations');
-  list.push({ id:uid(), caseTitle, lead, status, notes, classified });
-  await saveArr('jf_investigations', list);
-  document.getElementById('invCase').value=''; document.getElementById('invLead').value='';
-  document.getElementById('invNotes').value=''; document.getElementById('invClassified').checked=false;
-  renderInvest();
-});
-
-/* ===== حذف عام ===== */
-window.delItem = async function(key, id, refreshFn){
-  const code = prompt('رمز الحذف:');
-  if(code !== ADMIN_CODE){ alert('رمز خاطئ.'); return; }
-  const list = await loadArr(key);
-  await saveArr(key, list.filter(i=>i.id!==id));
-  refreshFn();
-};
-
-/* =========================================================
-   نظام مجموعات الخريطة: إنشاء / دخول / صلاحيات / خريطة مشتركة
-   ========================================================= */
-let myGroup = null;       // {id, name}
-let myMembership = null;  // {uid, name, isLeader, canControl}
-let groupPollTimer = null;
-
-async function checkGroupGate(){
-  myGroup = await loadObj('jf_my_group', false);
-  if(myGroup){
-    // تأكد أن المجموعة ما زالت موجودة
-    const groups = await loadArr('jf_groups');
-    if(!groups.find(g=>g.id===myGroup.id)){
-      myGroup = null; await saveObj('jf_my_group', null, false);
+function currentDrawerIdFor(r){ return r.players[r.game.drawerIdx % r.players.length].id; }
+function nextDrawRound(){
+  updateRoom(r=>{
+    const g=r.game;
+    g.di++; g.drawerIdx++;
+    if(g.di>=g.order.length) g.di=0;
+    g.word = g.order[g.di];
+    g.canvasData=null; g.winnerId=null; g.startedAt=Date.now();
+  }).then(()=>{ localGuess=''; iAmDrawingNow=false; renderRoom(); });
+}
+ 
+/* ============================================================
+   كلمة السر
+   ============================================================ */
+function startPasswordRound(r){
+  r.game = { phase:'describing', order: shuffle(PASSWORD_WORDS), wi:0, describerIdx:0, item:null, winnerId:null };
+  r.game.item = r.game.order[0];
+  localGuess='';
+}
+function currentDescriberId(){ return room.players[room.game.describerIdx % room.players.length].id; }
+function passwordHtml(){
+  const g = room.game;
+  const describerId = currentDescriberId();
+  const iAmDescriber = describerId===myId;
+  const describerName = findPlayer(room,describerId)?.name || '؟';
+ 
+  if(g.winnerId){
+    const winnerName = findPlayer(room,g.winnerId)?.name || '؟';
+    return `
+      ${topbar('كلمة السر')}
+      <div class="card" style="text-align:center;">
+        <span class="big-emoji">🎉</span>
+        <div class="display" style="font-size:20px;">${winnerName} خمّن صح!</div>
+        <div style="color:var(--muted);margin:8px 0;">الكلمة كانت: <b style="color:var(--gold)">${g.item.w}</b></div>
+        ${isLeader()?`<button class="btn" onclick="nextPasswordRound()">التالي ➡️</button>`:`<div class="footer-note">القائد ينتقل للجولة التالية</div>`}
+      </div>`;
+  }
+  if(iAmDescriber){
+    return `
+      ${topbar('كلمة السر')}
+      <div class="card cover">
+        <div style="color:var(--muted);">صف هالكلمة:</div>
+        <div class="display" style="font-size:26px;color:var(--gold);margin:8px 0;">${g.item.w}</div>
+        <div style="color:var(--muted);font-size:13px;margin-bottom:6px;">بدون ما تقول:</div>
+        <div>${g.item.f.map(x=>`<span class="forbidden-word">${x}</span>`).join('')}</div>
+      </div>
+      ${isLeader()?`<button class="btn ghost small" onclick="nextPasswordRound()">⏭️ تخطي</button>`:''}
+    `;
+  }
+  return `
+    ${topbar('كلمة السر')}
+    <div class="card" style="text-align:center;">
+      <div style="color:var(--muted);margin-bottom:10px;">${describerName} يوصف الكلمة الحين 🗣️</div>
+      <div class="row">
+        <input type="text" id="pwGuessField" placeholder="خمّن الكلمة..." value="${localGuess}" oninput="localGuess=this.value">
+        <button class="btn small teal" onclick="submitPasswordGuess()">خمّن</button>
+      </div>
+      ${isLeader()?`<button class="btn ghost small" style="margin-top:8px;" onclick="nextPasswordRound()">⏭️ تخطي الجولة</button>`:''}
+    </div>`;
+}
+function submitPasswordGuess(){
+  const guess=(localGuess||'').trim();
+  if(!guess) return;
+  updateRoom(r=>{
+    const g=r.game;
+    if(g.winnerId) return;
+    if(guess === g.item.w.trim()){
+      g.winnerId = myId;
+      const me=findPlayer(r,myId); if(me) me.score+=8;
+      const describer=findPlayer(r, r.players[g.describerIdx % r.players.length].id); if(describer) describer.score+=4;
     }
-  }
-  if(myGroup){
-    document.getElementById('mapGate').style.display='none';
-    document.getElementById('mapGroupView').style.display='block';
-    await enterGroupView();
-  } else {
-    document.getElementById('mapGate').style.display='block';
-    document.getElementById('mapGroupView').style.display='none';
-    if(groupPollTimer){ clearInterval(groupPollTimer); groupPollTimer=null; }
-    renderGroupsList();
-  }
+  }).then(()=>{ localGuess=''; renderRoom(); });
 }
-
-async function renderGroupsList(){
-  const groups = await loadArr('jf_groups');
-  const box = document.getElementById('groupsList'); box.innerHTML='';
-  if(groups.length===0){ box.innerHTML = `<p class="gate-note">لا توجد مجموعات حاليًا. أنشئ مجموعة من اليسار.</p>`; return; }
-  groups.slice().reverse().forEach(g=>{
-    const d = document.createElement('div'); d.className='group-card';
-    d.innerHTML = `<div><h4>${g.name}</h4><p>المسؤول: ${g.leaderName}</p></div><button class="btn small" onclick="joinGroup('${g.id}')">دخول</button>`;
-    box.appendChild(d);
-  });
+function nextPasswordRound(){
+  updateRoom(r=>{
+    const g=r.game;
+    g.wi++; g.describerIdx++;
+    if(g.wi>=g.order.length) g.wi=0;
+    g.item = g.order[g.wi];
+    g.winnerId=null;
+  }).then(()=>{ localGuess=''; renderRoom(); });
 }
-
-document.getElementById('createGroupBtn').addEventListener('click', async ()=>{
-  const name = document.getElementById('gateNameCreate').value.trim();
-  const gname = document.getElementById('newGroupName').value.trim();
-  if(!name){ alert('أدخل اسمك أولاً.'); return; }
-  if(!gname){ alert('أدخل اسم المجموعة.'); return; }
-  const id = uid();
-  const u = await myUid();
-  const groups = await loadArr('jf_groups');
-  groups.push({ id, name:gname, leaderUid:u, leaderName:name });
-  await saveArr('jf_groups', groups);
-  await saveArr('jf_group_members:'+id, [{ uid:u, name, isLeader:true, canControl:true }]);
-  await saveObj('jf_group_map:'+id, { scale:0.6, panX:60, panY:30, markers:[] });
-  await saveObj('jf_my_group', { id, name:gname }, false);
-  document.getElementById('gateNameCreate').value=''; document.getElementById('newGroupName').value='';
-  checkGroupGate();
-});
-
-window.joinGroup = async function(groupId){
-  const name = document.getElementById('gateNameJoin').value.trim();
-  if(!name){ alert('أدخل اسمك أولاً قبل الدخول للمجموعة.'); return; }
-  const groups = await loadArr('jf_groups');
-  const g = groups.find(x=>x.id===groupId);
-  if(!g){ alert('هذه المجموعة لم تعد موجودة.'); renderGroupsList(); return; }
-  const u = await myUid();
-  const members = await loadArr('jf_group_members:'+groupId);
-  if(!members.find(m=>m.uid===u)){
-    members.push({ uid:u, name, isLeader:false, canControl:false });
-    await saveArr('jf_group_members:'+groupId, members);
-  }
-  await saveObj('jf_my_group', { id:g.id, name:g.name }, false);
-  checkGroupGate();
-};
-
-window.leaveGroup = async function(){
-  if(!myGroup) return;
-  await saveObj('jf_my_group', null, false);
-  checkGroupGate();
-};
-
-async function enterGroupView(){
-  document.getElementById('curGroupName').innerText = myGroup.name;
-  if(groupPollTimer) clearInterval(groupPollTimer);
-  await refreshGroupState();
-  groupPollTimer = setInterval(refreshGroupState, 3000);
-}
-
-async function refreshGroupState(){
-  if(!myGroup) return;
-  const u = await myUid();
-  const members = await loadArr('jf_group_members:'+myGroup.id);
-  myMembership = members.find(m=>m.uid===u) || null;
-  if(!myMembership){ // تمت إزالتي أو المجموعة انحذفت
-    await saveObj('jf_my_group', null, false);
-    checkGroupGate();
-    return;
-  }
-  document.getElementById('curMyRole').innerText = myMembership.isLeader ? 'مسؤول المجموعة' : (myMembership.canControl ? 'لديك صلاحية تحكم' : 'مشاهد فقط');
-  document.getElementById('mapPermNote').innerText = (myMembership.isLeader || myMembership.canControl)
-    ? 'اضغط لإضافة دبوس، اسحب للتحريك، عجلة الفأرة للتكبير'
-    : 'أنت في وضع المشاهدة فقط — لا تملك صلاحية التحكم بالخريطة';
-  renderMembers(members);
-
-  const mapState = await loadObj('jf_group_map:'+myGroup.id);
-  if(mapState && !mapDragging){
-    scale = mapState.scale; panX = mapState.panX; panY = mapState.panY;
-    applyTransform();
-    renderPins(mapState.markers||[]);
-  }
-  const viewport = document.getElementById('mapViewport');
-  if(myMembership.isLeader || myMembership.canControl){ viewport.classList.remove('readonly'); }
-  else { viewport.classList.add('readonly'); }
-}
-
-function renderMembers(members){
-  const box = document.getElementById('membersList'); box.innerHTML='';
-  members.forEach(m=>{
-    const row = document.createElement('div'); row.className='member-row';
-    row.innerHTML = `<span class="mname">${m.name}${m.isLeader?'<span class="badge-leader">مسؤول</span>':''}${(!m.isLeader && m.canControl)?'<span class="badge-ctl">تحكم</span>':''}</span>`;
-    if(myMembership && myMembership.isLeader && !m.isLeader){
-      const btn = document.createElement('button');
-      btn.className = 'btn small';
-      btn.innerText = m.canControl ? 'إزالة الصلاحية' : 'منح صلاحية التحكم';
-      btn.onclick = ()=>toggleControl(m.uid);
-      row.appendChild(btn);
-    }
-    box.appendChild(row);
-  });
-}
-
-async function toggleControl(targetUid){
-  const members = await loadArr('jf_group_members:'+myGroup.id);
-  const m = members.find(x=>x.uid===targetUid);
-  if(!m) return;
-  m.canControl = !m.canControl;
-  await saveArr('jf_group_members:'+myGroup.id, members);
-  refreshGroupState();
-}
-
-async function saveMapState(){
-  if(!myGroup) return;
-  const markers = Array.from(document.querySelectorAll('.pin')).map(p=>({ id:p.dataset.id, x:parseFloat(p.dataset.x), y:parseFloat(p.dataset.y), label:p.dataset.label }));
-  await saveObj('jf_group_map:'+myGroup.id, { scale, panX, panY, markers });
-}
-function iHaveControl(){ return myMembership && (myMembership.isLeader || myMembership.canControl); }
-
-window.toggleMapMode = function(){
-  const tac = document.getElementById('tacticalMapWrap');
-  const gta = document.getElementById('gtaMapWrap');
-  const btn = document.getElementById('toggleMapModeBtn');
-  const showingGta = gta.style.display !== 'none';
-  if(showingGta){
-    gta.style.display='none'; tac.style.display='block';
-    btn.innerText = '🌍 عرض خريطة GTA5 الحقيقية';
-  } else {
-    tac.style.display='none'; gta.style.display='block';
-    btn.innerText = '🎯 عرض الخريطة التكتيكية';
-  }
-};
-
-/* ===== الخريطة (منطق العرض/التحكم) ===== */
-let scale=0.6, panX=60, panY=30, mapDragging=false, dragStartX=0, dragStartY=0, moved=false;
-const viewport = document.getElementById('mapViewport');
-const inner = document.getElementById('mapInner');
-function applyTransform(){ inner.style.transform = `translate(${panX}px,${panY}px) scale(${scale})`; }
-applyTransform();
-window.zoomMap = function(f){
-  if(!iHaveControl()) return;
-  scale = Math.min(2.5, Math.max(0.3, scale*f)); applyTransform(); saveMapState();
-};
-window.resetMap = function(){
-  if(!iHaveControl()) return;
-  scale=0.6; panX=60; panY=30; applyTransform(); saveMapState();
-};
-viewport.addEventListener('wheel', (e)=>{
-  if(!iHaveControl()) return;
-  e.preventDefault(); window.zoomMap(e.deltaY<0?1.1:0.9);
-});
-viewport.addEventListener('mousedown', (e)=>{
-  if(!iHaveControl()) return;
-  mapDragging=true; moved=false; dragStartX=e.clientX-panX; dragStartY=e.clientY-panY; viewport.classList.add('dragging');
-});
-window.addEventListener('mousemove', (e)=>{ if(!mapDragging) return; moved=true; panX=e.clientX-dragStartX; panY=e.clientY-dragStartY; applyTransform(); });
-window.addEventListener('mouseup', async (e)=>{
-  if(!iHaveControl()){ mapDragging=false; return; }
-  if(mapDragging && !moved){
-    const rect = viewport.getBoundingClientRect();
-    const x = (e.clientX-rect.left-panX)/scale;
-    const y = (e.clientY-rect.top-panY)/scale;
-    const label = prompt('اسم الدبوس:');
-    if(label){
-      const mapState = await loadObj('jf_group_map:'+myGroup.id) || { scale, panX, panY, markers:[] };
-      mapState.markers = mapState.markers || [];
-      mapState.markers.push({ id:uid(), x, y, label });
-      mapState.scale = scale; mapState.panX = panX; mapState.panY = panY;
-      await saveObj('jf_group_map:'+myGroup.id, mapState);
-      renderPins(mapState.markers);
-    }
-  } else if(mapDragging){
-    saveMapState();
-  }
-  mapDragging=false; viewport.classList.remove('dragging');
-});
-function renderPins(markers){
-  document.querySelectorAll('.pin').forEach(p=>p.remove());
-  (markers||[]).forEach(d=>{
-    const pin = document.createElement('div'); pin.className='pin';
-    pin.style.left = d.x+'px'; pin.style.top = d.y+'px';
-    pin.dataset.id=d.id; pin.dataset.x=d.x; pin.dataset.y=d.y; pin.dataset.label=d.label;
-    pin.innerHTML = `📍<span class="pin-label">${d.label}</span>`;
-    pin.title = iHaveControl() ? 'اضغط ضغطتين للحذف' : d.label;
-    pin.ondblclick = async ()=>{
-      if(!iHaveControl()) return;
-      const mapState = await loadObj('jf_group_map:'+myGroup.id);
-      if(!mapState) return;
-      mapState.markers = (mapState.markers||[]).filter(i=>i.id!==d.id);
-      await saveObj('jf_group_map:'+myGroup.id, mapState);
-      renderPins(mapState.markers);
-    };
-    inner.appendChild(pin);
-  });
-}
-
-/* ===== تحميل أولي ===== */
-(async function init(){
-  if(typeof window.storage === 'undefined'){
-    const warn = document.createElement('div');
-    warn.style.cssText = 'background:#3a1414; border:1px solid var(--crimson-light); color:#f0b8b6; padding:12px 16px; font-size:12.5px; text-align:center;';
-    warn.innerText = '⚠️ ميزات المجموعات والحفظ المشترك لن تعمل الآن — هذا الملف مفتوح خارج بيئة Claude (كملف محلي). لتشتغل الميزات لازم فتح نفس رابط الأداة من داخل محادثة Claude، وليس تنزيل الملف وفتحه من الجهاز مباشرة.';
-    document.body.insertBefore(warn, document.body.firstChild);
-  }
-  await renderOps(); await renderWanted(); await renderUpcoming(); await renderDist(); await renderInvest();
-})();
+ 
+/* ============ INIT ============ */
+render();
 </script>
 </body>
 </html>
+ 
