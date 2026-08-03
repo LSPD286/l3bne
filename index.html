@@ -359,17 +359,22 @@
       (من Firebase Console → Project settings → Your apps → Web app)
    ============================================================ */
 const firebaseConfig = {
-  apiKey: "PASTE_YOUR_API_KEY",
-  authDomain: "PASTE_YOUR_PROJECT.firebaseapp.com",
-  projectId: "PASTE_YOUR_PROJECT_ID",
-  storageBucket: "PASTE_YOUR_PROJECT.appspot.com",
-  messagingSenderId: "PASTE_SENDER_ID",
-  appId: "PASTE_APP_ID"
+  apiKey: "AIzaSyBTTj1ww1VPYIHu1SyMg_KSYHZRcF8dRHI",
+  authDomain: "swat-system-384b0.firebaseapp.com",
+  projectId: "swat-system-384b0",
+  storageBucket: "swat-system-384b0.firebasestorage.app",
+  messagingSenderId: "874029124115",
+  appId: "1:874029124115:web:27657c0137fe73ec50cde6"
 };
 
 /* صاحب الصفحة (Owner) — له صلاحية دائمة + يقدر يدير صلاحيات غيره.
    غيّر الإيميل التالي لإيميل Google حقك قبل الرفع. */
 const OWNER_EMAILS = ["your-email@gmail.com"];
+
+/* رابط Discord Webhook — كل عملية إضافة/تعديل/حذف تُرسل تلقائيًا كرسالة
+   لقناة الديسكورد. سوّيه من: إعدادات القناة → Integrations → Webhooks → New Webhook → Copy URL.
+   اتركه فاضي "" إذا ما تبي إشعارات ديسكورد. */
+const DISCORD_WEBHOOK_URL = "";
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
@@ -450,6 +455,32 @@ function toast(msg, isError=false){
   t.textContent = msg;
   t.className = 'toast show' + (isError ? ' error' : '');
   setTimeout(()=> t.className = 'toast', 2600);
+}
+
+/* ============================================================
+   DISCORD LOG — يبلّغ قناة ديسكورد بكل عملية إضافة/تعديل/حذف
+   ============================================================ */
+function logToDiscord(action, officer){
+  if (!DISCORD_WEBHOOK_URL) return; // مسوي تعطيل إذا الرابط فاضي
+  const actorEmail = currentUser ? currentUser.email : 'غير معروف';
+  const colors = { 'إضافة': 3066993, 'تعديل': 3447003, 'حذف': 15158332 };
+  const embed = {
+    title: `${action} عضو في السجل`,
+    color: colors[action] || 8421504,
+    fields: [
+      { name: 'بواسطة', value: actorEmail, inline: false },
+      { name: 'الرتبة الرئيسية', value: officer.tier || '—', inline: true },
+      { name: 'الرتبة', value: officer.rank || '—', inline: true },
+      { name: 'رقم الشارة', value: officer.badge || '—', inline: true },
+      { name: 'الاسم', value: officer.name || 'شاغر', inline: true }
+    ],
+    timestamp: new Date().toISOString()
+  };
+  fetch(DISCORD_WEBHOOK_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ embeds: [embed] })
+  }).catch(err => console.warn('Discord log failed:', err));
 }
 
 /* ============================================================
@@ -645,9 +676,11 @@ window.openEditModal = function(id){
 
 window.deleteOfficer = async function(id){
   if (!confirm('حذف هذا العضو نهائيًا؟')) return;
+  const o = officers.find(x => x.id === id);
   try{
     await officersRef.doc(id).delete();
     toast('تم الحذف');
+    if (o) logToDiscord('حذف', o);
   }catch(e){ toast('فشل الحذف: ' + e.message, true); }
 };
 
@@ -668,8 +701,15 @@ $('officerForm').addEventListener('submit', async (e) => {
     discord: $('f-discord').value.trim()
   };
   try{
-    if (id){ await officersRef.doc(id).update(data); toast('تم التحديث'); }
-    else { await officersRef.add(data); toast('تمت الإضافة'); }
+    if (id){
+      await officersRef.doc(id).update(data);
+      toast('تم التحديث');
+      logToDiscord('تعديل', data);
+    } else {
+      await officersRef.add(data);
+      toast('تمت الإضافة');
+      logToDiscord('إضافة', data);
+    }
     officerModal.classList.remove('open');
   }catch(e){ toast('فشل الحفظ: ' + e.message, true); }
 });
