@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- Firebase (compat SDK — works with a plain <script> tag, no build step) -->
+<!-- Firebase compat SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
@@ -87,7 +87,7 @@
   .btn-ghost{ background:transparent; }
   .btn-sm{ padding:6px 10px; font-size:12px; border-radius:6px; }
 
-  /* ---------- main navigation tabs ---------- */
+  /* ---------- navigation tabs ---------- */
   .nav-tabs{
     display:flex; justify-content:center; gap:8px; flex-wrap:wrap;
     padding:12px 24px; background:var(--panel-2); border-bottom:1px solid var(--line);
@@ -221,17 +221,30 @@
   }
 
   /* ---------- Content Grid for Guides ---------- */
-  .grid-2col { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .grid-2col { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
   .info-box {
-    background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; margin-bottom: 15px;
   }
   .info-box h3 { font-family: 'Oswald', sans-serif; color: var(--gold); margin-bottom: 10px; font-size: 18px; display: flex; align-items: center; gap: 8px; }
-  .info-box p { font-size: 13.5px; color: var(--muted); line-height: 1.6; }
+  .info-box h4 { color: var(--blue); margin: 12px 0 6px 0; font-size: 15px; }
+  .info-box p, .info-box ul { font-size: 13.5px; color: var(--muted); line-height: 1.6; }
+  .info-box ul { padding-right: 20px; }
+  .info-box li { margin-bottom: 6px; }
 
   .code-badge {
     font-family: 'IBM Plex Mono', monospace; font-weight: 700; color: var(--gold);
     background: rgba(201, 162, 39, 0.1); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--gold-dim);
   }
+
+  /* Tables inside Guides */
+  .styled-table {
+    width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px;
+  }
+  .styled-table th, .styled-table td {
+    border: 1px solid var(--line); padding: 8px 12px; text-align: right;
+  }
+  .styled-table th { background: var(--panel-2); color: var(--gold); font-family: 'Oswald', sans-serif; }
+  .styled-table tr:nth-child(even) { background: rgba(255,255,255,0.01); }
 
   /* ---------- FAB ---------- */
   .fab{
@@ -311,10 +324,12 @@
 
 <div class="nav-tabs">
   <button class="tab-btn active" onclick="switchTab('roster-sec')"><i class="fa-solid fa-users"></i> جدول الأفراد</button>
-  <button class="tab-btn" onclick="switchTab('codes-sec')"><i class="fa-solid fa-radio"></i> الأكواد</button>
-  <button class="tab-btn" onclick="switchTab('uniforms-sec')"><i class="fa-solid fa-shirt"></i> الملابس</button>
-  <button class="tab-btn" onclick="switchTab('laws-sec')"><i class="fa-solid fa-scale-balanced"></i> القوانين</button>
-  <button class="tab-btn" onclick="switchTab('procedures-sec')"><i class="fa-solid fa-clipboard-check"></i> الإجراءات</button>
+  <button class="tab-btn" onclick="switchTab('permissions-sec')"><i class="fa-solid fa-shield-halved"></i> الصلاحيات</button>
+  <button class="tab-btn" onclick="switchTab('promotions-sec')"><i class="fa-solid fa-award"></i> الترقيات والبنود</button>
+  <button class="tab-btn" onclick="switchTab('safe-escape-sec')"><i class="fa-solid fa-car-burst"></i> مفشلات الهروب</button>
+  <button class="tab-btn" onclick="switchTab('wings-sec')"><i class="fa-solid fa-plane-wings"></i> الويقات Wings</button>
+  <button class="tab-btn" onclick="switchTab('codes-sec')"><i class="fa-solid fa-radio"></i> البروتوكولات والأكواد</button>
+  <button class="tab-btn" onclick="switchTab('uniforms-sec')"><i class="fa-solid fa-shirt"></i> ملابس الشرطة</button>
 </div>
 
 <header>
@@ -341,102 +356,204 @@
   <div class="no-results hidden" id="noResults">لا توجد نتائج مطابقة</div>
 </div>
 
-<!-- ================= 2) CODES TAB ================= -->
+<!-- ================= 2) PERMISSIONS TAB ================= -->
+<div id="permissions-sec" class="view-section">
+  <div class="grid-2col">
+    <div class="info-box">
+      <h3><i class="fa-solid fa-user-tie"></i> صلاحيات سلم الضباط (LT - 1LT - Cpt - Maj)</h3>
+      <ul>
+        <li><b>إشراف على مسؤول الفترة والرقباء وإدارة القسم</b> (إجباري).</li>
+        <li><b>إنذار:</b> يحق للضباط استدعاء المحكمة ومحاسبة الفرد بما يراه مناسباً مع رفع تقرير للشؤون.</li>
+        <li><b>صرف نقاط (حد 15 نقطة) أسبوعياً</b> مع رفع تقرير لإدارة الشرطة.</li>
+        <li><b>دخول كمواطن بدون طلب إذن.</b></li>
+        <li><b>صرف أي مركبة أو أي وينق في الميدان</b> إلى حين تسجيل خروجك.</li>
+        <li><b>عمل تحديات ميدانية</b> سواء داخل السيرفر أو رومات الديسكورد.</li>
+        <li><b>صلاحيات سلم الرقباء بشكل كامل.</b></li>
+        <li><b>صلاحيات اللبس الخاص ولكن:</b> بشرط زي عسكري صحيح ويرمز إلى قطاعك.</li>
+      </ul>
+    </div>
+
+    <div class="info-box">
+      <h3><i class="fa-solid fa-user-shield"></i> صلاحيات سلم الرقباء (Sgt - 1Sgt - Ssgt)</h3>
+      <ul>
+        <li><b>إدارة الحالات</b> (يطبق إجبارياً في أي وجود).</li>
+        <li><b>محاسبة الأفراد المخالفين ميدانياً</b> | عقوبات عسكرية.</li>
+        <li><b>التوجيه العسكري الصحيح</b> بدون عبارات سوقية.</li>
+        <li>في حال عسكري خالف يتوجه الرقيب لمكتب الشؤون بشكل مباشر.</li>
+        <li><b>استلام مسؤولية الفترة</b> (إجباري).</li>
+        <li>في حال حاجة الميدان له (لن يستعلم فقط، Motorcycle أو AirShip صرف وتنسيق).</li>
+        <li><b>يحق لك إقامة صف دوام</b> لجميع الوحدات المتواجدة في الميدان.</li>
+        <li><b>يحق لك مصادرة المركبات بالأيام</b> (يومين كحد أقصى).</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 3) PROMOTIONS TAB ================= -->
+<div id="promotions-sec" class="view-section">
+  <div class="info-box">
+    <h3><i class="fa-solid fa-award"></i> النقاط العسكرية ومستوجبات الترقية</h3>
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>مسار الترقية</th>
+          <th>النقاط والاشتراطات المطلوبة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Cadet &rarr; Solo Cadet</td><td>100 نقطة</td></tr>
+        <tr><td>Solo Cadet &rarr; Officer 1</td><td>200 نقطة</td></tr>
+        <tr><td>Officer 1 &rarr; Officer 2</td><td>300 نقطة</td></tr>
+        <tr><td>Officer 2 &rarr; Officer 3</td><td>400 نقطة</td></tr>
+        <tr><td>Officer 3 &rarr; Senior Officer</td><td>550 نقطة</td></tr>
+        <tr><td>Senior Officer &rarr; Senior Lead Officer</td><td>700 نقطة</td></tr>
+        <tr><td>Senior Lead Officer &rarr; Sergeant</td><td>900 نقطة</td></tr>
+        <tr><td>Sergeant &rarr; First Sergeant</td><td>1100 نقطة + إثبات جدارة</td></tr>
+        <tr><td>First Sergeant &rarr; Staff Sergeant</td><td>1600 نقطة + إثبات جدارة</td></tr>
+        <tr><td>Staff Sergeant &rarr; Lieutenant</td><td>2100 نقطة + إثبات جدارة</td></tr>
+        <tr><td>Lieutenant &rarr; First Lieutenant</td><td>2600 نقطة + إثبات جدارة</td></tr>
+        <tr><td>First Lieutenant &rarr; Captain</td><td>إثبات جدارة + اتفاق من القادات</td></tr>
+        <tr><td>Captain &rarr; Major</td><td>إثبات جدارة + اتفاق من القادات</td></tr>
+        <tr><td>Major &rarr; Colonel</td><td>اتفاق من رئاسة الشرطة والوزير ونائبه</td></tr>
+        <tr><td>Colonel &rarr; Major General</td><td>اتفاق من رئاسة الشرطة والوزير ونائبه</td></tr>
+      </tbody>
+    </table>
+    <br>
+    <p style="color:var(--gold); border: 1px dashed var(--gold-dim); padding:10px; border-radius:6px;">
+      <i class="fa-solid fa-triangle-exclamation"></i> <b>تنويه:</b> الحد الأقصى لصرف النقاط اليومي هو <b>25 نقطة</b>، إلا في حال وجود حالة كبيرة يسمح إلى <b>50 نقطة</b>.
+    </p>
+  </div>
+</div>
+
+<!-- ================= 4) SAFE ESCAPE TAB ================= -->
+<div id="safe-escape-sec" class="view-section">
+  <div class="info-box">
+    <h3><i class="fa-solid fa-car-burst"></i> مفشلات الهروب الآمن (Safe Escape)</h3>
+    <ul>
+      <li>في حال نزول الشخص وبيده سلاح أو تم توجيه السلاح بشكل واضح.</li>
+      <li>تغيير المركبة.</li>
+      <li>يمنع خروج سيارات السوبر على الطرق السريعة وتعود للمفاوض لفرضها أو تركها.</li>
+      <li>تهديد حياة المواطنين أو الشرطي كـ عكس السير أو تصدميهم.</li>
+      <li>التوجه أو القرب إلى البحر.</li>
+      <li>القفزات بشكل عام.</li>
+      <li>الدخول إلى أماكن ضيقة أو الأنفاق.</li>
+      <li>دخولك إلى ورشة التصليح.</li>
+      <li>في حال السيارة كانت أوف رود يمنع صعود الجبال.</li>
+      <li>التدخل الخارجي.</li>
+      <li>الصعود على الأرصفة (الحد الأقصى 3 أرصفة).</li>
+      <li>العكسات (الحد الأقصى 3 عكسات).</li>
+      <li>في الهروب الشخص على الأقدام وبيده سلاح لمدة 5 ثواني يتم إطلاق النار على أطرافه بشكل متقطع.</li>
+      <li>الحد الأقصى للهروب: <b>10 دقائق</b>.</li>
+      <li>إخراج سلاح بشكل واضح.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ================= 5) WINGS TAB ================= -->
+<div id="wings-sec" class="view-section">
+  <div class="grid-2col">
+    <div class="info-box">
+      <h3><i class="fa-solid fa-crown"></i> قادة الويقات (Wings Commanders)</h3>
+      <ul>
+        <li>Police Wings Commander</li>
+        <li>Field Commander</li>
+        <li>AirShip Commander</li>
+        <li>MotorCycle Commander</li>
+        <li>Negotiator Commander</li>
+        <li>Dispatch Commander</li>
+        <li>Interceptor Commander</li>
+        <li>S.W.A.T Commander</li>
+      </ul>
+    </div>
+    <div class="info-box">
+      <h3><i class="fa-solid fa-vest"></i> ملابس الويقات (Wings Outfits)</h3>
+      <h4>AirShip</h4>
+      <p>Mask | Scarf & Chains | Jackets | Shirt | Glasses | Hats | Hands | Legs | Shoes</p>
+      <h4>Motorcycle</h4>
+      <p>Mask | Scarf & Chains | Jackets | Shirt | Glasses | Hats | Hands | Legs | Shoes</p>
+      <h4>Gang Unit</h4>
+      <p>Mask | Scarf & Chains | Jackets | Shirt | Body Armor | Bags and Parachute | Hands | Legs | Shoes | Glasses | Hats</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 6) CODES TAB ================= -->
 <div id="codes-sec" class="view-section">
+  <div class="info-box">
+    <h3><i class="fa-solid fa-radio"></i> Radio Protocols [10 Codes]</h3>
+    <table class="styled-table">
+      <thead>
+        <tr><th>الكود</th><th>طريقة الإبلاغ</th><th>البيان/المعنى</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="code-badge">10-0</span></td><td>U-1 TO Dispatch | 10-0</td><td>إلغاء بلاغ / الانتهاء من الحالة</td></tr>
+        <tr><td><span class="code-badge">10-1</span></td><td>U-1 TO Dispatch | 10-1</td><td>مطاردة مركبة</td></tr>
+        <tr><td><span class="code-badge">10-2</span></td><td>U-1 TO Dispatch | 10-2</td><td>غير صحيح</td></tr>
+        <tr><td><span class="code-badge">10-3</span></td><td>U-1 TO Dispatch | 10-3</td><td>استيقاف (مروري - جنائي)</td></tr>
+        <tr><td><span class="code-badge">10-4</span></td><td>U-1 TO Dispatch | 10-4</td><td>صحيح أو استلمت</td></tr>
+        <tr><td><span class="code-badge">10-5</span></td><td>U-1 TO Dispatch | 10-5</td><td>سرقة السيارة</td></tr>
+        <tr><td><span class="code-badge">10-6</span></td><td>U-1 TO Dispatch | 10-6</td><td>سرقة المنزل</td></tr>
+        <tr><td><span class="code-badge">10-7</span></td><td>U-1 TO Dispatch | 10-7</td><td>سرقة بقالة</td></tr>
+        <tr><td><span class="code-badge">10-8</span></td><td>U-1 TO Dispatch | 10-8</td><td>سرقة مجوهرات</td></tr>
+        <tr><td><span class="code-badge">10-9</span></td><td>U-1 TO Dispatch | 10-9</td><td>سرقة فليكا</td></tr>
+        <tr><td><span class="code-badge">10-10</span></td><td>U-1 TO Dispatch | 10-10</td><td>سرقة البنك المركزي</td></tr>
+      </tbody>
+    </table>
+  </div>
+
   <div class="grid-2col">
     <div class="info-box">
-      <h3><span class="code-badge">Code 0</span> حالة طوارئ قصوى</h3>
-      <p>سقوط ضابط شرطة أو تعرضه لإطلاق نار مباشر. الاستجابة فورية من جميع الوحدات المتاحة.</p>
+      <h3><i class="fa-solid fa-building-shield"></i> أكواد السرقات (Robbery Codes)</h3>
+      <table class="styled-table">
+        <tbody>
+          <tr><td><span class="code-badge">10-11</span></td><td>سرقة بوليتو</td></tr>
+          <tr><td><span class="code-badge">10-12</span></td><td>سرقة بوب كات</td></tr>
+          <tr><td><span class="code-badge">10-13</span></td><td>سرقة ATM</td></tr>
+          <tr><td><span class="code-badge">10-19</span></td><td>هروب على الأقدام</td></tr>
+          <tr><td><span class="code-badge">10-20</span></td><td>موقعك</td></tr>
+          <tr><td><span class="code-badge">20-2</span></td><td>طلق نار</td></tr>
+          <tr><td><span class="code-badge">20-3</span></td><td>احتاج دعم</td></tr>
+        </tbody>
+      </table>
     </div>
+
     <div class="info-box">
-      <h3><span class="code-badge">Code 1</span> استجابة عادية</h3>
-      <p>الانتقال للموقع بدون صفارات إنذار أو أضواء طوارئ مع الالتزام بقوانين المرور.</p>
-    </div>
-    <div class="info-box">
-      <h3><span class="code-badge">Code 2</span> استجابة متوسطة</h3>
-      <p>استجابة سريعة مع تشغيل أضواء الطوارئ بدون صفارات إلا عند التقاطعات.</p>
-    </div>
-    <div class="info-box">
-      <h3><span class="code-badge">Code 3</span> طوارئ عالية</h3>
-      <p>انتقال بأقصى سرعة مع تشغيل الأضواء والصفارات بصفة مستمرة.</p>
-    </div>
-    <div class="info-box">
-      <h3><span class="code-badge">10-8</span> بالمناوبة</h3>
-      <p>الضابط جاهز ومتاح لتلقي البلاغات والنداءات الميدانية.</p>
-    </div>
-    <div class="info-box">
-      <h3><span class="code-badge">10-20</span> تحديد الموقع</h3>
-      <p>طلب تحديد موقع الضابط الحالي بدقة على الخريطة.</p>
-    </div>
-    <div class="info-box">
-      <h3><span class="code-badge">10-80</span> مطاردة مركية</h3>
-      <p>مطاردة مباشرة لمركبة مشبوهة أو هاربة من السلطات.</p>
-    </div>
-    <div class="info-box">
-      <h3><span class="code-badge">10-90</span> سرقة قيد التنفيذ</h3>
-      <p>بلاغ عن عمل سرقة مسلح لمحل تجاري، بنك، أو منشأة.</p>
+      <h3><i class="fa-solid fa-headset"></i> Codes العامة والعبارات الإنجليزية</h3>
+      <ul>
+        <li><b>Code 0:</b> عموم الوحدات توجه للحالة (استنفار أمني).</li>
+        <li><b>Code 1:</b> اغلق السير sirens والوانتات.</li>
+        <li><b>Code 2:</b> اشغل السيراني فقط.</li>
+        <li><b>Code 3:</b> اشغل السيراني والوانتات.</li>
+        <li><b>Code 4:</b> المكان امن وخالي.</li>
+        <li><b>Code 6:</b> مسح البصمات واخذ صور لموقع الجريمة.</li>
+        <li><b>Code 7:</b> سحر او فلتش.</li>
+        <li><b>Shots fire:</b> تبادل إطلاق نار.</li>
+        <li><b>Officer down:</b> شرطي مسقط.</li>
+        <li><b>Dispatch Responding to:</b> مركز العمليات استقبلت - متوجه إلى.</li>
+        <li><b>I Need Backup:</b> احتاج دعم.</li>
+        <li><b>Pit Maneuver:</b> صدمة احترافية.</li>
+      </ul>
     </div>
   </div>
 </div>
 
-<!-- ================= 3) UNIFORMS TAB ================= -->
+<!-- ================= 7) UNIFORMS TAB ================= -->
 <div id="uniforms-sec" class="view-section">
-  <div class="grid-2col">
-    <div class="info-box">
-      <h3><i class="fa-solid fa-user-shield"></i> زي Patrol (الدوريات العامة)</h3>
-      <p>الزي الرسمي الكلاسيكي باللون الأزرق الداكن / الأسود. يلتزم به جميع ضباط الدوريات الميدانية اليومية.</p>
-    </div>
-    <div class="info-box">
-      <h3><i class="fa-solid fa-mask"></i> زي SWAT (العمليات الخاصة)</h3>
-      <p>الزي التكتيكي الأسود الكامل المجهز بالخوذة الواقية، السترة الرصاصية الثقيلة، وأقنعة الوجه للعمليات الخطرة.</p>
-    </div>
-    <div class="info-box">
-      <h3><i class="fa-solid fa-motorcycle"></i> زي Traffic & Motor (المرور)</h3>
-      <p>سترات عالية الرؤية وعاكسة مع خوذة المحركات لضباط وحدة تنظيم السير والمطاردات السريعة.</p>
-    </div>
-    <div class="info-box">
-      <h3><i class="fa-solid fa-vest"></i> زي التحقيقات (Detectives)</h3>
-      <p>بدلات رسمية مدنية مع إبراز الشارة الميدانية على الحزام أو الرقبة أثناء تنفيذ مهام التحقيق.</p>
-    </div>
-  </div>
-</div>
-
-<!-- ================= 4) LAWS TAB ================= -->
-<div id="laws-sec" class="view-section">
-  <div class="grid-2col">
-    <div class="info-box">
-      <h3>⚖ القوانين الإدارية</h3>
-      <p>الالتزام بالتسلسل القيادي، احترام أوامر الضباط الأعلى رتبة، وعدم الخروج بدورية فردية دون تصريح رسمي.</p>
-    </div>
-    <div class="info-box">
-      <h3>⚖ قواعد السلاح والاستخدام</h3>
-      <p>يمنع استخدام السلاح الناري إلا في حالة التهديد المباشر للحياة أو صدور أوامر من قائد الموقع (Code 4).</p>
-    </div>
-    <div class="info-box">
-      <h3>⚖ اللائحة الجزائية</h3>
-      <p>أي مخالفة إدارية تعرض الضابط للتوبيخ، سحب النقاط، التنزيل من الرتبة، أو الفصل النهائى من القطاع.</p>
-    </div>
-  </div>
-</div>
-
-<!-- ================= 5) PROCEDURES TAB ================= -->
-<div id="procedures-sec" class="view-section">
-  <div class="grid-2col">
-    <div class="info-box">
-      <h3>📌 إجراءات الاعتقال والتفتيش</h3>
-      <p>1. إلقاء القبض وتقييد المشتبه به.<br>2. قراءة حقوق ميراندا فوراً.<br>3. إجراء التفتيش الميداني وسحب الممنوعات.<br>4. نقل المعتقل إلى المركز الرئيسي.</p>
-    </div>
-    <div class="info-box">
-      <h3>📌 إجراءات المفاوضات والرهائن</h3>
-      <p>تأمين المحيط الخارجي بواسطة القناصة والدوريات، وتعيين مفاوض معتمد يمنع اقتحام الموقع قبل المباشرة.</p>
-    </div>
+  <div class="info-box">
+    <h3><i class="fa-solid fa-shirt"></i> ملابس الشرطة LSPD Outfits</h3>
+    <p>القائمة الموحدة لأرقام قطع الملابس الرسمية للقطاع:</p>
+    <br>
+    <ul>
+      <li><b>الرتب المشمولة:</b> All Officers, Staff Sergeant, First Sergeant, Sergeant, Senior Lead Officer, Senior Officer, Officer III, Officer II, Officer I, Solo Cadet, Cadet.</li>
+      <li><b>القطع المحددة لكل رتبة:</b> السترة (Jacket)، القميص (Shirt)، القفازات (Gloves)، البنطال (Legs)، الأحذية (Shoes)، الشارات (Decals)، القبعة (Hat)، الوشاح (Scarf and chains)، الدرع (Body Armor)، الحقائب (Bags).</li>
+    </ul>
   </div>
 </div>
 
 <button class="fab" id="fabAdd" title="إضافة عضو">+</button>
 
 <div class="notice">
-  البيانات الآن تُقرأ وتُكتب مباشرة من قاعدة بيانات حية (Firestore) — أي تعديل يظهر للجميع فورًا بدون رفع ملفات.
+  البيانات تُقرأ وتُكتب مباشرة من قاعدة بيانات حية (Firestore) — أي تعديل يظهر للجميع فورًا بدون رفع ملفات.
   الصلاحيات محصورة بإيميلات Google محدّدة عن طريق زر "إدارة الصلاحيات" (يظهر فقط لصاحب الصفحة).
 </div>
 
@@ -589,6 +706,12 @@ function toast(msg, isError=false){
   setTimeout(()=> t.className = 'toast', 2600);
 }
 
+function escapeHTML(str) {
+  return String(str || '').replace(/[&<>"']/g, function(m) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+  });
+}
+
 function logToDiscord(action, officer){
   if (!DISCORD_WEBHOOK_URL) return;
   const actorEmail = currentUser ? currentUser.email : 'غير معروف';
@@ -690,10 +813,8 @@ $('seedBtn').addEventListener('click', async () => {
 });
 
 /* ============================================================
-   RENDER
+   RENDER & CARDS
    ============================================================ */
-const chainEl = $('chain');
-
 function cardHTML(o){
   const vacant = !o.name || o.name.trim() === '' || o.name === '-';
   const nameHTML = vacant ? `<div class="name empty">شاغر</div>` : `<div class="name">${escapeHTML(o.name)}</div>`;
@@ -721,107 +842,111 @@ function cardHTML(o){
     </div>`;
 }
 
-function escapeHTML(s){
-  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
+function render(){
+  const query = ($('search').value || '').trim().toLowerCase();
+  const chainEl = $('chain');
+  chainEl.innerHTML = '';
 
-function render(filter=''){
-  const q = filter.trim().toLowerCase();
-  let total = 0, vacantCount = 0;
-  let html = '';
+  let totalOfficers = 0;
+  let totalVacant = 0;
+  let activeRanksCount = 0;
+  let hasMatches = false;
 
-  TIER_ORDER.forEach((tier, i) => {
-    const tierOfficers = officers.filter(o => o.tier === tier.key);
-    total += tierOfficers.length;
-    vacantCount += tierOfficers.filter(o => !o.name || o.name.trim()==='').length;
+  TIER_ORDER.forEach((t, index) => {
+    let tierOfficers = officers.filter(o => o.tier === t.key);
 
-    const visible = tierOfficers.filter(o => {
-      if (!q) return true;
-      return (o.name||'').toLowerCase().includes(q)
-          || (o.badge||'').toLowerCase().includes(q)
-          || (o.rank||'').toLowerCase().includes(q)
-          || tier.key.toLowerCase().includes(q);
-    });
-    if (q && visible.length === 0) return;
+    if (query) {
+      tierOfficers = tierOfficers.filter(o => 
+        (o.name || '').toLowerCase().includes(query) ||
+        (o.badge || '').toLowerCase().includes(query) ||
+        (o.rank || '').toLowerCase().includes(query)
+      );
+    }
 
-    html += `
-      <div class="tier">
-        <div class="tier-marker">${String(i+1).padStart(2,'0')}</div>
-        <div class="tier-head">
-          <h2>${tier.key}</h2>
-          <span class="tier-ar">${tier.ar}</span>
-          <span class="count">${tierOfficers.length} عضو</span>
-          <button class="tier-add" onclick="openAddModal('${tier.key}')">+ إضافة لهذه الرتبة</button>
-        </div>
-        <div class="roster">
-          ${visible.length ? visible.map(cardHTML).join('') : `<div class="empty-tier">لا يوجد أعضاء في هذه الرتبة بعد</div>`}
-        </div>
-      </div>`;
+    if (tierOfficers.length > 0) activeRanksCount++;
+
+    totalOfficers += tierOfficers.length;
+    totalVacant += tierOfficers.filter(o => !o.name || o.name.trim() === '' || o.name === '-').length;
+
+    if (query && tierOfficers.length === 0) return;
+    hasMatches = true;
+
+    const cardsHtml = tierOfficers.length > 0 
+      ? tierOfficers.map(cardHTML).join('') 
+      : `<div class="empty-tier">لا يوجد أعضاء مستجّلون في هذه الرتبة</div>`;
+
+    const tierEl = document.createElement('div');
+    tierEl.className = 'tier';
+    tierEl.innerHTML = `
+      <div class="tier-marker">${index + 1}</div>
+      <div class="tier-head">
+        <h2>${escapeHTML(t.key)}</h2>
+        <span class="tier-ar">${escapeHTML(t.ar)}</span>
+        <span class="count">(${tierOfficers.length})</span>
+        <button class="tier-add" onclick="openAddModal('${t.key}')">+ إضافة للرتبة</button>
+      </div>
+      <div class="roster">${cardsHtml}</div>
+    `;
+    chainEl.appendChild(tierEl);
   });
 
-  chainEl.innerHTML = html;
-  $('noResults').classList.toggle('hidden', !(q && chainEl.innerHTML.trim() === ''));
-  $('stat-ranks').textContent = TIER_ORDER.length;
-  $('stat-officers').textContent = total;
-  $('stat-vacant').textContent = vacantCount;
+  $('stat-ranks').textContent = activeRanksCount;
+  $('stat-officers').textContent = totalOfficers;
+  $('stat-vacant').textContent = totalVacant;
+
+  $('noResults').classList.toggle('hidden', hasMatches);
 }
 
-$('search').addEventListener('input', e => render(e.target.value));
+$('search').addEventListener('input', render);
 
 /* ============================================================
-   MODALS & ACTIONS
+   MODALS & CRUD OPERATIONS
    ============================================================ */
-const officerModal = $('officerModalOverlay');
-const tierSelect = $('f-tier');
-TIER_ORDER.forEach(t => {
-  const opt = document.createElement('option');
-  opt.value = t.key; opt.textContent = `${t.key} — ${t.ar}`;
-  tierSelect.appendChild(opt);
-});
+function populateTierDropdown(selectedKey = '') {
+  const select = $('f-tier');
+  select.innerHTML = TIER_ORDER.map(t => 
+    `<option value="${t.key}" ${t.key === selectedKey ? 'selected' : ''}>${t.key} (${t.ar})</option>`
+  ).join('');
+}
 
-function openAddModal(presetTier){
-  $('officerModalTitle').textContent = 'إضافة عضو';
+function openAddModal(tierKey = TIER_ORDER[0].key) {
   $('officerForm').reset();
   $('f-id').value = '';
-  if (presetTier) tierSelect.value = presetTier;
-  officerModal.classList.add('open');
+  $('officerModalTitle').textContent = 'إضافة عضو جديد';
+  populateTierDropdown(tierKey);
+  $('officerModalOverlay').classList.add('open');
 }
-window.openAddModal = openAddModal;
 
-window.openEditModal = function(id){
-  const o = officers.find(x => x.id === id);
+function openEditModal(id) {
+  const o = officers.find(item => item.id === id);
   if (!o) return;
-  $('officerModalTitle').textContent = 'تعديل عضو';
+  
   $('f-id').value = o.id;
-  tierSelect.value = o.tier || '';
+  populateTierDropdown(o.tier);
   $('f-badge').value = o.badge || '';
   $('f-name').value = o.name || '';
   $('f-rank').value = o.rank || '';
   $('f-points').value = o.points || '';
   $('f-user').value = o.user || '';
   $('f-discord').value = o.discord || '';
-  officerModal.classList.add('open');
-};
 
-window.deleteOfficer = async function(id){
-  if (!confirm('حذف هذا العضو نهائيًا؟')) return;
-  const o = officers.find(x => x.id === id);
-  try{
-    await officersRef.doc(id).delete();
-    toast('تم الحذف');
-    if (o) logToDiscord('حذف', o);
-  }catch(e){ toast('فشل الحذف: ' + e.message, true); }
-};
+  $('officerModalTitle').textContent = 'تعديل بيانا العضو';
+  $('officerModalOverlay').classList.add('open');
+}
+
+function closeModal() {
+  $('officerModalOverlay').classList.remove('open');
+}
 
 $('fabAdd').addEventListener('click', () => openAddModal());
-$('officerModalClose').addEventListener('click', () => officerModal.classList.remove('open'));
-$('officerCancelBtn').addEventListener('click', () => officerModal.classList.remove('open'));
+$('officerModalClose').addEventListener('click', closeModal);
+$('officerCancelBtn').addEventListener('click', closeModal);
 
 $('officerForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const id = $('f-id').value;
   const data = {
-    tier: tierSelect.value,
+    tier: $('f-tier').value,
     badge: $('f-badge').value.trim(),
     name: $('f-name').value.trim(),
     rank: $('f-rank').value.trim(),
@@ -829,64 +954,89 @@ $('officerForm').addEventListener('submit', async (e) => {
     user: $('f-user').value.trim(),
     discord: $('f-discord').value.trim()
   };
-  try{
-    if (id){
+
+  try {
+    if (id) {
       await officersRef.doc(id).update(data);
-      toast('تم التحديث');
+      toast('تم تحديث العضو بنجاح');
       logToDiscord('تعديل', data);
     } else {
       await officersRef.add(data);
-      toast('تمت الإضافة');
+      toast('تم إضافة العضو بنجاح');
       logToDiscord('إضافة', data);
     }
-    officerModal.classList.remove('open');
-  }catch(e){ toast('فشل الحفظ: ' + e.message, true); }
+    closeModal();
+  } catch (err) {
+    toast('حدث خطأ أثناء الحفظ: ' + err.message, true);
+  }
 });
+
+async function deleteOfficer(id) {
+  const o = officers.find(item => item.id === id);
+  if (!confirm(`هل أنت تأكد من حذف (${o ? o.name || o.badge : 'العضو'})؟`)) return;
+
+  try {
+    await officersRef.doc(id).delete();
+    toast('تم الحذف بنجاح');
+    if (o) logToDiscord('حذف', o);
+  } catch (err) {
+    toast('فشل الحذف: ' + err.message, true);
+  }
+}
 
 /* ============================================================
-   MANAGE EDITORS (OWNER COMPLETE)
+   EDITORS MANAGEMENT (OWNER ONLY)
    ============================================================ */
-const editorsModal = $('editorsModalOverlay');
-$('manageEditorsBtn').addEventListener('click', () => {
-  editorsModal.classList.add('open');
+$('manageEditorsBtn').addEventListener('click', async () => {
+  $('editorsModalOverlay').classList.add('open');
   loadEditorsList();
 });
-$('editorsModalClose').addEventListener('click', () => editorsModal.classList.remove('open'));
+$('editorsModalClose').addEventListener('click', () => {
+  $('editorsModalOverlay').classList.remove('open');
+});
 
-async function loadEditorsList(){
-  const listEl = $('editorsList');
-  listEl.innerHTML = 'جارِ التحميل...';
-  try{
+async function loadEditorsList() {
+  const list = $('editorsList');
+  list.innerHTML = 'جارِ التحميل...';
+  try {
     const snap = await editorsRef.get();
-    if (snap.empty){ listEl.innerHTML = '<p style="color:var(--muted-2); font-size:12.5px;">لا يوجد محررون مضافون بعد.</p>'; return; }
-    listEl.innerHTML = snap.docs.map(d => `
+    if (snap.empty) {
+      list.innerHTML = '<div style="color:var(--muted-2); font-size:12px;">لا يوجد محرّرين مضافين بعد</div>';
+      return;
+    }
+    list.innerHTML = snap.docs.map(doc => `
       <div class="editor-row">
-        <span>${d.id}</span>
-        <button class="btn btn-sm btn-danger" onclick="removeEditor('${d.id}')">إزالة</button>
-      </div>`).join('');
-  }catch(e){ listEl.innerHTML = 'تعذّر تحميل القائمة'; }
+        <span>${escapeHTML(doc.id)}</span>
+        <button class="btn btn-sm btn-danger" onclick="removeEditor('${doc.id}')">إزالة</button>
+      </div>
+    `).join('');
+  } catch (e) {
+    list.innerHTML = 'فشل تحميل القائمة';
+  }
 }
 
 $('addEditorBtn').addEventListener('click', async () => {
-  const emailInput = $('newEditorEmail');
-  const email = emailInput.value.trim().toLowerCase();
-  if (!email) return toast('يرجى كتابة الإيميل', true);
-  try{
+  const email = ($('newEditorEmail').value || '').trim().toLowerCase();
+  if (!email) return;
+  try {
     await editorsRef.doc(email).set({ addedAt: firebase.firestore.FieldValue.serverTimestamp() });
-    emailInput.value = '';
+    $('newEditorEmail').value = '';
     toast('تمت إضافة المحرر بنجاح');
     loadEditorsList();
-  }catch(e){ toast('فشل الإضافة: ' + e.message, true); }
+  } catch (e) {
+    toast('فشل الإضافة: ' + e.message, true);
+  }
 });
 
-window.removeEditor = async function(email){
-  if (!confirm(`إزالة المحرر ${email}؟`)) return;
-  try{
+async function removeEditor(email) {
+  try {
     await editorsRef.doc(email).delete();
-    toast('تمت الإزالة');
+    toast('تم إزالة المحرر');
     loadEditorsList();
-  }catch(e){ toast('فشل الإزالة: ' + e.message, true); }
-};
+  } catch (e) {
+    toast('فشل الإزالة: ' + e.message, true);
+  }
+}
 </script>
 </body>
 </html>
