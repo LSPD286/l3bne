@@ -6,6 +6,7 @@
 <title>Legend Town | Los Santos Police Department</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <!-- Firebase (compat SDK — works with a plain <script> tag, no build step) -->
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
@@ -40,7 +41,7 @@
   }
   ::selection{ background:var(--gold); color:#0a0d13; }
   button{ font-family:inherit; cursor:pointer; }
-  input, select{ font-family:inherit; }
+  input, select, textarea{ font-family:inherit; }
 
   /* ---------- topbar ---------- */
   .topbar{
@@ -77,6 +78,7 @@
     border:1px solid var(--line);
     background:var(--panel-2); color:var(--text);
     transition:all .15s;
+    display:inline-flex; align-items:center; gap:6px;
   }
   .btn:hover{ border-color:var(--gold-dim); }
   .btn-gold{ background:var(--gold); color:#0a0d13; border-color:var(--gold); }
@@ -85,10 +87,25 @@
   .btn-ghost{ background:transparent; }
   .btn-sm{ padding:6px 10px; font-size:12px; border-radius:6px; }
 
+  /* ---------- main navigation tabs ---------- */
+  .nav-tabs{
+    display:flex; justify-content:center; gap:8px; flex-wrap:wrap;
+    padding:12px 24px; background:var(--panel-2); border-bottom:1px solid var(--line);
+  }
+  .tab-btn{
+    padding:8px 16px; border-radius:6px; border:1px solid transparent;
+    background:transparent; color:var(--muted); font-size:13px; font-weight:600;
+    transition:all 0.2s ease;
+  }
+  .tab-btn:hover{ color:var(--text); background:rgba(255,255,255,0.03); }
+  .tab-btn.active{
+    color:var(--gold); background:var(--panel); border-color:var(--gold-dim);
+  }
+
   /* ---------- header ---------- */
   header{
     position:relative;
-    padding:56px 24px 40px;
+    padding:40px 24px 30px;
     text-align:center;
     border-bottom:1px solid var(--line);
     overflow:hidden;
@@ -102,38 +119,41 @@
   .eyebrow{
     font-family:'IBM Plex Mono', monospace;
     letter-spacing:0.35em; font-size:11px; color:var(--gold);
-    text-transform:uppercase; margin-bottom:18px;
+    text-transform:uppercase; margin-bottom:12px;
   }
   h1{
     font-family:'Oswald', sans-serif; font-weight:700;
-    font-size:clamp(30px, 6vw, 58px);
+    font-size:clamp(28px, 5vw, 48px);
     letter-spacing:0.02em; text-transform:uppercase; line-height:1.05;
   }
   h1 span{ color:var(--gold); }
-  .subtitle{ margin-top:14px; color:var(--muted); font-size:15px; max-width:560px; margin-inline:auto; }
-  .badge-strip{ display:flex; justify-content:center; gap:10px; margin-top:26px; flex-wrap:wrap; }
+  .subtitle{ margin-top:10px; color:var(--muted); font-size:14px; max-width:560px; margin-inline:auto; }
+  .badge-strip{ display:flex; justify-content:center; gap:10px; margin-top:20px; flex-wrap:wrap; }
   .badge-strip .chip{
     font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--muted);
     border:1px solid var(--line); padding:6px 14px; border-radius:100px; background:var(--panel);
   }
 
+  /* ---------- section views ---------- */
+  .view-section{ display:none; max-width:980px; margin:30px auto 0; padding:0 24px; }
+  .view-section.active{ display:block; }
+
   /* ---------- controls ---------- */
   .controls{
-    max-width:920px; margin:36px auto 0; padding:0 24px;
-    display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:30px;
   }
   #search{
     flex:1; min-width:220px; background:var(--panel); border:1px solid var(--line);
-    color:var(--text); padding:14px 16px; border-radius:8px; font-size:14px;
+    color:var(--text); padding:12px 16px; border-radius:8px; font-size:14px;
     outline:none; transition:border-color .15s;
   }
   #search:focus{ border-color:var(--gold); }
   #search::placeholder{ color:var(--muted-2); }
 
   /* ---------- chain of command ---------- */
-  .chain{ max-width:920px; margin:48px auto 0; padding:0 24px; position:relative; }
+  .chain{ position:relative; }
   .chain::before{
-    content:""; position:absolute; left:calc(24px + 17px); top:8px; bottom:8px; width:2px;
+    content:""; position:absolute; left:calc(17px); top:8px; bottom:8px; width:2px;
     background:linear-gradient(180deg, var(--gold) 0%, var(--blue) 55%, var(--muted-2) 100%);
     opacity:0.5;
   }
@@ -200,6 +220,19 @@
     opacity:0.75;
   }
 
+  /* ---------- Content Grid for Guides ---------- */
+  .grid-2col { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .info-box {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px;
+  }
+  .info-box h3 { font-family: 'Oswald', sans-serif; color: var(--gold); margin-bottom: 10px; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+  .info-box p { font-size: 13.5px; color: var(--muted); line-height: 1.6; }
+
+  .code-badge {
+    font-family: 'IBM Plex Mono', monospace; font-weight: 700; color: var(--gold);
+    background: rgba(201, 162, 39, 0.1); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--gold-dim);
+  }
+
   /* ---------- FAB ---------- */
   .fab{
     position:fixed; bottom:28px; left:28px; z-index:50;
@@ -224,11 +257,11 @@
   .modal h3{ font-family:'Oswald', sans-serif; text-transform:uppercase; font-size:18px; margin-bottom:18px; }
   .field{ margin-bottom:14px; }
   .field label{ display:block; font-size:12px; color:var(--muted); margin-bottom:6px; }
-  .field input, .field select{
+  .field input, .field select, .field textarea{
     width:100%; background:var(--panel-2); border:1px solid var(--line); color:var(--text);
     padding:10px 12px; border-radius:7px; font-size:13.5px; outline:none;
   }
-  .field input:focus, .field select:focus{ border-color:var(--gold); }
+  .field input:focus, .field select:focus, .field textarea:focus{ border-color:var(--gold); }
   .modal-actions{ display:flex; gap:10px; margin-top:20px; }
   .modal-actions .btn{ flex:1; }
   .modal-close{
@@ -252,7 +285,7 @@
   .toast.show{ display:block; }
 
   .notice{
-    max-width:920px; margin:56px auto 0; padding:20px 24px;
+    max-width:980px; margin:40px auto 0; padding:20px 24px;
     border:1px solid var(--line); border-inline-start:3px solid var(--gold-dim);
     background:var(--panel); border-radius:8px; color:var(--muted); font-size:13px; line-height:1.8;
   }
@@ -276,33 +309,135 @@
   </div>
 </div>
 
+<div class="nav-tabs">
+  <button class="tab-btn active" onclick="switchTab('roster-sec')"><i class="fa-solid fa-users"></i> جدول الأفراد</button>
+  <button class="tab-btn" onclick="switchTab('codes-sec')"><i class="fa-solid fa-radio"></i> الأكواد</button>
+  <button class="tab-btn" onclick="switchTab('uniforms-sec')"><i class="fa-solid fa-shirt"></i> الملابس</button>
+  <button class="tab-btn" onclick="switchTab('laws-sec')"><i class="fa-solid fa-scale-balanced"></i> القوانين</button>
+  <button class="tab-btn" onclick="switchTab('procedures-sec')"><i class="fa-solid fa-clipboard-check"></i> الإجراءات</button>
+</div>
+
 <header>
   <div class="eyebrow">LEGEND TOWN &middot; ROLEPLAY SERVER</div>
   <h1>Los Santos <span>Police</span> Department</h1>
-  <p class="subtitle">السجل الرسمي لسلسلة القيادة — يتحدّث تلقائيًا لحظة ما أي مسؤول يعدّل عليه.</p>
+  <p class="subtitle">السجل والتصريح الرسمي لدليل وإدارة شرطة لوس سانتوس.</p>
   <div class="badge-strip">
-    <span class="chip">التبويبات: <span id="stat-ranks">0</span></span>
+    <span class="chip">الرتب: <span id="stat-ranks">0</span></span>
     <span class="chip">إجمالي الأعضاء: <span id="stat-officers">0</span></span>
     <span class="chip">الشواغر: <span id="stat-vacant">0</span></span>
   </div>
 </header>
 
-<div class="controls">
-  <input id="search" type="text" placeholder="ابحث بالاسم، رقم الشارة، أو الرتبة...">
-  <button class="btn hidden" id="manageEditorsBtn">إدارة الصلاحيات</button>
-  <button class="btn btn-gold hidden" id="seedBtn">استيراد البيانات الأساسية</button>
+<!-- ================= 1) ROSTER TAB ================= -->
+<div id="roster-sec" class="view-section active">
+  <div class="controls">
+    <input id="search" type="text" placeholder="ابحث بالاسم، رقم الشارة، أو الرتبة...">
+    <button class="btn hidden" id="manageEditorsBtn">إدارة الصلاحيات</button>
+    <button class="btn btn-gold hidden" id="seedBtn">استيراد البيانات الأساسية</button>
+  </div>
+
+  <div id="loading" class="loading">جارِ تحميل البيانات من القاعدة...</div>
+  <div class="chain" id="chain"></div>
+  <div class="no-results hidden" id="noResults">لا توجد نتائج مطابقة</div>
 </div>
 
-<div id="loading" class="loading">جارِ تحميل البيانات من القاعدة...</div>
-<div class="chain" id="chain"></div>
-<div class="no-results hidden" id="noResults">لا توجد نتائج مطابقة</div>
+<!-- ================= 2) CODES TAB ================= -->
+<div id="codes-sec" class="view-section">
+  <div class="grid-2col">
+    <div class="info-box">
+      <h3><span class="code-badge">Code 0</span> حالة طوارئ قصوى</h3>
+      <p>سقوط ضابط شرطة أو تعرضه لإطلاق نار مباشر. الاستجابة فورية من جميع الوحدات المتاحة.</p>
+    </div>
+    <div class="info-box">
+      <h3><span class="code-badge">Code 1</span> استجابة عادية</h3>
+      <p>الانتقال للموقع بدون صفارات إنذار أو أضواء طوارئ مع الالتزام بقوانين المرور.</p>
+    </div>
+    <div class="info-box">
+      <h3><span class="code-badge">Code 2</span> استجابة متوسطة</h3>
+      <p>استجابة سريعة مع تشغيل أضواء الطوارئ بدون صفارات إلا عند التقاطعات.</p>
+    </div>
+    <div class="info-box">
+      <h3><span class="code-badge">Code 3</span> طوارئ عالية</h3>
+      <p>انتقال بأقصى سرعة مع تشغيل الأضواء والصفارات بصفة مستمرة.</p>
+    </div>
+    <div class="info-box">
+      <h3><span class="code-badge">10-8</span> بالمناوبة</h3>
+      <p>الضابط جاهز ومتاح لتلقي البلاغات والنداءات الميدانية.</p>
+    </div>
+    <div class="info-box">
+      <h3><span class="code-badge">10-20</span> تحديد الموقع</h3>
+      <p>طلب تحديد موقع الضابط الحالي بدقة على الخريطة.</p>
+    </div>
+    <div class="info-box">
+      <h3><span class="code-badge">10-80</span> مطاردة مركية</h3>
+      <p>مطاردة مباشرة لمركبة مشبوهة أو هاربة من السلطات.</p>
+    </div>
+    <div class="info-box">
+      <h3><span class="code-badge">10-90</span> سرقة قيد التنفيذ</h3>
+      <p>بلاغ عن عمل سرقة مسلح لمحل تجاري، بنك، أو منشأة.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 3) UNIFORMS TAB ================= -->
+<div id="uniforms-sec" class="view-section">
+  <div class="grid-2col">
+    <div class="info-box">
+      <h3><i class="fa-solid fa-user-shield"></i> زي Patrol (الدوريات العامة)</h3>
+      <p>الزي الرسمي الكلاسيكي باللون الأزرق الداكن / الأسود. يلتزم به جميع ضباط الدوريات الميدانية اليومية.</p>
+    </div>
+    <div class="info-box">
+      <h3><i class="fa-solid fa-mask"></i> زي SWAT (العمليات الخاصة)</h3>
+      <p>الزي التكتيكي الأسود الكامل المجهز بالخوذة الواقية، السترة الرصاصية الثقيلة، وأقنعة الوجه للعمليات الخطرة.</p>
+    </div>
+    <div class="info-box">
+      <h3><i class="fa-solid fa-motorcycle"></i> زي Traffic & Motor (المرور)</h3>
+      <p>سترات عالية الرؤية وعاكسة مع خوذة المحركات لضباط وحدة تنظيم السير والمطاردات السريعة.</p>
+    </div>
+    <div class="info-box">
+      <h3><i class="fa-solid fa-vest"></i> زي التحقيقات (Detectives)</h3>
+      <p>بدلات رسمية مدنية مع إبراز الشارة الميدانية على الحزام أو الرقبة أثناء تنفيذ مهام التحقيق.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 4) LAWS TAB ================= -->
+<div id="laws-sec" class="view-section">
+  <div class="grid-2col">
+    <div class="info-box">
+      <h3>⚖ القوانين الإدارية</h3>
+      <p>الالتزام بالتسلسل القيادي، احترام أوامر الضباط الأعلى رتبة، وعدم الخروج بدورية فردية دون تصريح رسمي.</p>
+    </div>
+    <div class="info-box">
+      <h3>⚖ قواعد السلاح والاستخدام</h3>
+      <p>يمنع استخدام السلاح الناري إلا في حالة التهديد المباشر للحياة أو صدور أوامر من قائد الموقع (Code 4).</p>
+    </div>
+    <div class="info-box">
+      <h3>⚖ اللائحة الجزائية</h3>
+      <p>أي مخالفة إدارية تعرض الضابط للتوبيخ، سحب النقاط، التنزيل من الرتبة، أو الفصل النهائى من القطاع.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 5) PROCEDURES TAB ================= -->
+<div id="procedures-sec" class="view-section">
+  <div class="grid-2col">
+    <div class="info-box">
+      <h3>📌 إجراءات الاعتقال والتفتيش</h3>
+      <p>1. إلقاء القبض وتقييد المشتبه به.<br>2. قراءة حقوق ميراندا فوراً.<br>3. إجراء التفتيش الميداني وسحب الممنوعات.<br>4. نقل المعتقل إلى المركز الرئيسي.</p>
+    </div>
+    <div class="info-box">
+      <h3>📌 إجراءات المفاوضات والرهائن</h3>
+      <p>تأمين المحيط الخارجي بواسطة القناصة والدوريات، وتعيين مفاوض معتمد يمنع اقتحام الموقع قبل المباشرة.</p>
+    </div>
+  </div>
+</div>
 
 <button class="fab" id="fabAdd" title="إضافة عضو">+</button>
 
-<div class="notice" style="max-width:920px;">
+<div class="notice">
   البيانات الآن تُقرأ وتُكتب مباشرة من قاعدة بيانات حية (Firestore) — أي تعديل يظهر للجميع فورًا بدون رفع ملفات.
   الصلاحيات محصورة بإيميلات Google محدّدة عن طريق زر "إدارة الصلاحيات" (يظهر فقط لصاحب الصفحة).
-  الرتب الأدنى من Staff Sergeant (رقيب، عريف، شرطي، مرشح) مضافة كتبويبات فارغة جاهزة تنتظر تعبئتها.
 </div>
 
 <footer>LSPD // LEGEND TOWN &middot; CHAIN OF COMMAND REGISTRY</footer>
@@ -355,8 +490,7 @@
 
 <script>
 /* ============================================================
-   1) FIREBASE CONFIG — استبدل القيم التالية بإعدادات مشروعك
-      (من Firebase Console → Project settings → Your apps → Web app)
+   1) FIREBASE CONFIG
    ============================================================ */
 const firebaseConfig = {
   apiKey: "AIzaSyBTTj1ww1VPYIHu1SyMg_KSYHZRcF8dRHI",
@@ -367,13 +501,7 @@ const firebaseConfig = {
   appId: "1:874029124115:web:27657c0137fe73ec50cde6"
 };
 
-/* صاحب الصفحة (Owner) — له صلاحية دائمة + يقدر يدير صلاحيات غيره.
-   غيّر الإيميل التالي لإيميل Google حقك قبل الرفع. */
 const OWNER_EMAILS = ["fahadalotaibi0084@gmail.com"];
-
-/* رابط Discord Webhook — كل عملية إضافة/تعديل/حذف تُرسل تلقائيًا كرسالة
-   لقناة الديسكورد. سوّيه من: إعدادات القناة → Integrations → Webhooks → New Webhook → Copy URL.
-   اتركه فاضي "" إذا ما تبي إشعارات ديسكورد. */
 const DISCORD_WEBHOOK_URL = "";
 
 firebase.initializeApp(firebaseConfig);
@@ -383,7 +511,7 @@ const officersRef = db.collection('officers');
 const editorsRef = db.collection('editors');
 
 /* ============================================================
-   2) TIER ORDER — ترتيب سلسلة القيادة (من الأعلى للأدنى)
+   2) TIER ORDER — ترتيب سلسلة القيادة
    ============================================================ */
 const TIER_ORDER = [
   {key:"Minister Of Interior", ar:"وزير الداخلية"},
@@ -404,8 +532,7 @@ const TIER_ORDER = [
 ];
 
 /* ============================================================
-   3) SEED DATA — نفس بيانات الجدول الأصلي (تُستورد مرة وحدة فقط
-      بواسطة زر "استيراد البيانات الأساسية" لما القاعدة تكون فاضية)
+   3) SEED DATA
    ============================================================ */
 const SEED_OFFICERS = [
   {tier:"Minister Of Interior", badge:"P-1", name:"Rashid Saad", rank:"Minister", points:"N/A", user:"i833.1", discord:"840084298630823946"},
@@ -440,15 +567,20 @@ const SEED_OFFICERS = [
   {tier:"Staff Sergeant", badge:"U-2", name:"Ahmad Almutiri", rank:"Staff Sergeant", points:"15", user:"OT3M", discord:"1445134968396189758"}
 ];
 
-/* ============================================================
-   STATE
-   ============================================================ */
 let currentUser = null;
-let currentRole = 'viewer'; // owner | editor | viewer
-let officers = [];          // live cache from Firestore
+let currentRole = 'viewer';
+let officers = [];
 let unsubscribeOfficers = null;
 
 const $ = (id) => document.getElementById(id);
+
+function switchTab(tabId) {
+  document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  
+  $(tabId).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
 
 function toast(msg, isError=false){
   const t = $('toast');
@@ -457,11 +589,8 @@ function toast(msg, isError=false){
   setTimeout(()=> t.className = 'toast', 2600);
 }
 
-/* ============================================================
-   DISCORD LOG — يبلّغ قناة ديسكورد بكل عملية إضافة/تعديل/حذف
-   ============================================================ */
 function logToDiscord(action, officer){
-  if (!DISCORD_WEBHOOK_URL) return; // مسوي تعطيل إذا الرابط فاضي
+  if (!DISCORD_WEBHOOK_URL) return;
   const actorEmail = currentUser ? currentUser.email : 'غير معروف';
   const colors = { 'إضافة': 3066993, 'تعديل': 3447003, 'حذف': 15158332 };
   const embed = {
@@ -532,7 +661,7 @@ auth.onAuthStateChanged(async (user) => {
 });
 
 /* ============================================================
-   FIRESTORE — realtime officers
+   FIRESTORE
    ============================================================ */
 $('loading').classList.remove('hidden');
 unsubscribeOfficers = officersRef.onSnapshot(snap => {
@@ -640,7 +769,7 @@ function render(filter=''){
 $('search').addEventListener('input', e => render(e.target.value));
 
 /* ============================================================
-   ADD / EDIT MODAL
+   MODALS & ACTIONS
    ============================================================ */
 const officerModal = $('officerModalOverlay');
 const tierSelect = $('f-tier');
@@ -715,7 +844,7 @@ $('officerForm').addEventListener('submit', async (e) => {
 });
 
 /* ============================================================
-   MANAGE EDITORS (owner only)
+   MANAGE EDITORS (OWNER COMPLETE)
    ============================================================ */
 const editorsModal = $('editorsModalOverlay');
 $('manageEditorsBtn').addEventListener('click', () => {
@@ -739,27 +868,25 @@ async function loadEditorsList(){
 }
 
 $('addEditorBtn').addEventListener('click', async () => {
-  const email = $('newEditorEmail').value.trim().toLowerCase();
-  if (!email || !email.includes('@')){ toast('أدخل إيميل صحيح', true); return; }
+  const emailInput = $('newEditorEmail');
+  const email = emailInput.value.trim().toLowerCase();
+  if (!email) return toast('يرجى كتابة الإيميل', true);
   try{
-    await editorsRef.doc(email).set({ addedAt: firebase.firestore.FieldValue.serverTimestamp(), addedBy: currentUser ? currentUser.email : '' });
-    $('newEditorEmail').value = '';
-    toast('تمت إضافة الصلاحية');
+    await editorsRef.doc(email).set({ addedAt: firebase.firestore.FieldValue.serverTimestamp() });
+    emailInput.value = '';
+    toast('تمت إضافة المحرر بنجاح');
     loadEditorsList();
-  }catch(e){ toast('فشل: ' + e.message, true); }
+  }catch(e){ toast('فشل الإضافة: ' + e.message, true); }
 });
 
 window.removeEditor = async function(email){
-  if (!confirm('إزالة صلاحية ' + email + '؟')) return;
+  if (!confirm(`إزالة المحرر ${email}؟`)) return;
   try{
     await editorsRef.doc(email).delete();
     toast('تمت الإزالة');
     loadEditorsList();
-  }catch(e){ toast('فشل: ' + e.message, true); }
+  }catch(e){ toast('فشل الإزالة: ' + e.message, true); }
 };
-
-render();
 </script>
-
 </body>
 </html>
