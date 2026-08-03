@@ -6,6 +6,12 @@
 <title>Legend Town | Los Santos Police Department</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- Firebase (compat SDK — works with a plain <script> tag, no build step) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
 <style>
   :root{
     --bg:#0a0d13;
@@ -19,6 +25,7 @@
     --muted:#8a93a6;
     --muted-2:#5b6376;
     --danger:#a5433b;
+    --ok:#3f8f5f;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
@@ -29,14 +36,59 @@
     color:var(--text);
     font-family:'IBM Plex Sans Arabic', sans-serif;
     min-height:100vh;
-    padding-bottom:80px;
+    padding-bottom:120px;
   }
   ::selection{ background:var(--gold); color:#0a0d13; }
+  button{ font-family:inherit; cursor:pointer; }
+  input, select{ font-family:inherit; }
+
+  /* ---------- topbar ---------- */
+  .topbar{
+    display:flex; justify-content:space-between; align-items:center;
+    gap:12px; flex-wrap:wrap;
+    padding:14px 24px;
+    border-bottom:1px solid var(--line);
+    background:var(--panel);
+    position:sticky; top:0; z-index:40;
+  }
+  .topbar .brand{
+    font-family:'Oswald', sans-serif;
+    letter-spacing:0.08em;
+    font-size:13px;
+    color:var(--muted);
+    text-transform:uppercase;
+  }
+  .topbar .brand b{ color:var(--gold); }
+  .auth-area{ display:flex; align-items:center; gap:10px; }
+  .role-pill{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    padding:4px 10px;
+    border-radius:100px;
+    border:1px solid var(--line);
+    color:var(--muted);
+  }
+  .role-pill.owner{ color:#0a0d13; background:var(--gold); border-color:var(--gold); }
+  .role-pill.editor{ color:var(--gold); border-color:var(--gold-dim); }
+  .user-email{ font-size:12.5px; color:var(--muted); direction:ltr; }
+  .btn{
+    font-size:13px; font-weight:600;
+    padding:9px 16px; border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--panel-2); color:var(--text);
+    transition:all .15s;
+  }
+  .btn:hover{ border-color:var(--gold-dim); }
+  .btn-gold{ background:var(--gold); color:#0a0d13; border-color:var(--gold); }
+  .btn-gold:hover{ background:#e0b62f; }
+  .btn-danger{ background:transparent; color:var(--danger); border-color:var(--danger); }
+  .btn-ghost{ background:transparent; }
+  .btn-sm{ padding:6px 10px; font-size:12px; border-radius:6px; }
 
   /* ---------- header ---------- */
   header{
     position:relative;
-    padding:64px 24px 48px;
+    padding:56px 24px 40px;
     text-align:center;
     border-bottom:1px solid var(--line);
     overflow:hidden;
@@ -44,401 +96,628 @@
   header::before{
     content:"";
     position:absolute; inset:0;
-    background-image:
-      repeating-linear-gradient(90deg, transparent 0 46px, rgba(255,255,255,0.02) 46px 47px);
+    background-image: repeating-linear-gradient(90deg, transparent 0 46px, rgba(255,255,255,0.02) 46px 47px);
     pointer-events:none;
   }
   .eyebrow{
     font-family:'IBM Plex Mono', monospace;
-    letter-spacing:0.35em;
-    font-size:11px;
-    color:var(--gold);
-    text-transform:uppercase;
-    margin-bottom:18px;
+    letter-spacing:0.35em; font-size:11px; color:var(--gold);
+    text-transform:uppercase; margin-bottom:18px;
   }
   h1{
-    font-family:'Oswald', sans-serif;
-    font-weight:700;
-    font-size:clamp(34px, 6vw, 64px);
-    letter-spacing:0.02em;
-    text-transform:uppercase;
-    line-height:1.05;
+    font-family:'Oswald', sans-serif; font-weight:700;
+    font-size:clamp(30px, 6vw, 58px);
+    letter-spacing:0.02em; text-transform:uppercase; line-height:1.05;
   }
   h1 span{ color:var(--gold); }
-  .subtitle{
-    margin-top:14px;
-    color:var(--muted);
-    font-size:15px;
-    max-width:560px;
-    margin-inline:auto;
-  }
-  .badge-strip{
-    display:flex; justify-content:center; gap:10px; margin-top:28px; flex-wrap:wrap;
-  }
+  .subtitle{ margin-top:14px; color:var(--muted); font-size:15px; max-width:560px; margin-inline:auto; }
+  .badge-strip{ display:flex; justify-content:center; gap:10px; margin-top:26px; flex-wrap:wrap; }
   .badge-strip .chip{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:11px;
-    color:var(--muted);
-    border:1px solid var(--line);
-    padding:6px 14px;
-    border-radius:100px;
-    background:var(--panel);
+    font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--muted);
+    border:1px solid var(--line); padding:6px 14px; border-radius:100px; background:var(--panel);
   }
 
   /* ---------- controls ---------- */
   .controls{
-    max-width:760px; margin:40px auto 0; padding:0 24px;
-    display:flex; gap:10px; flex-wrap:wrap;
+    max-width:920px; margin:36px auto 0; padding:0 24px;
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center;
   }
   #search{
-    flex:1; min-width:220px;
-    background:var(--panel);
-    border:1px solid var(--line);
-    color:var(--text);
-    padding:14px 16px;
-    border-radius:8px;
-    font-family:'IBM Plex Sans Arabic', sans-serif;
-    font-size:14px;
-    outline:none;
-    transition:border-color .15s;
+    flex:1; min-width:220px; background:var(--panel); border:1px solid var(--line);
+    color:var(--text); padding:14px 16px; border-radius:8px; font-size:14px;
+    outline:none; transition:border-color .15s;
   }
   #search:focus{ border-color:var(--gold); }
   #search::placeholder{ color:var(--muted-2); }
 
-  /* ---------- spine / chain of command ---------- */
-  .chain{
-    max-width:920px;
-    margin:56px auto 0;
-    padding:0 24px;
-    position:relative;
-  }
+  /* ---------- chain of command ---------- */
+  .chain{ max-width:920px; margin:48px auto 0; padding:0 24px; position:relative; }
   .chain::before{
-    content:"";
-    position:absolute;
-    right:calc(24px + 17px);
-    top:8px; bottom:8px;
-    width:2px;
+    content:""; position:absolute; left:calc(24px + 17px); top:8px; bottom:8px; width:2px;
     background:linear-gradient(180deg, var(--gold) 0%, var(--blue) 55%, var(--muted-2) 100%);
     opacity:0.5;
   }
-  @media (max-width:640px){
-    .chain::before{ right:31px; }
-  }
+  @media (max-width:640px){ .chain::before{ left:14px; } }
 
-  .tier{
-    position:relative;
-    padding-inline-end:56px;
-    margin-bottom:44px;
-  }
+  .tier{ position:relative; padding-inline-start:64px; margin-bottom:40px; }
+  @media (max-width:640px){ .tier{ padding-inline-start:44px; } }
   .tier-marker{
-    position:absolute;
-    right:0; top:2px;
-    width:36px; height:36px;
-    border-radius:50%;
-    background:var(--panel-2);
-    border:2px solid var(--gold-dim);
+    position:absolute; left:0; top:2px; width:36px; height:36px; border-radius:50%;
+    background:var(--panel-2); border:2px solid var(--gold-dim);
     display:flex; align-items:center; justify-content:center;
-    font-family:'Oswald', sans-serif;
-    font-size:13px; font-weight:600;
-    color:var(--gold);
-    z-index:2;
+    font-family:'Oswald', sans-serif; font-size:13px; font-weight:600; color:var(--gold); z-index:2;
   }
-  .tier-head{
-    display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
-    margin-bottom:16px;
-  }
+  .tier-head{ display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
   .tier-head h2{
-    font-family:'Oswald', sans-serif;
-    text-transform:uppercase;
-    letter-spacing:0.04em;
-    font-size:20px;
-    font-weight:600;
+    font-family:'Oswald', sans-serif; text-transform:uppercase; letter-spacing:0.04em;
+    font-size:19px; font-weight:600;
   }
-  .tier-head .count{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:11px;
-    color:var(--muted-2);
+  .tier-head .tier-ar{ font-size:14px; color:var(--gold); font-weight:500; }
+  .tier-head .count{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--muted-2); }
+  .tier-add{
+    margin-inline-start:auto;
+    font-family:'IBM Plex Mono', monospace; font-size:11px;
+    color:var(--muted); border:1px dashed var(--line); background:transparent;
+    padding:4px 10px; border-radius:6px; display:none;
   }
+  body.can-edit .tier-add{ display:inline-block; }
+  .tier-add:hover{ border-color:var(--gold); color:var(--gold); }
 
-  .roster{
-    display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(230px, 1fr));
-    gap:12px;
+  .roster{ display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:12px; }
+  .empty-tier{
+    grid-column:1/-1; color:var(--muted-2); font-size:12.5px;
+    border:1px dashed var(--line); border-radius:8px; padding:14px; text-align:center;
   }
 
   .card{
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:16px 16px 14px;
-    position:relative;
-    transition:border-color .15s, transform .15s;
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    padding:14px 14px 12px; position:relative; transition:border-color .15s, transform .15s;
   }
-  .card:hover{ border-color:var(--gold-dim); transform:translateY(-2px); }
-  .card .top{
-    display:flex; justify-content:space-between; align-items:flex-start;
-    margin-bottom:10px;
-  }
+  .card:hover{ border-color:var(--gold-dim); }
+  .card .top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
   .card .badge-id{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:12px;
-    color:var(--gold);
-    border:1px solid var(--gold-dim);
-    padding:2px 8px;
-    border-radius:4px;
+    font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--gold);
+    border:1px solid var(--gold-dim); padding:2px 8px; border-radius:4px;
   }
-  .card .points{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:11px;
-    color:var(--muted);
-  }
+  .card .points{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--muted); }
   .card .points b{ color:var(--text); font-weight:600; }
-  .card .name{
-    font-size:16px;
-    font-weight:600;
-    margin-bottom:2px;
-  }
-  .card .name.empty{ color:var(--muted-2); font-weight:400; font-style:normal; }
-  .card .rank{
-    font-size:12.5px;
-    color:var(--muted);
-    margin-bottom:10px;
-  }
+  .card .name{ font-size:15.5px; font-weight:600; margin-bottom:1px; }
+  .card .name.empty{ color:var(--muted-2); font-weight:400; }
+  .card .rank{ font-size:12.5px; color:var(--muted); margin-bottom:8px; }
   .card .meta{
     display:flex; justify-content:space-between; align-items:center;
-    border-top:1px dashed var(--line);
-    padding-top:10px;
-    font-family:'IBM Plex Mono', monospace;
-    font-size:11px;
-    color:var(--muted-2);
+    border-top:1px dashed var(--line); padding-top:8px;
+    font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--muted-2);
   }
   .card .meta .discord{ direction:ltr; }
-
-  /* vacant slot */
+  .card .actions{
+    display:none; gap:6px; margin-top:10px; padding-top:8px; border-top:1px dashed var(--line);
+  }
+  body.can-edit .card .actions{ display:flex; }
+  .card .actions button{ flex:1; }
   .card.vacant{
     background:repeating-linear-gradient(135deg, var(--panel) 0 10px, var(--panel-2) 10px 20px);
-    opacity:0.7;
+    opacity:0.75;
   }
 
-  /* ---------- footer / notice ---------- */
+  /* ---------- FAB ---------- */
+  .fab{
+    position:fixed; bottom:28px; left:28px; z-index:50;
+    background:var(--gold); color:#0a0d13; border:none;
+    width:56px; height:56px; border-radius:50%;
+    font-size:26px; font-weight:700; box-shadow:0 6px 20px rgba(0,0,0,.4);
+    display:none; align-items:center; justify-content:center;
+  }
+  body.can-edit .fab{ display:flex; }
+  .fab:hover{ transform:scale(1.06); }
+
+  /* ---------- modal ---------- */
+  .modal-overlay{
+    display:none; position:fixed; inset:0; background:rgba(5,7,11,0.75);
+    z-index:100; align-items:flex-start; justify-content:center; padding:5vh 16px; overflow-y:auto;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal{
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    width:100%; max-width:460px; padding:24px;
+  }
+  .modal h3{ font-family:'Oswald', sans-serif; text-transform:uppercase; font-size:18px; margin-bottom:18px; }
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-size:12px; color:var(--muted); margin-bottom:6px; }
+  .field input, .field select{
+    width:100%; background:var(--panel-2); border:1px solid var(--line); color:var(--text);
+    padding:10px 12px; border-radius:7px; font-size:13.5px; outline:none;
+  }
+  .field input:focus, .field select:focus{ border-color:var(--gold); }
+  .modal-actions{ display:flex; gap:10px; margin-top:20px; }
+  .modal-actions .btn{ flex:1; }
+  .modal-close{
+    background:none; border:none; color:var(--muted); float:left; font-size:20px; line-height:1;
+  }
+
+  .editor-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:8px 0; border-bottom:1px solid var(--line); font-size:13px;
+  }
+  .editor-row:last-child{ border-bottom:none; }
+  .editor-row span{ direction:ltr; color:var(--text); font-family:'IBM Plex Mono', monospace; font-size:12px; }
+
+  .toast{
+    position:fixed; bottom:28px; right:28px; z-index:200;
+    background:var(--panel-2); border:1px solid var(--gold-dim); color:var(--text);
+    padding:12px 18px; border-radius:8px; font-size:13px; display:none;
+    box-shadow:0 6px 20px rgba(0,0,0,.4);
+  }
+  .toast.error{ border-color:var(--danger); }
+  .toast.show{ display:block; }
+
   .notice{
-    max-width:760px; margin:64px auto 0; padding:20px 24px;
-    border:1px solid var(--line);
-    border-inline-start:3px solid var(--gold-dim);
-    background:var(--panel);
-    border-radius:8px;
-    color:var(--muted);
-    font-size:13px;
-    line-height:1.8;
+    max-width:920px; margin:56px auto 0; padding:20px 24px;
+    border:1px solid var(--line); border-inline-start:3px solid var(--gold-dim);
+    background:var(--panel); border-radius:8px; color:var(--muted); font-size:13px; line-height:1.8;
   }
   footer{
-    text-align:center;
-    margin-top:48px;
-    color:var(--muted-2);
-    font-family:'IBM Plex Mono', monospace;
-    font-size:11px;
-    letter-spacing:0.08em;
+    text-align:center; margin-top:40px; color:var(--muted-2);
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.08em;
   }
-
-  .no-results{
-    text-align:center;
-    color:var(--muted-2);
-    padding:40px 0;
-    font-family:'IBM Plex Mono', monospace;
-    font-size:13px;
-    display:none;
+  .no-results, .loading{
+    text-align:center; color:var(--muted-2); padding:40px 0;
+    font-family:'IBM Plex Mono', monospace; font-size:13px;
   }
+  .hidden{ display:none !important; }
 </style>
 </head>
 <body>
 
+<div class="topbar">
+  <div class="brand">LEGEND TOWN &middot; <b>LSPD</b> REGISTRY</div>
+  <div class="auth-area" id="authArea">
+    <button class="btn" id="loginBtn">تسجيل الدخول بـ Google</button>
+  </div>
+</div>
+
 <header>
   <div class="eyebrow">LEGEND TOWN &middot; ROLEPLAY SERVER</div>
   <h1>Los Santos <span>Police</span> Department</h1>
-  <p class="subtitle">السجل الرسمي لسلسلة القيادة — من وزير الداخلية إلى رتبة Staff Sergeant.</p>
+  <p class="subtitle">السجل الرسمي لسلسلة القيادة — يتحدّث تلقائيًا لحظة ما أي مسؤول يعدّل عليه.</p>
   <div class="badge-strip">
-    <span class="chip">TOTAL RANKS: <span id="stat-ranks"></span></span>
-    <span class="chip">TOTAL OFFICERS: <span id="stat-officers"></span></span>
-    <span class="chip">FILLED: <span id="stat-filled"></span></span>
+    <span class="chip">التبويبات: <span id="stat-ranks">0</span></span>
+    <span class="chip">إجمالي الأعضاء: <span id="stat-officers">0</span></span>
+    <span class="chip">الشواغر: <span id="stat-vacant">0</span></span>
   </div>
 </header>
 
 <div class="controls">
-  <input id="search" type="text" placeholder="ابحث بالاسم، الرقم، أو الرتبة...">
+  <input id="search" type="text" placeholder="ابحث بالاسم، رقم الشارة، أو الرتبة...">
+  <button class="btn hidden" id="manageEditorsBtn">إدارة الصلاحيات</button>
+  <button class="btn btn-gold hidden" id="seedBtn">استيراد البيانات الأساسية</button>
 </div>
 
+<div id="loading" class="loading">جارِ تحميل البيانات من القاعدة...</div>
 <div class="chain" id="chain"></div>
-<div class="no-results" id="noResults">لا توجد نتائج مطابقة</div>
+<div class="no-results hidden" id="noResults">لا توجد نتائج مطابقة</div>
+
+<button class="fab" id="fabAdd" title="إضافة عضو">+</button>
 
 <div class="notice" style="max-width:920px;">
-  البيانات المعروضة هنا مأخوذة من نسخة العرض العامة (view-only) لجدول البيانات الأصلي في Google Sheets.
-  بعض الخلايا في المصدر كانت فارغة أو مصنّفة "Classified" أو تحتوي على صور شارات لم يتم تضمينها هنا،
-  وبعض الصفوف السفلية (الرتب الأدنى من Staff Sergeant) لم تكن متاحة عبر أداة القراءة المستخدمة.
-  حدّث أي بيانات ناقصة يدويًا في المصفوفة <code>ROSTER</code> أسفل الكود.
+  البيانات الآن تُقرأ وتُكتب مباشرة من قاعدة بيانات حية (Firestore) — أي تعديل يظهر للجميع فورًا بدون رفع ملفات.
+  الصلاحيات محصورة بإيميلات Google محدّدة عن طريق زر "إدارة الصلاحيات" (يظهر فقط لصاحب الصفحة).
+  الرتب الأدنى من Staff Sergeant (رقيب، عريف، شرطي، مرشح) مضافة كتبويبات فارغة جاهزة تنتظر تعبئتها.
 </div>
 
 <footer>LSPD // LEGEND TOWN &middot; CHAIN OF COMMAND REGISTRY</footer>
 
+<!-- ============ Add / Edit modal ============ -->
+<div class="modal-overlay" id="officerModalOverlay">
+  <div class="modal">
+    <button class="modal-close" id="officerModalClose">&times;</button>
+    <h3 id="officerModalTitle">إضافة عضو</h3>
+    <form id="officerForm">
+      <input type="hidden" id="f-id">
+      <div class="field">
+        <label>الرتبة الرئيسية (التبويب)</label>
+        <select id="f-tier" required></select>
+      </div>
+      <div class="field"><label>رقم الشارة</label><input id="f-badge" placeholder="مثال: C-19" required></div>
+      <div class="field"><label>الاسم (اتركه فارغ إذا الشاغر مو معبّى)</label><input id="f-name" placeholder="اسم العضو"></div>
+      <div class="field"><label>الرتبة الدقيقة</label><input id="f-rank" placeholder="مثال: Captain" required></div>
+      <div class="field"><label>النقاط</label><input id="f-points" placeholder="0"></div>
+      <div class="field"><label>اليوزر (In-game)</label><input id="f-user" placeholder="اختياري"></div>
+      <div class="field"><label>Discord ID</label><input id="f-discord" placeholder="اختياري"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="officerCancelBtn">إلغاء</button>
+        <button type="submit" class="btn btn-gold">حفظ</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ Manage editors modal (owner only) ============ -->
+<div class="modal-overlay" id="editorsModalOverlay">
+  <div class="modal">
+    <button class="modal-close" id="editorsModalClose">&times;</button>
+    <h3>إدارة الصلاحيات</h3>
+    <p style="color:var(--muted); font-size:12.5px; margin-bottom:14px;">
+      أضف إيميل Google لأي شخص تبي يقدر يضيف/يعدّل/يحذف من الجدول.
+    </p>
+    <div class="field" style="display:flex; gap:8px; align-items:flex-end;">
+      <div style="flex:1;">
+        <label>إيميل Google</label>
+        <input id="newEditorEmail" placeholder="name@gmail.com">
+      </div>
+      <button class="btn btn-gold btn-sm" id="addEditorBtn">إضافة</button>
+    </div>
+    <div id="editorsList" style="margin-top:16px;"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
-// ============================================================
-// ROSTER DATA — extracted from the source spreadsheet (public view).
-// Each tier = one rank group. Each entry = one officer/slot.
-// name:null or "-"  => vacant slot
-// ============================================================
-const ROSTER = [
-  {
-    tier: "Minister Of Interior",
-    members: [
-      { badge:"P-1", name:"Rashid Saad", rank:"The Minister", points:"N/A", user:"i833.1", discord:"840084298630823946" },
-      { badge:"P-2", name:"Micheal Arthur", rank:"Deputy The Minister (The Deputy Minister)", points:"N/A", user:"6zx4", discord:"1263133559951065099" },
-    ]
-  },
-  {
-    tier: "Police Chief",
-    members: [
-      { badge:"—", name:null, rank:"Chief Commander (Police Chief)", points:"N/A", user:null, discord:null },
-      { badge:"—", name:null, rank:"Deputy Commander (Deputy Police Chief)", points:"N/A", user:null, discord:null },
-    ]
-  },
-  {
-    tier: "Chief Of LSPD",
-    members: [
-      { badge:"A-1", name:"Ghost James", rank:"Chief LSPD (LSPD Chief)", points:"N/A", user:"dwlh0", discord:"905889945279922246" },
-      { badge:"A-2", name:null, rank:"Deputy Chief LSPD", points:"N/A", user:null, discord:null },
-    ]
-  },
-  {
-    tier: "General",
-    members: [
-      { badge:"G-1", name:null, rank:"General", points:"0", user:null, discord:null },
-      { badge:"G-2", name:"Arthur Rain", rank:"General", points:"0", user:"q_zf4", discord:"902222193440718938" },
-    ]
-  },
-  {
-    tier: "Major General",
-    members: [
-      { badge:"G-3", name:null, rank:"Major General", points:"0", user:null, discord:null },
-      { badge:"G-4", name:null, rank:"Major General", points:null, user:null, discord:null },
-    ]
-  },
-  {
-    tier: "Colonel",
-    members: [
-      { badge:"C-1", name:null, rank:"Colonel", points:"35", user:null, discord:null },
-      { badge:"C-2", name:null, rank:"Colonel", points:null, user:null, discord:null },
-    ]
-  },
-  {
-    tier: "Major",
-    members: [
-      { badge:"C-3", name:null, rank:"Major", points:"0", user:null, discord:null },
-      { badge:"C-4", name:null, rank:"Major", points:"15", user:null, discord:null },
-      { badge:"C-5", name:null, rank:"Major", points:"15", user:null, discord:null },
-    ]
-  },
-  {
-    tier: "Captain",
-    members: [
-      { badge:"C-6", name:"Hussain Ali", rank:"Captain", points:"0", user:"N5ZP", discord:"1228858079525863423" },
-      { badge:"C-7", name:"John Marly", rank:"Captain", points:"0", user:"me.7034", discord:"1039977282636357632" },
-      { badge:"C-8", name:"Majed Zom", rank:"Captain", points:"0", user:"3.5ii", discord:"1473616661218332735" },
-    ]
-  },
-  {
-    tier: "First Lieutenant",
-    members: [
-      { badge:"C-9", name:"Abdulaziz Alqahtani", rank:"First Lieutenant", points:"0", user:"h7obsi", discord:"1319457797498208387" },
-      { badge:"C-10", name:"Adolf Oliver", rank:"First Lieutenant", points:"0", user:null, discord:null },
-      { badge:"C-11", name:null, rank:"First Lieutenant", points:"0", user:null, discord:null },
-      { badge:"C-12", name:null, rank:"First Lieutenant", points:"0", user:null, discord:null },
-    ]
-  },
-  {
-    tier: "Lieutenant",
-    members: [
-      { badge:"C-13", name:null, rank:"Lieutenant", points:"0", user:null, discord:null },
-      { badge:"C-14", name:null, rank:"Lieutenant", points:"15", user:null, discord:null },
-      { badge:"C-15", name:null, rank:"Lieutenant", points:"0", user:null, discord:null },
-      { badge:"C-16", name:"Don Self", rank:"Lieutenant", points:"0", user:".eqm.", discord:"988506268731850784" },
-      { badge:"C-17", name:null, rank:"Lieutenant", points:"0", user:null, discord:null },
-      { badge:"C-18", name:null, rank:"Lieutenant", points:"0", user:null, discord:null },
-    ]
-  },
-  {
-    tier: "Staff Sergeant",
-    members: [
-      { badge:"U-1", name:null, rank:"Staff Sergeant", points:"0", user:null, discord:null },
-      { badge:"U-2", name:"Ahmad Almutiri", rank:"Staff Sergeant", points:"15", user:"OT3M", discord:"1445134968396189758" },
-    ]
-  },
+/* ============================================================
+   1) FIREBASE CONFIG — استبدل القيم التالية بإعدادات مشروعك
+      (من Firebase Console → Project settings → Your apps → Web app)
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "PASTE_YOUR_API_KEY",
+  authDomain: "PASTE_YOUR_PROJECT.firebaseapp.com",
+  projectId: "PASTE_YOUR_PROJECT_ID",
+  storageBucket: "PASTE_YOUR_PROJECT.appspot.com",
+  messagingSenderId: "PASTE_SENDER_ID",
+  appId: "PASTE_APP_ID"
+};
+
+/* صاحب الصفحة (Owner) — له صلاحية دائمة + يقدر يدير صلاحيات غيره.
+   غيّر الإيميل التالي لإيميل Google حقك قبل الرفع. */
+const OWNER_EMAILS = ["your-email@gmail.com"];
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const officersRef = db.collection('officers');
+const editorsRef = db.collection('editors');
+
+/* ============================================================
+   2) TIER ORDER — ترتيب سلسلة القيادة (من الأعلى للأدنى)
+   ============================================================ */
+const TIER_ORDER = [
+  {key:"Minister Of Interior", ar:"وزير الداخلية"},
+  {key:"Police Chief", ar:"رئيس الشرطة"},
+  {key:"Chief Of LSPD", ar:"رئيس شرطة لوس سانتوس"},
+  {key:"General", ar:"لواء"},
+  {key:"Major General", ar:"لواء أول"},
+  {key:"Colonel", ar:"عقيد"},
+  {key:"Major", ar:"رائد"},
+  {key:"Captain", ar:"نقيب"},
+  {key:"First Lieutenant", ar:"ملازم أول"},
+  {key:"Lieutenant", ar:"ملازم"},
+  {key:"Staff Sergeant", ar:"رقيب أول"},
+  {key:"Sergeant", ar:"رقيب"},
+  {key:"Corporal", ar:"عريف"},
+  {key:"Officer", ar:"شرطي"},
+  {key:"Cadet", ar:"مرشح"}
 ];
 
-// ---------------- render ----------------
-const chainEl = document.getElementById('chain');
-const noResultsEl = document.getElementById('noResults');
+/* ============================================================
+   3) SEED DATA — نفس بيانات الجدول الأصلي (تُستورد مرة وحدة فقط
+      بواسطة زر "استيراد البيانات الأساسية" لما القاعدة تكون فاضية)
+   ============================================================ */
+const SEED_OFFICERS = [
+  {tier:"Minister Of Interior", badge:"P-1", name:"Rashid Saad", rank:"Minister", points:"N/A", user:"i833.1", discord:"840084298630823946"},
+  {tier:"Minister Of Interior", badge:"P-2", name:"Micheal Arthur", rank:"Deputy Minister", points:"N/A", user:"6zx4", discord:"1263133559951065099"},
+  {tier:"Police Chief", badge:"—", name:"", rank:"Chief Commander", points:"N/A", user:"", discord:""},
+  {tier:"Police Chief", badge:"—", name:"", rank:"Deputy Commander", points:"N/A", user:"", discord:""},
+  {tier:"Chief Of LSPD", badge:"A-1", name:"Ghost James", rank:"Chief of LSPD", points:"N/A", user:"dwlh0", discord:"905889945279922246"},
+  {tier:"Chief Of LSPD", badge:"A-2", name:"", rank:"Deputy Chief LSPD", points:"N/A", user:"", discord:""},
+  {tier:"General", badge:"G-1", name:"", rank:"General", points:"0", user:"", discord:""},
+  {tier:"General", badge:"G-2", name:"Arthur Rain", rank:"General", points:"0", user:"q_zf4", discord:"902222193440718938"},
+  {tier:"Major General", badge:"G-3", name:"", rank:"Major General", points:"0", user:"", discord:""},
+  {tier:"Major General", badge:"G-4", name:"", rank:"Major General", points:"", user:"", discord:""},
+  {tier:"Colonel", badge:"C-1", name:"", rank:"Colonel", points:"35", user:"", discord:""},
+  {tier:"Colonel", badge:"C-2", name:"", rank:"Colonel", points:"", user:"", discord:""},
+  {tier:"Major", badge:"C-3", name:"", rank:"Major", points:"0", user:"", discord:""},
+  {tier:"Major", badge:"C-4", name:"", rank:"Major", points:"15", user:"", discord:""},
+  {tier:"Major", badge:"C-5", name:"", rank:"Major", points:"15", user:"", discord:""},
+  {tier:"Captain", badge:"C-6", name:"Hussain Ali", rank:"Captain", points:"0", user:"N5ZP", discord:"1228858079525863423"},
+  {tier:"Captain", badge:"C-7", name:"John Marly", rank:"Captain", points:"0", user:"me.7034", discord:"1039977282636357632"},
+  {tier:"Captain", badge:"C-8", name:"Majed Zom", rank:"Captain", points:"0", user:"3.5ii", discord:"1473616661218332735"},
+  {tier:"First Lieutenant", badge:"C-9", name:"Abdulaziz Alqahtani", rank:"First Lieutenant", points:"0", user:"h7obsi", discord:"1319457797498208387"},
+  {tier:"First Lieutenant", badge:"C-10", name:"Adolf Oliver", rank:"First Lieutenant", points:"0", user:"", discord:""},
+  {tier:"First Lieutenant", badge:"C-11", name:"", rank:"First Lieutenant", points:"0", user:"", discord:""},
+  {tier:"First Lieutenant", badge:"C-12", name:"", rank:"First Lieutenant", points:"0", user:"", discord:""},
+  {tier:"Lieutenant", badge:"C-13", name:"", rank:"Lieutenant", points:"0", user:"", discord:""},
+  {tier:"Lieutenant", badge:"C-14", name:"", rank:"Lieutenant", points:"15", user:"", discord:""},
+  {tier:"Lieutenant", badge:"C-15", name:"", rank:"Lieutenant", points:"0", user:"", discord:""},
+  {tier:"Lieutenant", badge:"C-16", name:"Don Self", rank:"Lieutenant", points:"0", user:".eqm.", discord:"988506268731850784"},
+  {tier:"Lieutenant", badge:"C-17", name:"", rank:"Lieutenant", points:"0", user:"", discord:""},
+  {tier:"Lieutenant", badge:"C-18", name:"", rank:"Lieutenant", points:"0", user:"", discord:""},
+  {tier:"Staff Sergeant", badge:"U-1", name:"", rank:"Staff Sergeant", points:"0", user:"", discord:""},
+  {tier:"Staff Sergeant", badge:"U-2", name:"Ahmad Almutiri", rank:"Staff Sergeant", points:"15", user:"OT3M", discord:"1445134968396189758"}
+];
 
-function cardHTML(m){
-  const vacant = !m.name || m.name === "-";
-  const nameHTML = vacant
-    ? `<div class="name empty">شاغر</div>`
-    : `<div class="name">${m.name}</div>`;
-  const userDiscord = (m.user && m.user !== "-") || (m.discord && m.discord !== "-")
-    ? `<div class="meta">
-         <span>${m.user && m.user !== "-" ? '@'+m.user : ''}</span>
-         <span class="discord">${m.discord && m.discord !== "-" ? m.discord : ''}</span>
-       </div>`
-    : ``;
+/* ============================================================
+   STATE
+   ============================================================ */
+let currentUser = null;
+let currentRole = 'viewer'; // owner | editor | viewer
+let officers = [];          // live cache from Firestore
+let unsubscribeOfficers = null;
+
+const $ = (id) => document.getElementById(id);
+
+function toast(msg, isError=false){
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(()=> t.className = 'toast', 2600);
+}
+
+/* ============================================================
+   AUTH
+   ============================================================ */
+$('loginBtn').addEventListener('click', () => {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch(err => toast('فشل تسجيل الدخول: ' + err.message, true));
+});
+
+auth.onAuthStateChanged(async (user) => {
+  currentUser = user;
+  const authArea = $('authArea');
+  if (!user){
+    currentRole = 'viewer';
+    document.body.classList.remove('can-edit');
+    authArea.innerHTML = `<button class="btn" id="loginBtn">تسجيل الدخول بـ Google</button>`;
+    document.getElementById('loginBtn').addEventListener('click', () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).catch(err => toast('فشل تسجيل الدخول: ' + err.message, true));
+    });
+    $('manageEditorsBtn').classList.add('hidden');
+    $('seedBtn').classList.add('hidden');
+    render();
+    return;
+  }
+
+  const email = (user.email || '').toLowerCase();
+  if (OWNER_EMAILS.map(e=>e.toLowerCase()).includes(email)){
+    currentRole = 'owner';
+  } else {
+    try{
+      const doc = await editorsRef.doc(email).get();
+      currentRole = doc.exists ? 'editor' : 'viewer';
+    }catch(e){ currentRole = 'viewer'; }
+  }
+
+  document.body.classList.toggle('can-edit', currentRole === 'owner' || currentRole === 'editor');
+  $('manageEditorsBtn').classList.toggle('hidden', currentRole !== 'owner');
+
+  authArea.innerHTML = `
+    <span class="role-pill ${currentRole}">${currentRole === 'owner' ? 'المالك' : currentRole === 'editor' ? 'محرر' : 'زائر'}</span>
+    <span class="user-email">${user.email}</span>
+    <button class="btn btn-sm" id="logoutBtn">خروج</button>`;
+  document.getElementById('logoutBtn').addEventListener('click', () => auth.signOut());
+
+  checkSeedVisibility();
+  render();
+});
+
+/* ============================================================
+   FIRESTORE — realtime officers
+   ============================================================ */
+$('loading').classList.remove('hidden');
+unsubscribeOfficers = officersRef.onSnapshot(snap => {
+  officers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  $('loading').classList.add('hidden');
+  checkSeedVisibility();
+  render();
+}, err => {
+  $('loading').textContent = 'تعذّر الاتصال بقاعدة البيانات — تأكد من تعبئة firebaseConfig وقواعد Firestore.';
+  console.error(err);
+});
+
+function checkSeedVisibility(){
+  const show = currentRole === 'owner' && officers.length === 0;
+  $('seedBtn').classList.toggle('hidden', !show);
+}
+
+$('seedBtn').addEventListener('click', async () => {
+  if (!confirm('استيراد البيانات الأساسية؟ يُفضّل تسويها مرة وحدة بس.')) return;
+  const batch = db.batch();
+  SEED_OFFICERS.forEach(o => batch.set(officersRef.doc(), o));
+  try{
+    await batch.commit();
+    toast('تم استيراد البيانات بنجاح');
+  }catch(e){ toast('فشل الاستيراد: ' + e.message, true); }
+});
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+const chainEl = $('chain');
+
+function cardHTML(o){
+  const vacant = !o.name || o.name.trim() === '' || o.name === '-';
+  const nameHTML = vacant ? `<div class="name empty">شاغر</div>` : `<div class="name">${escapeHTML(o.name)}</div>`;
+  const hasMeta = (o.user && o.user !== '-') || (o.discord && o.discord !== '-');
+  const metaHTML = hasMeta ? `
+    <div class="meta">
+      <span>${o.user && o.user !== '-' ? '@'+escapeHTML(o.user) : ''}</span>
+      <span class="discord">${o.discord && o.discord !== '-' ? escapeHTML(o.discord) : ''}</span>
+    </div>` : '';
+  const actionsHTML = `
+    <div class="actions">
+      <button class="btn btn-sm" onclick="openEditModal('${o.id}')">تعديل</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteOfficer('${o.id}')">حذف</button>
+    </div>`;
   return `
-    <div class="card ${vacant ? 'vacant' : ''}" data-search="${(m.name||'')+' '+m.badge+' '+m.rank}">
+    <div class="card ${vacant ? 'vacant' : ''}" data-search="${(o.name||'')+' '+o.badge+' '+o.rank}">
       <div class="top">
-        <span class="badge-id">${m.badge}</span>
-        <span class="points">PTS <b>${m.points ?? '—'}</b></span>
+        <span class="badge-id">${escapeHTML(o.badge||'—')}</span>
+        <span class="points">PTS <b>${o.points || o.points === '0' ? o.points : '—'}</b></span>
       </div>
       ${nameHTML}
-      <div class="rank">${m.rank}</div>
-      ${userDiscord}
+      <div class="rank">${escapeHTML(o.rank||'')}</div>
+      ${metaHTML}
+      ${actionsHTML}
     </div>`;
+}
+
+function escapeHTML(s){
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 function render(filter=''){
   const q = filter.trim().toLowerCase();
-  let totalOfficers = 0, filled = 0;
+  let total = 0, vacantCount = 0;
   let html = '';
 
-  ROSTER.forEach((tier, i) => {
-    const visibleMembers = tier.members.filter(m => {
-      totalOfficers++;
-      if (m.name && m.name !== '-') filled++;
+  TIER_ORDER.forEach((tier, i) => {
+    const tierOfficers = officers.filter(o => o.tier === tier.key);
+    total += tierOfficers.length;
+    vacantCount += tierOfficers.filter(o => !o.name || o.name.trim()==='').length;
+
+    const visible = tierOfficers.filter(o => {
       if (!q) return true;
-      return (m.name||'').toLowerCase().includes(q)
-          || m.badge.toLowerCase().includes(q)
-          || m.rank.toLowerCase().includes(q)
-          || tier.tier.toLowerCase().includes(q);
+      return (o.name||'').toLowerCase().includes(q)
+          || (o.badge||'').toLowerCase().includes(q)
+          || (o.rank||'').toLowerCase().includes(q)
+          || tier.key.toLowerCase().includes(q);
     });
-    if (q && visibleMembers.length === 0) return;
+    if (q && visible.length === 0) return;
 
     html += `
       <div class="tier">
         <div class="tier-marker">${String(i+1).padStart(2,'0')}</div>
         <div class="tier-head">
-          <h2>${tier.tier}</h2>
-          <span class="count">${tier.members.length} SLOT${tier.members.length>1?'S':''}</span>
+          <h2>${tier.key}</h2>
+          <span class="tier-ar">${tier.ar}</span>
+          <span class="count">${tierOfficers.length} عضو</span>
+          <button class="tier-add" onclick="openAddModal('${tier.key}')">+ إضافة لهذه الرتبة</button>
         </div>
         <div class="roster">
-          ${visibleMembers.map(cardHTML).join('')}
+          ${visible.length ? visible.map(cardHTML).join('') : `<div class="empty-tier">لا يوجد أعضاء في هذه الرتبة بعد</div>`}
         </div>
       </div>`;
   });
 
   chainEl.innerHTML = html;
-  noResultsEl.style.display = (q && html.trim() === '') ? 'block' : 'none';
-
-  document.getElementById('stat-ranks').textContent = ROSTER.length;
-  document.getElementById('stat-officers').textContent = totalOfficers;
-  document.getElementById('stat-filled').textContent = filled;
+  $('noResults').classList.toggle('hidden', !(q && chainEl.innerHTML.trim() === ''));
+  $('stat-ranks').textContent = TIER_ORDER.length;
+  $('stat-officers').textContent = total;
+  $('stat-vacant').textContent = vacantCount;
 }
 
-document.getElementById('search').addEventListener('input', e => render(e.target.value));
+$('search').addEventListener('input', e => render(e.target.value));
+
+/* ============================================================
+   ADD / EDIT MODAL
+   ============================================================ */
+const officerModal = $('officerModalOverlay');
+const tierSelect = $('f-tier');
+TIER_ORDER.forEach(t => {
+  const opt = document.createElement('option');
+  opt.value = t.key; opt.textContent = `${t.key} — ${t.ar}`;
+  tierSelect.appendChild(opt);
+});
+
+function openAddModal(presetTier){
+  $('officerModalTitle').textContent = 'إضافة عضو';
+  $('officerForm').reset();
+  $('f-id').value = '';
+  if (presetTier) tierSelect.value = presetTier;
+  officerModal.classList.add('open');
+}
+window.openAddModal = openAddModal;
+
+window.openEditModal = function(id){
+  const o = officers.find(x => x.id === id);
+  if (!o) return;
+  $('officerModalTitle').textContent = 'تعديل عضو';
+  $('f-id').value = o.id;
+  tierSelect.value = o.tier || '';
+  $('f-badge').value = o.badge || '';
+  $('f-name').value = o.name || '';
+  $('f-rank').value = o.rank || '';
+  $('f-points').value = o.points || '';
+  $('f-user').value = o.user || '';
+  $('f-discord').value = o.discord || '';
+  officerModal.classList.add('open');
+};
+
+window.deleteOfficer = async function(id){
+  if (!confirm('حذف هذا العضو نهائيًا؟')) return;
+  try{
+    await officersRef.doc(id).delete();
+    toast('تم الحذف');
+  }catch(e){ toast('فشل الحذف: ' + e.message, true); }
+};
+
+$('fabAdd').addEventListener('click', () => openAddModal());
+$('officerModalClose').addEventListener('click', () => officerModal.classList.remove('open'));
+$('officerCancelBtn').addEventListener('click', () => officerModal.classList.remove('open'));
+
+$('officerForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const id = $('f-id').value;
+  const data = {
+    tier: tierSelect.value,
+    badge: $('f-badge').value.trim(),
+    name: $('f-name').value.trim(),
+    rank: $('f-rank').value.trim(),
+    points: $('f-points').value.trim(),
+    user: $('f-user').value.trim(),
+    discord: $('f-discord').value.trim()
+  };
+  try{
+    if (id){ await officersRef.doc(id).update(data); toast('تم التحديث'); }
+    else { await officersRef.add(data); toast('تمت الإضافة'); }
+    officerModal.classList.remove('open');
+  }catch(e){ toast('فشل الحفظ: ' + e.message, true); }
+});
+
+/* ============================================================
+   MANAGE EDITORS (owner only)
+   ============================================================ */
+const editorsModal = $('editorsModalOverlay');
+$('manageEditorsBtn').addEventListener('click', () => {
+  editorsModal.classList.add('open');
+  loadEditorsList();
+});
+$('editorsModalClose').addEventListener('click', () => editorsModal.classList.remove('open'));
+
+async function loadEditorsList(){
+  const listEl = $('editorsList');
+  listEl.innerHTML = 'جارِ التحميل...';
+  try{
+    const snap = await editorsRef.get();
+    if (snap.empty){ listEl.innerHTML = '<p style="color:var(--muted-2); font-size:12.5px;">لا يوجد محررون مضافون بعد.</p>'; return; }
+    listEl.innerHTML = snap.docs.map(d => `
+      <div class="editor-row">
+        <span>${d.id}</span>
+        <button class="btn btn-sm btn-danger" onclick="removeEditor('${d.id}')">إزالة</button>
+      </div>`).join('');
+  }catch(e){ listEl.innerHTML = 'تعذّر تحميل القائمة'; }
+}
+
+$('addEditorBtn').addEventListener('click', async () => {
+  const email = $('newEditorEmail').value.trim().toLowerCase();
+  if (!email || !email.includes('@')){ toast('أدخل إيميل صحيح', true); return; }
+  try{
+    await editorsRef.doc(email).set({ addedAt: firebase.firestore.FieldValue.serverTimestamp(), addedBy: currentUser ? currentUser.email : '' });
+    $('newEditorEmail').value = '';
+    toast('تمت إضافة الصلاحية');
+    loadEditorsList();
+  }catch(e){ toast('فشل: ' + e.message, true); }
+});
+
+window.removeEditor = async function(email){
+  if (!confirm('إزالة صلاحية ' + email + '؟')) return;
+  try{
+    await editorsRef.doc(email).delete();
+    toast('تمت الإزالة');
+    loadEditorsList();
+  }catch(e){ toast('فشل: ' + e.message, true); }
+};
+
 render();
 </script>
 
