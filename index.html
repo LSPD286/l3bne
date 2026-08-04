@@ -1,1042 +1,835 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Legend Town | Los Santos Police Department</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎮 لعبة لعبني - Laabni</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #0d0a1a;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --primary: #8b5cf6;
+      --primary-hover: #7c3aed;
+      --accent: #ec4899;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --glow: 0 0 20px rgba(139, 92, 246, 0.4);
+    }
 
-<!-- Firebase compat SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Tajawal', sans-serif;
+      user-select: none;
+    }
 
-<style>
-  :root{
-    --bg:#0a0d13;
-    --panel:#12161f;
-    --panel-2:#171c27;
-    --line:#262e3e;
-    --gold:#c9a227;
-    --gold-dim:#8a7020;
-    --blue:#3b6ea5;
-    --text:#e9e6dc;
-    --muted:#8a93a6;
-    --muted-2:#5b6376;
-    --danger:#a5433b;
-    --ok:#3f8f5f;
-  }
-  *{box-sizing:border-box; margin:0; padding:0;}
-  html{scroll-behavior:smooth;}
-  body{
-    background:
-      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(59,110,165,0.14), transparent 60%),
-      var(--bg);
-    color:var(--text);
-    font-family:'IBM Plex Sans Arabic', sans-serif;
-    min-height:100vh;
-    padding-bottom:120px;
-  }
-  ::selection{ background:var(--gold); color:#0a0d13; }
-  button{ font-family:inherit; cursor:pointer; }
-  input, select, textarea{ font-family:inherit; }
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
 
-  /* ---------- topbar ---------- */
-  .topbar{
-    display:flex; justify-content:space-between; align-items:center;
-    gap:12px; flex-wrap:wrap;
-    padding:14px 24px;
-    border-bottom:1px solid var(--line);
-    background:var(--panel);
-    position:sticky; top:0; z-index:40;
-  }
-  .topbar .brand{
-    font-family:'Oswald', sans-serif;
-    letter-spacing:0.08em;
-    font-size:13px;
-    color:var(--muted);
-    text-transform:uppercase;
-  }
-  .topbar .brand b{ color:var(--gold); }
-  .auth-area{ display:flex; align-items:center; gap:10px; }
-  .role-pill{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:10.5px;
-    padding:4px 10px;
-    border-radius:100px;
-    border:1px solid var(--line);
-    color:var(--muted);
-  }
-  .role-pill.owner{ color:#0a0d13; background:var(--gold); border-color:var(--gold); }
-  .role-pill.editor{ color:var(--gold); border-color:var(--gold-dim); }
-  .user-email{ font-size:12.5px; color:var(--muted); direction:ltr; }
-  .btn{
-    font-size:13px; font-weight:600;
-    padding:9px 16px; border-radius:8px;
-    border:1px solid var(--line);
-    background:var(--panel-2); color:var(--text);
-    transition:all .15s;
-    display:inline-flex; align-items:center; gap:6px;
-  }
-  .btn:hover{ border-color:var(--gold-dim); }
-  .btn-gold{ background:var(--gold); color:#0a0d13; border-color:var(--gold); }
-  .btn-gold:hover{ background:#e0b62f; }
-  .btn-danger{ background:transparent; color:var(--danger); border-color:var(--danger); }
-  .btn-ghost{ background:transparent; }
-  .btn-sm{ padding:6px 10px; font-size:12px; border-radius:6px; }
+    .navbar {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      margin-bottom: 25px;
+    }
 
-  /* ---------- navigation tabs ---------- */
-  .nav-tabs{
-    display:flex; justify-content:center; gap:8px; flex-wrap:wrap;
-    padding:12px 24px; background:var(--panel-2); border-bottom:1px solid var(--line);
-  }
-  .tab-btn{
-    padding:8px 16px; border-radius:6px; border:1px solid transparent;
-    background:transparent; color:var(--muted); font-size:13px; font-weight:600;
-    transition:all 0.2s ease;
-  }
-  .tab-btn:hover{ color:var(--text); background:rgba(255,255,255,0.03); }
-  .tab-btn.active{
-    color:var(--gold); background:var(--panel); border-color:var(--gold-dim);
-  }
+    .brand {
+      font-size: 1.6rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #a78bfa, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-  /* ---------- header ---------- */
-  header{
-    position:relative;
-    padding:40px 24px 30px;
-    text-align:center;
-    border-bottom:1px solid var(--line);
-    overflow:hidden;
-  }
-  header::before{
-    content:"";
-    position:absolute; inset:0;
-    background-image: repeating-linear-gradient(90deg, transparent 0 46px, rgba(255,255,255,0.02) 46px 47px);
-    pointer-events:none;
-  }
-  .eyebrow{
-    font-family:'IBM Plex Mono', monospace;
-    letter-spacing:0.35em; font-size:11px; color:var(--gold);
-    text-transform:uppercase; margin-bottom:12px;
-  }
-  h1{
-    font-family:'Oswald', sans-serif; font-weight:700;
-    font-size:clamp(28px, 5vw, 48px);
-    letter-spacing:0.02em; text-transform:uppercase; line-height:1.05;
-  }
-  h1 span{ color:var(--gold); }
-  .subtitle{ margin-top:10px; color:var(--muted); font-size:14px; max-width:560px; margin-inline:auto; }
-  .badge-strip{ display:flex; justify-content:center; gap:10px; margin-top:20px; flex-wrap:wrap; }
-  .badge-strip .chip{
-    font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--muted);
-    border:1px solid var(--line); padding:6px 14px; border-radius:100px; background:var(--panel);
-  }
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--card-border);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
 
-  /* ---------- section views ---------- */
-  .view-section{ display:none; max-width:980px; margin:30px auto 0; padding:0 24px; }
-  .view-section.active{ display:block; }
+    .nav-btn:hover {
+      background: var(--primary);
+      box-shadow: var(--glow);
+    }
 
-  /* ---------- controls ---------- */
-  .controls{
-    display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:30px;
-  }
-  #search{
-    flex:1; min-width:220px; background:var(--panel); border:1px solid var(--line);
-    color:var(--text); padding:12px 16px; border-radius:8px; font-size:14px;
-    outline:none; transition:border-color .15s;
-  }
-  #search:focus{ border-color:var(--gold); }
-  #search::placeholder{ color:var(--muted-2); }
+    .container {
+      width: 100%;
+      max-width: 900px;
+    }
 
-  /* ---------- chain of command ---------- */
-  .chain{ position:relative; }
-  .chain::before{
-    content:""; position:absolute; left:calc(17px); top:8px; bottom:8px; width:2px;
-    background:linear-gradient(180deg, var(--gold) 0%, var(--blue) 55%, var(--muted-2) 100%);
-    opacity:0.5;
-  }
-  @media (max-width:640px){ .chain::before{ left:14px; } }
+    .screen {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out forwards;
+    }
 
-  .tier{ position:relative; padding-inline-start:64px; margin-bottom:40px; }
-  @media (max-width:640px){ .tier{ padding-inline-start:44px; } }
-  .tier-marker{
-    position:absolute; left:0; top:2px; width:36px; height:36px; border-radius:50%;
-    background:var(--panel-2); border:2px solid var(--gold-dim);
-    display:flex; align-items:center; justify-content:center;
-    font-family:'Oswald', sans-serif; font-size:13px; font-weight:600; color:var(--gold); z-index:2;
-  }
-  .tier-head{ display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
-  .tier-head h2{
-    font-family:'Oswald', sans-serif; text-transform:uppercase; letter-spacing:0.04em;
-    font-size:19px; font-weight:600;
-  }
-  .tier-head .tier-ar{ font-size:14px; color:var(--gold); font-weight:500; }
-  .tier-head .count{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--muted-2); }
-  .tier-add{
-    margin-inline-start:auto;
-    font-family:'IBM Plex Mono', monospace; font-size:11px;
-    color:var(--muted); border:1px dashed var(--line); background:transparent;
-    padding:4px 10px; border-radius:6px; display:none;
-  }
-  body.can-edit .tier-add{ display:inline-block; }
-  .tier-add:hover{ border-color:var(--gold); color:var(--gold); }
+    .screen.active {
+      display: block;
+    }
 
-  .roster{ display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:12px; }
-  .empty-tier{
-    grid-column:1/-1; color:var(--muted-2); font-size:12.5px;
-    border:1px dashed var(--line); border-radius:8px; padding:14px; text-align:center;
-  }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-  .card{
-    background:var(--panel); border:1px solid var(--line); border-radius:10px;
-    padding:14px 14px 12px; position:relative; transition:border-color .15s, transform .15s;
-  }
-  .card:hover{ border-color:var(--gold-dim); }
-  .card .top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
-  .card .badge-id{
-    font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--gold);
-    border:1px solid var(--gold-dim); padding:2px 8px; border-radius:4px;
-  }
-  .card .points{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--muted); }
-  .card .points b{ color:var(--text); font-weight:600; }
-  .card .name{ font-size:15.5px; font-weight:600; margin-bottom:1px; }
-  .card .name.empty{ color:var(--muted-2); font-weight:400; }
-  .card .rank{ font-size:12.5px; color:var(--muted); margin-bottom:8px; }
-  .card .meta{
-    display:flex; justify-content:space-between; align-items:center;
-    border-top:1px dashed var(--line); padding-top:8px;
-    font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--muted-2);
-  }
-  .card .meta .discord{ direction:ltr; }
-  .card .actions{
-    display:none; gap:6px; margin-top:10px; padding-top:8px; border-top:1px dashed var(--line);
-  }
-  body.can-edit .card .actions{ display:flex; }
-  .card .actions button{ flex:1; }
-  .card.vacant{
-    background:repeating-linear-gradient(135deg, var(--panel) 0 10px, var(--panel-2) 10px 20px);
-    opacity:0.75;
-  }
+    .hero {
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      backdrop-filter: blur(10px);
+    }
 
-  /* ---------- Content Grid for Guides ---------- */
-  .grid-2col { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
-  .info-box {
-    background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; margin-bottom: 15px;
-  }
-  .info-box h3 { font-family: 'Oswald', sans-serif; color: var(--gold); margin-bottom: 10px; font-size: 18px; display: flex; align-items: center; gap: 8px; }
-  .info-box h4 { color: var(--blue); margin: 12px 0 6px 0; font-size: 15px; }
-  .info-box p, .info-box ul { font-size: 13.5px; color: var(--muted); line-height: 1.6; }
-  .info-box ul { padding-right: 20px; }
-  .info-box li { margin-bottom: 6px; }
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
 
-  .code-badge {
-    font-family: 'IBM Plex Mono', monospace; font-weight: 700; color: var(--gold);
-    background: rgba(201, 162, 39, 0.1); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--gold-dim);
-  }
+    .hero p {
+      color: var(--text-muted);
+      margin-bottom: 30px;
+      font-size: 1.1rem;
+    }
 
-  /* Tables inside Guides */
-  .styled-table {
-    width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px;
-  }
-  .styled-table th, .styled-table td {
-    border: 1px solid var(--line); padding: 8px 12px; text-align: right;
-  }
-  .styled-table th { background: var(--panel-2); color: var(--gold); font-family: 'Oswald', sans-serif; }
-  .styled-table tr:nth-child(even) { background: rgba(255,255,255,0.01); }
+    .btn-main {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      border: none;
+      padding: 14px 36px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: var(--glow);
+      transition: transform 0.2s ease;
+    }
 
-  /* ---------- FAB ---------- */
-  .fab{
-    position:fixed; bottom:28px; left:28px; z-index:50;
-    background:var(--gold); color:#0a0d13; border:none;
-    width:56px; height:56px; border-radius:50%;
-    font-size:26px; font-weight:700; box-shadow:0 6px 20px rgba(0,0,0,.4);
-    display:none; align-items:center; justify-content:center;
-  }
-  body.can-edit .fab{ display:flex; }
-  .fab:hover{ transform:scale(1.06); }
+    .btn-main:hover {
+      transform: scale(1.05);
+    }
 
-  /* ---------- modal ---------- */
-  .modal-overlay{
-    display:none; position:fixed; inset:0; background:rgba(5,7,11,0.75);
-    z-index:100; align-items:flex-start; justify-content:center; padding:5vh 16px; overflow-y:auto;
-  }
-  .modal-overlay.open{ display:flex; }
-  .modal{
-    background:var(--panel); border:1px solid var(--line); border-radius:12px;
-    width:100%; max-width:460px; padding:24px;
-  }
-  .modal h3{ font-family:'Oswald', sans-serif; text-transform:uppercase; font-size:18px; margin-bottom:18px; }
-  .field{ margin-bottom:14px; }
-  .field label{ display:block; font-size:12px; color:var(--muted); margin-bottom:6px; }
-  .field input, .field select, .field textarea{
-    width:100%; background:var(--panel-2); border:1px solid var(--line); color:var(--text);
-    padding:10px 12px; border-radius:7px; font-size:13.5px; outline:none;
-  }
-  .field input:focus, .field select:focus, .field textarea:focus{ border-color:var(--gold); }
-  .modal-actions{ display:flex; gap:10px; margin-top:20px; }
-  .modal-actions .btn{ flex:1; }
-  .modal-close{
-    background:none; border:none; color:var(--muted); float:left; font-size:20px; line-height:1;
-  }
+    .setup-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 25px;
+      margin-bottom: 20px;
+    }
 
-  .editor-row{
-    display:flex; justify-content:space-between; align-items:center;
-    padding:8px 0; border-bottom:1px solid var(--line); font-size:13px;
-  }
-  .editor-row:last-child{ border-bottom:none; }
-  .editor-row span{ direction:ltr; color:var(--text); font-family:'IBM Plex Mono', monospace; font-size:12px; }
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
 
-  .toast{
-    position:fixed; bottom:28px; right:28px; z-index:200;
-    background:var(--panel-2); border:1px solid var(--gold-dim); color:var(--text);
-    padding:12px 18px; border-radius:8px; font-size:13px; display:none;
-    box-shadow:0 6px 20px rgba(0,0,0,.4);
-  }
-  .toast.error{ border-color:var(--danger); }
-  .toast.show{ display:block; }
+    input[type="text"] {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--card-border);
+      background: rgba(0,0,0,0.3);
+      color: white;
+      font-size: 1rem;
+    }
 
-  .notice{
-    max-width:980px; margin:40px auto 0; padding:20px 24px;
-    border:1px solid var(--line); border-inline-start:3px solid var(--gold-dim);
-    background:var(--panel); border-radius:8px; color:var(--muted); font-size:13px; line-height:1.8;
-  }
-  footer{
-    text-align:center; margin-top:40px; color:var(--muted-2);
-    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.08em;
-  }
-  .no-results, .loading{
-    text-align:center; color:var(--muted-2); padding:40px 0;
-    font-family:'IBM Plex Mono', monospace; font-size:13px;
-  }
-  .hidden{ display:none !important; }
-</style>
+    .players-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .player-tag {
+      background: var(--primary);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .player-tag span {
+      cursor: pointer;
+      color: #fca5a5;
+      font-weight: bold;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 18px;
+    }
+
+    .game-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .game-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-5px);
+      box-shadow: var(--glow);
+    }
+
+    .game-icon {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .playground {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .timer-display {
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: var(--accent);
+      margin: 20px 0;
+    }
+
+    .question-box {
+      font-size: 1.5rem;
+      font-weight: bold;
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.2);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .answer-box {
+      font-size: 1.2rem;
+      color: #34d399;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-sec {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--card-border);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-sec:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .modal {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #15102a;
+      border: 1px solid var(--card-border);
+      padding: 25px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 480px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      font-size: 1.05rem;
+    }
+
+    .rules-list {
+      text-align: right;
+      margin: 15px 0;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    .rules-list li {
+      margin-bottom: 8px;
+    }
+  </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="brand">LEGEND TOWN &middot; <b>LSPD</b> REGISTRY</div>
-  <div class="auth-area" id="authArea">
-    <button class="btn" id="loginBtn">تسجيل الدخول بـ Google</button>
-  </div>
-</div>
-
-<div class="nav-tabs">
-  <button class="tab-btn active" onclick="switchTab('roster-sec')"><i class="fa-solid fa-users"></i> جدول الأفراد</button>
-  <button class="tab-btn" onclick="switchTab('permissions-sec')"><i class="fa-solid fa-shield-halved"></i> الصلاحيات</button>
-  <button class="tab-btn" onclick="switchTab('promotions-sec')"><i class="fa-solid fa-award"></i> الترقيات والبنود</button>
-  <button class="tab-btn" onclick="switchTab('safe-escape-sec')"><i class="fa-solid fa-car-burst"></i> مفشلات الهروب</button>
-  <button class="tab-btn" onclick="switchTab('wings-sec')"><i class="fa-solid fa-plane-wings"></i> الويقات Wings</button>
-  <button class="tab-btn" onclick="switchTab('codes-sec')"><i class="fa-solid fa-radio"></i> البروتوكولات والأكواد</button>
-  <button class="tab-btn" onclick="switchTab('uniforms-sec')"><i class="fa-solid fa-shirt"></i> ملابس الشرطة</button>
-</div>
-
-<header>
-  <div class="eyebrow">LEGEND TOWN &middot; ROLEPLAY SERVER</div>
-  <h1>Los Santos <span>Police</span> Department</h1>
-  <p class="subtitle">السجل والتصريح الرسمي لدليل وإدارة شرطة لوس سانتوس.</p>
-  <div class="badge-strip">
-    <span class="chip">الرتب: <span id="stat-ranks">0</span></span>
-    <span class="chip">إجمالي الأعضاء: <span id="stat-officers">0</span></span>
-    <span class="chip">الشواغر: <span id="stat-vacant">0</span></span>
-  </div>
-</header>
-
-<!-- ================= 1) ROSTER TAB ================= -->
-<div id="roster-sec" class="view-section active">
-  <div class="controls">
-    <input id="search" type="text" placeholder="ابحث بالاسم، رقم الشارة، أو الرتبة...">
-    <button class="btn hidden" id="manageEditorsBtn">إدارة الصلاحيات</button>
-    <button class="btn btn-gold hidden" id="seedBtn">استيراد البيانات الأساسية</button>
-  </div>
-
-  <div id="loading" class="loading">جارِ تحميل البيانات من القاعدة...</div>
-  <div class="chain" id="chain"></div>
-  <div class="no-results hidden" id="noResults">لا توجد نتائج مطابقة</div>
-</div>
-
-<!-- ================= 2) PERMISSIONS TAB ================= -->
-<div id="permissions-sec" class="view-section">
-  <div class="grid-2col">
-    <div class="info-box">
-      <h3><i class="fa-solid fa-user-tie"></i> صلاحيات سلم الضباط (LT - 1LT - Cpt - Maj)</h3>
-      <ul>
-        <li><b>إشراف على مسؤول الفترة والرقباء وإدارة القسم</b> (إجباري).</li>
-        <li><b>إنذار:</b> يحق للضباط استدعاء المحكمة ومحاسبة الفرد بما يراه مناسباً مع رفع تقرير للشؤون.</li>
-        <li><b>صرف نقاط (حد 15 نقطة) أسبوعياً</b> مع رفع تقرير لإدارة الشرطة.</li>
-        <li><b>دخول كمواطن بدون طلب إذن.</b></li>
-        <li><b>صرف أي مركبة أو أي وينق في الميدان</b> إلى حين تسجيل خروجك.</li>
-        <li><b>عمل تحديات ميدانية</b> سواء داخل السيرفر أو رومات الديسكورد.</li>
-        <li><b>صلاحيات سلم الرقباء بشكل كامل.</b></li>
-        <li><b>صلاحيات اللبس الخاص ولكن:</b> بشرط زي عسكري صحيح ويرمز إلى قطاعك.</li>
-      </ul>
-    </div>
-
-    <div class="info-box">
-      <h3><i class="fa-solid fa-user-shield"></i> صلاحيات سلم الرقباء (Sgt - 1Sgt - Ssgt)</h3>
-      <ul>
-        <li><b>إدارة الحالات</b> (يطبق إجبارياً في أي وجود).</li>
-        <li><b>محاسبة الأفراد المخالفين ميدانياً</b> | عقوبات عسكرية.</li>
-        <li><b>التوجيه العسكري الصحيح</b> بدون عبارات سوقية.</li>
-        <li>في حال عسكري خالف يتوجه الرقيب لمكتب الشؤون بشكل مباشر.</li>
-        <li><b>استلام مسؤولية الفترة</b> (إجباري).</li>
-        <li>في حال حاجة الميدان له (لن يستعلم فقط، Motorcycle أو AirShip صرف وتنسيق).</li>
-        <li><b>يحق لك إقامة صف دوام</b> لجميع الوحدات المتواجدة في الميدان.</li>
-        <li><b>يحق لك مصادرة المركبات بالأيام</b> (يومين كحد أقصى).</li>
-      </ul>
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="brand">🎮 لعبني</div>
+    <div style="display: flex; gap: 10px;">
+      <button class="nav-btn" onclick="shareGame()">🔗 مشاركة اللعبة</button>
+      <button class="nav-btn" onclick="showScreen('screen-home')">الرئيسية</button>
+      <button class="nav-btn" onclick="openSettings()">⚙️ الإعدادات</button>
     </div>
   </div>
-</div>
 
-<!-- ================= 3) PROMOTIONS TAB ================= -->
-<div id="promotions-sec" class="view-section">
-  <div class="info-box">
-    <h3><i class="fa-solid fa-award"></i> النقاط العسكرية ومستوجبات الترقية</h3>
-    <table class="styled-table">
-      <thead>
-        <tr>
-          <th>مسار الترقية</th>
-          <th>النقاط والاشتراطات المطلوبة</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>Cadet &rarr; Solo Cadet</td><td>100 نقطة</td></tr>
-        <tr><td>Solo Cadet &rarr; Officer 1</td><td>200 نقطة</td></tr>
-        <tr><td>Officer 1 &rarr; Officer 2</td><td>300 نقطة</td></tr>
-        <tr><td>Officer 2 &rarr; Officer 3</td><td>400 نقطة</td></tr>
-        <tr><td>Officer 3 &rarr; Senior Officer</td><td>550 نقطة</td></tr>
-        <tr><td>Senior Officer &rarr; Senior Lead Officer</td><td>700 نقطة</td></tr>
-        <tr><td>Senior Lead Officer &rarr; Sergeant</td><td>900 نقطة</td></tr>
-        <tr><td>Sergeant &rarr; First Sergeant</td><td>1100 نقطة + إثبات جدارة</td></tr>
-        <tr><td>First Sergeant &rarr; Staff Sergeant</td><td>1600 نقطة + إثبات جدارة</td></tr>
-        <tr><td>Staff Sergeant &rarr; Lieutenant</td><td>2100 نقطة + إثبات جدارة</td></tr>
-        <tr><td>Lieutenant &rarr; First Lieutenant</td><td>2600 نقطة + إثبات جدارة</td></tr>
-        <tr><td>First Lieutenant &rarr; Captain</td><td>إثبات جدارة + اتفاق من القادات</td></tr>
-        <tr><td>Captain &rarr; Major</td><td>إثبات جدارة + اتفاق من القادات</td></tr>
-        <tr><td>Major &rarr; Colonel</td><td>اتفاق من رئاسة الشرطة والوزير ونائبه</td></tr>
-        <tr><td>Colonel &rarr; Major General</td><td>اتفاق من رئاسة الشرطة والوزير ونائبه</td></tr>
-      </tbody>
-    </table>
-    <br>
-    <p style="color:var(--gold); border: 1px dashed var(--gold-dim); padding:10px; border-radius:6px;">
-      <i class="fa-solid fa-triangle-exclamation"></i> <b>تنويه:</b> الحد الأقصى لصرف النقاط اليومي هو <b>25 نقطة</b>، إلا في حال وجود حالة كبيرة يسمح إلى <b>50 نقطة</b>.
-    </p>
-  </div>
-</div>
+  <div class="container">
 
-<!-- ================= 4) SAFE ESCAPE TAB ================= -->
-<div id="safe-escape-sec" class="view-section">
-  <div class="info-box">
-    <h3><i class="fa-solid fa-car-burst"></i> مفشلات الهروب الآمن (Safe Escape)</h3>
-    <ul>
-      <li>في حال نزول الشخص وبيده سلاح أو تم توجيه السلاح بشكل واضح.</li>
-      <li>تغيير المركبة.</li>
-      <li>يمنع خروج سيارات السوبر على الطرق السريعة وتعود للمفاوض لفرضها أو تركها.</li>
-      <li>تهديد حياة المواطنين أو الشرطي كـ عكس السير أو تصدميهم.</li>
-      <li>التوجه أو القرب إلى البحر.</li>
-      <li>القفزات بشكل عام.</li>
-      <li>الدخول إلى أماكن ضيقة أو الأنفاق.</li>
-      <li>دخولك إلى ورشة التصليح.</li>
-      <li>في حال السيارة كانت أوف رود يمنع صعود الجبال.</li>
-      <li>التدخل الخارجي.</li>
-      <li>الصعود على الأرصفة (الحد الأقصى 3 أرصفة).</li>
-      <li>العكسات (الحد الأقصى 3 عكسات).</li>
-      <li>في الهروب الشخص على الأقدام وبيده سلاح لمدة 5 ثواني يتم إطلاق النار على أطرافه بشكل متقطع.</li>
-      <li>الحد الأقصى للهروب: <b>10 دقائق</b>.</li>
-      <li>إخراج سلاح بشكل واضح.</li>
-    </ul>
-  </div>
-</div>
-
-<!-- ================= 5) WINGS TAB ================= -->
-<div id="wings-sec" class="view-section">
-  <div class="grid-2col">
-    <div class="info-box">
-      <h3><i class="fa-solid fa-crown"></i> قادة الويقات (Wings Commanders)</h3>
-      <ul>
-        <li>Police Wings Commander</li>
-        <li>Field Commander</li>
-        <li>AirShip Commander</li>
-        <li>MotorCycle Commander</li>
-        <li>Negotiator Commander</li>
-        <li>Dispatch Commander</li>
-        <li>Interceptor Commander</li>
-        <li>S.W.A.T Commander</li>
-      </ul>
-    </div>
-    <div class="info-box">
-      <h3><i class="fa-solid fa-vest"></i> ملابس الويقات (Wings Outfits)</h3>
-      <h4>AirShip</h4>
-      <p>Mask | Scarf & Chains | Jackets | Shirt | Glasses | Hats | Hands | Legs | Shoes</p>
-      <h4>Motorcycle</h4>
-      <p>Mask | Scarf & Chains | Jackets | Shirt | Glasses | Hats | Hands | Legs | Shoes</p>
-      <h4>Gang Unit</h4>
-      <p>Mask | Scarf & Chains | Jackets | Shirt | Body Armor | Bags and Parachute | Hands | Legs | Shoes | Glasses | Hats</p>
-    </div>
-  </div>
-</div>
-
-<!-- ================= 6) CODES TAB ================= -->
-<div id="codes-sec" class="view-section">
-  <div class="info-box">
-    <h3><i class="fa-solid fa-radio"></i> Radio Protocols [10 Codes]</h3>
-    <table class="styled-table">
-      <thead>
-        <tr><th>الكود</th><th>طريقة الإبلاغ</th><th>البيان/المعنى</th></tr>
-      </thead>
-      <tbody>
-        <tr><td><span class="code-badge">10-0</span></td><td>U-1 TO Dispatch | 10-0</td><td>إلغاء بلاغ / الانتهاء من الحالة</td></tr>
-        <tr><td><span class="code-badge">10-1</span></td><td>U-1 TO Dispatch | 10-1</td><td>مطاردة مركبة</td></tr>
-        <tr><td><span class="code-badge">10-2</span></td><td>U-1 TO Dispatch | 10-2</td><td>غير صحيح</td></tr>
-        <tr><td><span class="code-badge">10-3</span></td><td>U-1 TO Dispatch | 10-3</td><td>استيقاف (مروري - جنائي)</td></tr>
-        <tr><td><span class="code-badge">10-4</span></td><td>U-1 TO Dispatch | 10-4</td><td>صحيح أو استلمت</td></tr>
-        <tr><td><span class="code-badge">10-5</span></td><td>U-1 TO Dispatch | 10-5</td><td>سرقة السيارة</td></tr>
-        <tr><td><span class="code-badge">10-6</span></td><td>U-1 TO Dispatch | 10-6</td><td>سرقة المنزل</td></tr>
-        <tr><td><span class="code-badge">10-7</span></td><td>U-1 TO Dispatch | 10-7</td><td>سرقة بقالة</td></tr>
-        <tr><td><span class="code-badge">10-8</span></td><td>U-1 TO Dispatch | 10-8</td><td>سرقة مجوهرات</td></tr>
-        <tr><td><span class="code-badge">10-9</span></td><td>U-1 TO Dispatch | 10-9</td><td>سرقة فليكا</td></tr>
-        <tr><td><span class="code-badge">10-10</span></td><td>U-1 TO Dispatch | 10-10</td><td>سرقة البنك المركزي</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="grid-2col">
-    <div class="info-box">
-      <h3><i class="fa-solid fa-building-shield"></i> أكواد السرقات (Robbery Codes)</h3>
-      <table class="styled-table">
-        <tbody>
-          <tr><td><span class="code-badge">10-11</span></td><td>سرقة بوليتو</td></tr>
-          <tr><td><span class="code-badge">10-12</span></td><td>سرقة بوب كات</td></tr>
-          <tr><td><span class="code-badge">10-13</span></td><td>سرقة ATM</td></tr>
-          <tr><td><span class="code-badge">10-19</span></td><td>هروب على الأقدام</td></tr>
-          <tr><td><span class="code-badge">10-20</span></td><td>موقعك</td></tr>
-          <tr><td><span class="code-badge">20-2</span></td><td>طلق نار</td></tr>
-          <tr><td><span class="code-badge">20-3</span></td><td>احتاج دعم</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="info-box">
-      <h3><i class="fa-solid fa-headset"></i> Codes العامة والعبارات الإنجليزية</h3>
-      <ul>
-        <li><b>Code 0:</b> عموم الوحدات توجه للحالة (استنفار أمني).</li>
-        <li><b>Code 1:</b> اغلق السير sirens والوانتات.</li>
-        <li><b>Code 2:</b> اشغل السيراني فقط.</li>
-        <li><b>Code 3:</b> اشغل السيراني والوانتات.</li>
-        <li><b>Code 4:</b> المكان امن وخالي.</li>
-        <li><b>Code 6:</b> مسح البصمات واخذ صور لموقع الجريمة.</li>
-        <li><b>Code 7:</b> سحر او فلتش.</li>
-        <li><b>Shots fire:</b> تبادل إطلاق نار.</li>
-        <li><b>Officer down:</b> شرطي مسقط.</li>
-        <li><b>Dispatch Responding to:</b> مركز العمليات استقبلت - متوجه إلى.</li>
-        <li><b>I Need Backup:</b> احتاج دعم.</li>
-        <li><b>Pit Maneuver:</b> صدمة احترافية.</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<!-- ================= 7) UNIFORMS TAB ================= -->
-<div id="uniforms-sec" class="view-section">
-  <div class="info-box">
-    <h3><i class="fa-solid fa-shirt"></i> ملابس الشرطة LSPD Outfits</h3>
-    <p>القائمة الموحدة لأرقام قطع الملابس الرسمية للقطاع:</p>
-    <br>
-    <ul>
-      <li><b>الرتب المشمولة:</b> All Officers, Staff Sergeant, First Sergeant, Sergeant, Senior Lead Officer, Senior Officer, Officer III, Officer II, Officer I, Solo Cadet, Cadet.</li>
-      <li><b>القطع المحددة لكل رتبة:</b> السترة (Jacket)، القميص (Shirt)، القفازات (Gloves)، البنطال (Legs)، الأحذية (Shoes)، الشارات (Decals)، القبعة (Hat)، الوشاح (Scarf and chains)، الدرع (Body Armor)، الحقائب (Bags).</li>
-    </ul>
-  </div>
-</div>
-
-<button class="fab" id="fabAdd" title="إضافة عضو">+</button>
-
-<div class="notice">
-  البيانات تُقرأ وتُكتب مباشرة من قاعدة بيانات حية (Firestore) — أي تعديل يظهر للجميع فورًا بدون رفع ملفات.
-  الصلاحيات محصورة بإيميلات Google محدّدة عن طريق زر "إدارة الصلاحيات" (يظهر فقط لصاحب الصفحة).
-</div>
-
-<footer>LSPD // LEGEND TOWN &middot; CHAIN OF COMMAND REGISTRY</footer>
-
-<!-- ============ Add / Edit modal ============ -->
-<div class="modal-overlay" id="officerModalOverlay">
-  <div class="modal">
-    <button class="modal-close" id="officerModalClose">&times;</button>
-    <h3 id="officerModalTitle">إضافة عضو</h3>
-    <form id="officerForm">
-      <input type="hidden" id="f-id">
-      <div class="field">
-        <label>الرتبة الرئيسية (التبويب)</label>
-        <select id="f-tier" required></select>
+    <!-- Screen 1: Home -->
+    <div id="screen-home" class="screen active">
+      <div class="hero">
+        <h1>مرحباً بك في «لعبني»</h1>
+        <p>مجموعة ألعاب جماعية ممتعة تعمل على جهاز واحد للجمعات والعائلات!</p>
+        <button class="btn-main" onclick="showScreen('screen-players')">ابدأ اللعب الان 🚀</button>
       </div>
-      <div class="field"><label>رقم الشارة</label><input id="f-badge" placeholder="مثال: C-19" required></div>
-      <div class="field"><label>الاسم (اتركه فارغ إذا الشاغر مو معبّى)</label><input id="f-name" placeholder="اسم العضو"></div>
-      <div class="field"><label>الرتبة الدقيقة</label><input id="f-rank" placeholder="مثال: Captain" required></div>
-      <div class="field"><label>النقاط</label><input id="f-points" placeholder="0"></div>
-      <div class="field"><label>اليوزر (In-game)</label><input id="f-user" placeholder="اختياري"></div>
-      <div class="field"><label>Discord ID</label><input id="f-discord" placeholder="اختياري"></div>
-      <div class="modal-actions">
-        <button type="button" class="btn btn-ghost" id="officerCancelBtn">إلغاء</button>
-        <button type="submit" class="btn btn-gold">حفظ</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- ============ Manage editors modal (owner only) ============ -->
-<div class="modal-overlay" id="editorsModalOverlay">
-  <div class="modal">
-    <button class="modal-close" id="editorsModalClose">&times;</button>
-    <h3>إدارة الصلاحيات</h3>
-    <p style="color:var(--muted); font-size:12.5px; margin-bottom:14px;">
-      أضف إيميل Google لأي شخص تبي يقدر يضيف/يعدّل/يحذف من الجدول.
-    </p>
-    <div class="field" style="display:flex; gap:8px; align-items:flex-end;">
-      <div style="flex:1;">
-        <label>إيميل Google</label>
-        <input id="newEditorEmail" placeholder="fahadalotaibi0084@gmail.com">
-      </div>
-      <button class="btn btn-gold btn-sm" id="addEditorBtn">إضافة</button>
     </div>
-    <div id="editorsList" style="margin-top:16px;"></div>
-  </div>
-</div>
 
-<div class="toast" id="toast"></div>
-
-<script>
-/* ============================================================
-   1) FIREBASE CONFIG
-   ============================================================ */
-const firebaseConfig = {
-  apiKey: "AIzaSyBTTj1ww1VPYIHu1SyMg_KSYHZRcF8dRHI",
-  authDomain: "swat-system-384b0.firebaseapp.com",
-  projectId: "swat-system-384b0",
-  storageBucket: "swat-system-384b0.firebasestorage.app",
-  messagingSenderId: "874029124115",
-  appId: "1:874029124115:web:27657c0137fe73ec50cde6"
-};
-
-const OWNER_EMAILS = ["fahadalotaibi0084@gmail.com"];
-const DISCORD_WEBHOOK_URL = "";
-
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-const officersRef = db.collection('officers');
-const editorsRef = db.collection('editors');
-
-/* ============================================================
-   2) TIER ORDER — ترتيب سلسلة القيادة
-   ============================================================ */
-const TIER_ORDER = [
-  {key:"Minister Of Interior", ar:"وزير الداخلية"},
-  {key:"Police Chief", ar:"رئيس الشرطة"},
-  {key:"Chief Of LSPD", ar:"رئيس شرطة لوس سانتوس"},
-  {key:"General", ar:"لواء"},
-  {key:"Major General", ar:"لواء أول"},
-  {key:"Colonel", ar:"عقيد"},
-  {key:"Major", ar:"رائد"},
-  {key:"Captain", ar:"نقيب"},
-  {key:"First Lieutenant", ar:"ملازم أول"},
-  {key:"Lieutenant", ar:"ملازم"},
-  {key:"Staff Sergeant", ar:"رقيب أول"},
-  {key:"Sergeant", ar:"رقيب"},
-  {key:"Corporal", ar:"عريف"},
-  {key:"Officer", ar:"شرطي"},
-  {key:"Cadet", ar:"مرشح"}
-];
-
-/* ============================================================
-   3) SEED DATA
-   ============================================================ */
-const SEED_OFFICERS = [
-  {tier:"Minister Of Interior", badge:"P-1", name:"Rashid Saad", rank:"Minister", points:"N/A", user:"i833.1", discord:"840084298630823946"},
-  {tier:"Minister Of Interior", badge:"P-2", name:"Micheal Arthur", rank:"Deputy Minister", points:"N/A", user:"6zx4", discord:"1263133559951065099"},
-  {tier:"Police Chief", badge:"—", name:"", rank:"Chief Commander", points:"N/A", user:"", discord:""},
-  {tier:"Police Chief", badge:"—", name:"", rank:"Deputy Commander", points:"N/A", user:"", discord:""},
-  {tier:"Chief Of LSPD", badge:"A-1", name:"Ghost James", rank:"Chief of LSPD", points:"N/A", user:"dwlh0", discord:"905889945279922246"},
-  {tier:"Chief Of LSPD", badge:"A-2", name:"", rank:"Deputy Chief LSPD", points:"N/A", user:"", discord:""},
-  {tier:"General", badge:"G-1", name:"", rank:"General", points:"0", user:"", discord:""},
-  {tier:"General", badge:"G-2", name:"Arthur Rain", rank:"General", points:"0", user:"q_zf4", discord:"902222193440718938"},
-  {tier:"Major General", badge:"G-3", name:"", rank:"Major General", points:"0", user:"", discord:""},
-  {tier:"Major General", badge:"G-4", name:"", rank:"Major General", points:"", user:"", discord:""},
-  {tier:"Colonel", badge:"C-1", name:"", rank:"Colonel", points:"35", user:"", discord:""},
-  {tier:"Colonel", badge:"C-2", name:"", rank:"Colonel", points:"", user:"", discord:""},
-  {tier:"Major", badge:"C-3", name:"", rank:"Major", points:"0", user:"", discord:""},
-  {tier:"Major", badge:"C-4", name:"", rank:"Major", points:"15", user:"", discord:""},
-  {tier:"Major", badge:"C-5", name:"", rank:"Major", points:"15", user:"", discord:""},
-  {tier:"Captain", badge:"C-6", name:"Hussain Ali", rank:"Captain", points:"0", user:"N5ZP", discord:"1228858079525863423"},
-  {tier:"Captain", badge:"C-7", name:"John Marly", rank:"Captain", points:"0", user:"me.7034", discord:"1039977282636357632"},
-  {tier:"Captain", badge:"C-8", name:"Majed Zom", rank:"Captain", points:"0", user:"3.5ii", discord:"1473616661218332735"},
-  {tier:"First Lieutenant", badge:"C-9", name:"Abdulaziz Alqahtani", rank:"First Lieutenant", points:"0", user:"h7obsi", discord:"1319457797498208387"},
-  {tier:"First Lieutenant", badge:"C-10", name:"Adolf Oliver", rank:"First Lieutenant", points:"0", user:"", discord:""},
-  {tier:"First Lieutenant", badge:"C-11", name:"", rank:"First Lieutenant", points:"0", user:"", discord:""},
-  {tier:"First Lieutenant", badge:"C-12", name:"", rank:"First Lieutenant", points:"0", user:"", discord:""},
-  {tier:"Lieutenant", badge:"C-13", name:"", rank:"Lieutenant", points:"0", user:"", discord:""},
-  {tier:"Lieutenant", badge:"C-14", name:"", rank:"Lieutenant", points:"15", user:"", discord:""},
-  {tier:"Lieutenant", badge:"C-15", name:"", rank:"Lieutenant", points:"0", user:"", discord:""},
-  {tier:"Lieutenant", badge:"C-16", name:"Don Self", rank:"Lieutenant", points:"0", user:".eqm.", discord:"988506268731850784"},
-  {tier:"Lieutenant", badge:"C-17", name:"", rank:"Lieutenant", points:"0", user:"", discord:""},
-  {tier:"Lieutenant", badge:"C-18", name:"", rank:"Lieutenant", points:"0", user:"", discord:""},
-  {tier:"Staff Sergeant", badge:"U-1", name:"", rank:"Staff Sergeant", points:"0", user:"", discord:""},
-  {tier:"Staff Sergeant", badge:"U-2", name:"Ahmad Almutiri", rank:"Staff Sergeant", points:"15", user:"OT3M", discord:"1445134968396189758"}
-];
-
-let currentUser = null;
-let currentRole = 'viewer';
-let officers = [];
-let unsubscribeOfficers = null;
-
-const $ = (id) => document.getElementById(id);
-
-function switchTab(tabId) {
-  document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  
-  $(tabId).classList.add('active');
-  event.currentTarget.classList.add('active');
-}
-
-function toast(msg, isError=false){
-  const t = $('toast');
-  t.textContent = msg;
-  t.className = 'toast show' + (isError ? ' error' : '');
-  setTimeout(()=> t.className = 'toast', 2600);
-}
-
-function escapeHTML(str) {
-  return String(str || '').replace(/[&<>"']/g, function(m) {
-    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
-  });
-}
-
-function logToDiscord(action, officer){
-  if (!DISCORD_WEBHOOK_URL) return;
-  const actorEmail = currentUser ? currentUser.email : 'غير معروف';
-  const colors = { 'إضافة': 3066993, 'تعديل': 3447003, 'حذف': 15158332 };
-  const embed = {
-    title: `${action} عضو في السجل`,
-    color: colors[action] || 8421504,
-    fields: [
-      { name: 'بواسطة', value: actorEmail, inline: false },
-      { name: 'الرتبة الرئيسية', value: officer.tier || '—', inline: true },
-      { name: 'الرتبة', value: officer.rank || '—', inline: true },
-      { name: 'رقم الشارة', value: officer.badge || '—', inline: true },
-      { name: 'الاسم', value: officer.name || 'شاغر', inline: true }
-    ],
-    timestamp: new Date().toISOString()
-  };
-  fetch(DISCORD_WEBHOOK_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ embeds: [embed] })
-  }).catch(err => console.warn('Discord log failed:', err));
-}
-
-/* ============================================================
-   AUTH
-   ============================================================ */
-$('loginBtn').addEventListener('click', () => {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider).catch(err => toast('فشل تسجيل الدخول: ' + err.message, true));
-});
-
-auth.onAuthStateChanged(async (user) => {
-  currentUser = user;
-  const authArea = $('authArea');
-  if (!user){
-    currentRole = 'viewer';
-    document.body.classList.remove('can-edit');
-    authArea.innerHTML = `<button class="btn" id="loginBtn">تسجيل الدخول بـ Google</button>`;
-    document.getElementById('loginBtn').addEventListener('click', () => {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider).catch(err => toast('فشل تسجيل الدخول: ' + err.message, true));
-    });
-    $('manageEditorsBtn').classList.add('hidden');
-    $('seedBtn').classList.add('hidden');
-    render();
-    return;
-  }
-
-  const email = (user.email || '').toLowerCase();
-  if (OWNER_EMAILS.map(e=>e.toLowerCase()).includes(email)){
-    currentRole = 'owner';
-  } else {
-    try{
-      const doc = await editorsRef.doc(email).get();
-      currentRole = doc.exists ? 'editor' : 'viewer';
-    }catch(e){ currentRole = 'viewer'; }
-  }
-
-  document.body.classList.toggle('can-edit', currentRole === 'owner' || currentRole === 'editor');
-  $('manageEditorsBtn').classList.toggle('hidden', currentRole !== 'owner');
-
-  authArea.innerHTML = `
-    <span class="role-pill ${currentRole}">${currentRole === 'owner' ? 'المالك' : currentRole === 'editor' ? 'محرر' : 'زائر'}</span>
-    <span class="user-email">${user.email}</span>
-    <button class="btn btn-sm" id="logoutBtn">خروج</button>`;
-  document.getElementById('logoutBtn').addEventListener('click', () => auth.signOut());
-
-  checkSeedVisibility();
-  render();
-});
-
-/* ============================================================
-   FIRESTORE
-   ============================================================ */
-$('loading').classList.remove('hidden');
-unsubscribeOfficers = officersRef.onSnapshot(snap => {
-  officers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  $('loading').classList.add('hidden');
-  checkSeedVisibility();
-  render();
-}, err => {
-  $('loading').textContent = 'تعذّر الاتصال بقاعدة البيانات — تأكد من تعبئة firebaseConfig وقواعد Firestore.';
-  console.error(err);
-});
-
-function checkSeedVisibility(){
-  const show = currentRole === 'owner' && officers.length === 0;
-  $('seedBtn').classList.toggle('hidden', !show);
-}
-
-$('seedBtn').addEventListener('click', async () => {
-  if (!confirm('استيراد البيانات الأساسية؟ يُفضّل تسويها مرة وحدة بس.')) return;
-  const batch = db.batch();
-  SEED_OFFICERS.forEach(o => batch.set(officersRef.doc(), o));
-  try{
-    await batch.commit();
-    toast('تم استيراد البيانات بنجاح');
-  }catch(e){ toast('فشل الاستيراد: ' + e.message, true); }
-});
-
-/* ============================================================
-   RENDER & CARDS
-   ============================================================ */
-function cardHTML(o){
-  const vacant = !o.name || o.name.trim() === '' || o.name === '-';
-  const nameHTML = vacant ? `<div class="name empty">شاغر</div>` : `<div class="name">${escapeHTML(o.name)}</div>`;
-  const hasMeta = (o.user && o.user !== '-') || (o.discord && o.discord !== '-');
-  const metaHTML = hasMeta ? `
-    <div class="meta">
-      <span>${o.user && o.user !== '-' ? '@'+escapeHTML(o.user) : ''}</span>
-      <span class="discord">${o.discord && o.discord !== '-' ? escapeHTML(o.discord) : ''}</span>
-    </div>` : '';
-  const actionsHTML = `
-    <div class="actions">
-      <button class="btn btn-sm" onclick="openEditModal('${o.id}')">تعديل</button>
-      <button class="btn btn-sm btn-danger" onclick="deleteOfficer('${o.id}')">حذف</button>
-    </div>`;
-  return `
-    <div class="card ${vacant ? 'vacant' : ''}" data-search="${(o.name||'')+' '+o.badge+' '+o.rank}">
-      <div class="top">
-        <span class="badge-id">${escapeHTML(o.badge||'—')}</span>
-        <span class="points">PTS <b>${o.points || o.points === '0' ? o.points : '—'}</b></span>
+    <!-- Screen 2: Players Setup -->
+    <div id="screen-players" class="screen">
+      <div class="setup-card">
+        <h2>👥 إضافة اللاعبين (2 - 20)</h2>
+        <div class="input-group">
+          <input type="text" id="player-input" placeholder="اكتب اسم اللاعب هنا..." onkeypress="if(event.key==='Enter') addPlayer()">
+          <button class="btn-sec" onclick="addPlayer()">إضافة</button>
+        </div>
+        <div class="players-list" id="players-list"></div>
       </div>
-      ${nameHTML}
-      <div class="rank">${escapeHTML(o.rank||'')}</div>
-      ${metaHTML}
-      ${actionsHTML}
-    </div>`;
-}
+      <div style="text-align: center;">
+        <button class="btn-main" onclick="goToGameSelect()">الانتقال لتحديد اللعبة 🎲</button>
+      </div>
+    </div>
 
-function render(){
-  const query = ($('search').value || '').trim().toLowerCase();
-  const chainEl = $('chain');
-  chainEl.innerHTML = '';
+    <!-- Screen 3: Game Select -->
+    <div id="screen-games" class="screen">
+      <h2 style="margin-bottom: 20px; text-align: center;">اختر اللعبة المناسبة</h2>
+      <div class="games-grid" id="games-grid"></div>
+    </div>
 
-  let totalOfficers = 0;
-  let totalVacant = 0;
-  let activeRanksCount = 0;
-  let hasMatches = false;
+    <!-- Screen 4: Active Game Playground -->
+    <div id="screen-play" class="screen">
+      <div class="playground">
+        <h2 id="current-game-title">اسم اللعبة</h2>
+        <div class="timer-display" id="timer">30</div>
+        <div class="question-box" id="question-text">اضغط "السؤال التالي" للبدء</div>
+        <div class="answer-box" id="answer-text">الجواب: ...</div>
 
-  TIER_ORDER.forEach((t, index) => {
-    let tierOfficers = officers.filter(o => o.tier === t.key);
+        <div class="controls">
+          <button class="btn-main" onclick="nextQuestion()">السؤال التالي ➡️</button>
+          <button class="btn-sec" id="ans-btn" onclick="toggleAnswer()">كشف الجواب 👁️</button>
+          <button class="btn-sec" onclick="startTimer()">إعادة العداد ⏱️</button>
+          <button class="btn-sec" style="border-color: #ef4444; color: #f87171;" onclick="showScreen('screen-games')">إنهاء اللعبة ❌</button>
+        </div>
+      </div>
+    </div>
 
-    if (query) {
-      tierOfficers = tierOfficers.filter(o => 
-        (o.name || '').toLowerCase().includes(query) ||
-        (o.badge || '').toLowerCase().includes(query) ||
-        (o.rank || '').toLowerCase().includes(query)
-      );
+  </div>
+
+  <!-- Game Instructions Modal -->
+  <div class="modal" id="rules-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="rules-title">📖 قواعد وشرح اللعبة</h3>
+      </div>
+      <div class="rules-list" id="rules-text"></div>
+      <div style="text-align: center; margin-top: 20px;">
+        <button class="btn-main" onclick="confirmStartGame()">فهمت، ابدأ اللعب 🎮</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal" id="settings-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>⚙️ إعدادات اللعبة</h3>
+        <button class="nav-btn" onclick="closeSettings()">✕</button>
+      </div>
+      <div class="setting-item">
+        <span>المؤثرات الصوتية</span>
+        <input type="checkbox" id="sound-toggle" checked>
+      </div>
+      <div class="setting-item">
+        <span>وقت المؤقت الإفتراضي (ثواني)</span>
+        <select id="timer-select" class="nav-btn" style="background:#000;">
+          <option value="15">15 ثانية</option>
+          <option value="30" selected>30 ثانية</option>
+          <option value="60">60 ثانية</option>
+        </select>
+      </div>
+      <div style="text-align: center; margin-top: 20px;">
+        <button class="btn-main" onclick="closeSettings()">حفظ</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let players = ["لاعب 1", "لاعب 2"];
+    let currentGame = null;
+    let selectedGameData = null;
+    let currentQuestionIndex = 0;
+    let timerInterval = null;
+    let timeLeft = 30;
+
+    const gamesData = [
+      {
+        id: "sg",
+        title: "سين جيم",
+        icon: "❓",
+        rules: "اقرأ السؤال على اللاعبين، وأول لاعب يجيب إجابة صحيحة يحصل على نقطة.",
+        questions: [
+          { q: "ما هي عاصمة المملكة العربية السعودية؟", a: "الرياض" },
+          { q: "كم عدد ألوان قوس قزح؟", a: "7 ألوان" },
+          { q: "ما هو أكبر كوكب في المجموعة الشمسية؟", a: "المشتري" },
+          { q: "ما هو أطول نهر في العالم؟", a: "نهر النيل" },
+          { q: "ما هي عاصمة أستراليا؟", a: "كانبرا" },
+          { q: "كم عدد أضلاع الشكل الثماني؟", a: "8 أضلاع" },
+          { q: "ما هو الحيوان الملقب بسفينة الصحراء؟", a: "الجمل" },
+          { q: "ما هو أسرع حيوان بري في العالم؟", a: "الفهد" },
+          { q: "ما هي عاصمة اليابان؟", a: "طوكيو" },
+          { q: "ما اسم أقدم لغة مكتوبة في العالم؟", a: "اللغة السومرية" },
+          { q: "ما هو عنصر الهيدروجين رمز الكيميائي؟", a: "H" },
+          { q: "كم قلب للأخطبوط؟", a: "3 قلوب" },
+          { q: "ما هي أكبر قارة في العالم من حيث المساحة؟", a: "قارة آسيا" },
+          { q: "في أي دولة توجد مدينة بيزا وصومعتها المائلة؟", a: "إيطاليا" },
+          { q: "ما هو أقرب كوكب إلى الشمس؟", a: "عطارد" },
+          { q: "ما هو الغاز الذي يستنشقه الإنسان للتنفس؟", a: "الأكسجين" },
+          { q: "ما هو أصلح معتاد لقياس درجات الحرارة في العالم؟", a: "سليزيوس (مئوية)" },
+          { q: "كم عدد القارات في العالم؟", a: "7 قارات" },
+          { q: "ما هي الدولة الأكثر سكاناً في العالم؟", a: "الهند (أو الصين)" },
+          { q: "ما هو أثقل عضو في جسم الإنسان؟", a: "الجلد" },
+          { q: "ما هي عاصمة دولة الإمارات؟", a: "أبوظبي" },
+          { q: "ما هي أصغر دولة في العالم؟", a: "الفاتيكان" },
+          { q: "كم يبلغ عدد أسنان الأسد البالغ تقريباً؟", a: "30 سناً" },
+          { q: "ما هي أكبر محيطات العالم مساحة؟", a: "المحيط الهادئ" },
+          { q: "ما هو الطائر الذي يبيض ولا يحضن بيضه؟", a: "الوقواق" },
+          { q: "ما هي العملة الرسمية للمملكة المتحدة؟", a: "الجنيه الإسترليني" },
+          { q: "من هو مخترع المصباح الكهربائي؟", a: "توماس إديسون" },
+          { q: "ما هي عاصمة فرنسا؟", a: "باريس" },
+          { q: "ما هو الطائر الذي لا يطير ويتكيف مع البيئة الجليدية؟", a: "البطريق" },
+          { q: "ما هو العضو الذي يصفى الدم في جسم الإنسان؟", a: "الكلى" },
+          { q: "ما هي أسرع الطيور في العالم أثناء الهبوط؟", a: "صقر الشاهين" },
+          { q: "ما هي عاصمة جمهورية مصر العربية؟", a: "القاهرة" },
+          { q: "كم عدد ألوان العلم السعودي؟", a: "لونان (الأسود والأخضر - الأخضر والأبيض)" },
+          { q: "ما هو الحيوان الذي يستخرج منه المسك؟", a: "الغزال (غزال المسك)" },
+          { q: "ما هي عاصمة إسبانيا؟", a: "مدريد" }
+        ]
+      },
+      {
+        id: "charades",
+        title: "بدون كلام",
+        icon: "🎭",
+        rules: "يقوم لاعب بتمثيل الجملة أو المشهد بدون أي كلام أو صوت، ويجب على بقية اللاعبين التخمين قبل انتهاء الوقت!",
+        questions: [
+          { q: "تمثيل: فيلم (طاق طاق طاقية)", a: "اسم فيلم/مسرحية" },
+          { q: "تمثيل: شخص يحاول صيد سمكة كبيرة", a: "مشهد" },
+          { q: "تمثيل: ركوب خيل ثائر والوقوع عنه", a: "مشهد" },
+          { q: "تمثيل: طباخ يحترق طعامه على النار", a: "مشهد" },
+          { q: "تمثيل: شخص يتصفح الهاتف ويسقط في حفرة", a: "مشهد" },
+          { q: "تمثيل: لاعِب كرة قدم ضيع ركلة جزاء", a: "مشهد" },
+          { q: "تمثيل: طبيب أسنان يحاول خلع ضرس مريض خائف", a: "مشهد" },
+          { q: "تمثيل: شخص يحاول النوم ولعابه يقطر مع الناموس", a: "مشهد" },
+          { q: "تمثيل: شخص يشتري ملابس ضيقة جداً", a: "مشهد" },
+          { q: "تمثيل: شرب قهوة حارة جداً بالخطأ", a: "مشهد" },
+          { q: "تمثيل: مصور يحاول التقاط صورة لحيوان مفترس", a: "مشهد" },
+          { q: "تمثيل: شخص يهرب من كلب في الشارع", a: "مشهد" },
+          { q: "تمثيل: طالب يغش في الامتحان والمدرس يراقبه", a: "مشهد" },
+          { q: "تمثيل: شخص يقلد مشية البطريق", a: "مشهد" },
+          { q: "تمثيل: شخص يسوق سيارة وفجأة ينثقب التایر", a: "مشهد" },
+          { q: "تمثيل: محاولة فتح علبة مخلل محكمة الإغلاق", a: "مشهد" },
+          { q: "تمثيل: طفل يبكي لأنه يريد شراء لعبة", a: "مشهد" },
+          { q: "تمثيل: شخص يصعد جبل مرتفع ويتعب", a: "مشهد" },
+          { q: "تمثيل: شخص يمثل كأنه روبوت الآلي", a: "مشهد" },
+          { q: "تمثيل: المشي على رمل حار جداً على الشاطئ", a: "مشهد" },
+          { q: "تمثيل: طائر يحاول الطيران ولا يستطيع", a: "مشهد" },
+          { q: "تمثيل: شخص يستمع لموسيقى صاخبة ويدبك", a: "مشهد" },
+          { q: "تمثيل: حارس مرمى يتصدى لعدة كرات متتالية", a: "مشهد" },
+          { q: "تمثيل: رجل يركض ليلحق بالباص ويفوته", a: "مشهد" },
+          { q: "تمثيل: شخص يأكل فلفل حار جداً", a: "مشهد" },
+          { q: "تمثيل: خياط يقيس مقاسات شخص ويقص القماش", a: "مشهد" },
+          { q: "تمثيل: حلاق يقص شعر زبون بشكل خاطئ", a: "مشهد" },
+          { q: "تمثيل: شخص يضيع مفاتيحه ويبحث عنها بلهفة", a: "مشهد" },
+          { q: "تمثيل: قطة تتغسل وتنظف نفسها", a: "مشهد" },
+          { q: "تمثيل: شخص يلعب لعبة فيديو بحماس شديد", a: "مشهد" }
+        ]
+      },
+      {
+        id: "seconds3",
+        title: "3 ثوانٍ",
+        icon: "⚡",
+        rules: "يجب على اللاعب الإجابة واذكر 3 أشياء مطلوبة في التحدي خلال العداد الزمني المحدد فقط!",
+        questions: [
+          { q: "اذكر 3 أطعمة لونها أصفر", a: "مثل: موز، ليمون، جبن" },
+          { q: "اذكر 3 دول عربية تبدأ بحرف الميم", a: "مثل: مصر، المغرب، موريتانيا" },
+          { q: "اذكر 3 أشكال هندسية", a: "مثل: مثلث، مربع، دائرة" },
+          { q: "اذكر 3 أنواع فواكه حمراء", a: "مثل: تفاح، فراولة، رمان" },
+          { q: "اذكر 3 أسماء أسماك أو كائنات بحرية", a: "مثل: قرش، تونة، سلمون" },
+          { q: "اذكر 3 أشياء تجدها في المطبخ", a: "مثل: ملعقة، ثلاجة، سكين" },
+          { q: "اذكر 3 سيارات ماركات ألمانية", a: "مثل: مرسيدس، بي إم دبليو، أودي" },
+          { q: "اذكر 3 لغات عالمية", a: "مثل: العربية، الإنجليزية، الإسبانية" },
+          { q: "اذكر 3 ألوان في قوس قزح", a: "مثل: أحمر، أصفر، أزرق" },
+          { q: "اذكر 3 مدن سعودية", a: "مثل: الرياض، جدة، الدمام" },
+          { q: "اذكر 3 حيوانات تطير", a: "مثل: الصقر، الحمامة، الخفاش" },
+          { q: "اذكر 3 أدوات مدرسية", a: "مثل: قلم، دفتر، مسطرة" },
+          { q: "اذكر 3 رياضات تلعب بالكرة", a: "مثل: كرة القدم، السلة، التنس" },
+          { q: "اذكر 3 أشياء تحمي من المطر", a: "مثل: مظلة، جاكيت، قبعة" },
+          { q: "اذكر 3 حيوانات أليفة", a: "مثل: قطة، كلب، أرنب" },
+          { q: "اذكر 3 مششروبات حارة", a: "مثل: شاي، قهوة، سنجاب/سحلب" },
+          { q: "اذكر 3 وسائل مواصلات", a: "مثل: سيارة، قطار، طائرة" },
+          { q: "اذكر 3 أجهزة إلكترونية في المنزل", a: "مثل: تلفزيون، ثلاجة، غسالة" },
+          { q: "اذكر 3 مفروشات في الغرفة", a: "مثل: سرير، دولاب، سجادة" },
+          { q: "اذكر 3 أجزاء في جسم الإنسان", a: "مثل: عين، يد، قدم" },
+          { q: "اذكر 3 عواصم خليجية", a: "مثل: الرياض، الكويت، أبوظبي" },
+          { q: "اذكر 3 خضروات ورقية", a: "مثل: خس، جرجير، سبانخ" },
+          { q: "اذكر 3 قنوات أو منصات بث", a: "مثل: يوتيوب، نتفليكس، شاهد" },
+          { q: "اذكر 3 أنواع مكسرات", a: "مثل: فستق، كاجو، لوز" },
+          { q: "اذكر 3 أسماء طيور مفترسة", a: "مثل: نسر، صقر، بومة" },
+          { q: "اذكر 3 أشياء نضعها في الحقيبة", a: "مثل: محفظة، مفاتيح، هاتف" },
+          { q: "اذكر 3 كواكب في النظام الشمسي", a: "مثل: المريخ، المشتري، زحل" },
+          { q: "اذكر 3 ألوان تبدأ بحرف الألف", a: "مثل: أحمر، أزرق، أصفر" },
+          { q: "اذكر 3 ألعاب الكترونية مشهورة", a: "مثل: ببجي، فورتنايت، كود" },
+          { q: "اذكر 3 أطعمة ناكلها في الإفطار", a: "مثل: بيض، جبن، فول" }
+        ]
+      },
+      {
+        id: "spy",
+        title: "من الشاطح؟",
+        icon: "💣",
+        rules: "سيتم إعطاء موضوع، وعلى كل لاعب إعطاء كلمة متعلقة به. اللاعب الشاطح (الجاسوس) لا يعرف الموضوع ويحاول التمويه!",
+        questions: [
+          { q: "الموضوع: المطبخ والأواني", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: السفر والمطار", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: مستشفى وعيادة", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: المدرسة والتعليم", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: كرة القدم والملعب", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: شاطئ البحر والغوص", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: رحلة تخييم وبر (كشتة)", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: المطعم والوجبات السريعة", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: السينما والأفلام", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: حديقة الحيوان", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: صالون الحلاقة والتجميل", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: الملاهي ومدينة الألعاب", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: التسوق والمول", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: محطة البنزين والسيارات", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: ألعاب الفيديوجيم والكومبيوتر", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: عالم الفضاء والكواكب", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: نادي الرياضة والجيم", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: المزرعة والنباتات", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: الفندق والاستقبال", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: حفلة الزفاف والعرس", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: المكتبة وقراءة الكتب", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: فصل الشتاء والثلج", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: حمام السباحة والغوص", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: وسائل النقل العامة كالقطار", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: محلات القهوة (الكافيهات)", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: ورشة تصليح السيارات", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: معركة وسوبر ماركت", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: مهرجان الألعاب النارية", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: استوديو تصوير", a: "شاطح: لا يعرف الموضوع" },
+          { q: "الموضوع: حلبة سباق السيارات", a: "شاطح: لا يعرف الموضوع" }
+        ]
+      },
+      {
+        id: "tf",
+        title: "صح أو خطأ",
+        icon: "✔️",
+        rules: "حدد ما إذا كانت المعلومة التي تظهر على الشاشة صحيحة أم خاطئة بسرعة.",
+        questions: [
+          { q: "الشمس تدور حول الأرض.", a: "خطأ (الأرض تدور حول الشمس)" },
+          { q: "الحوت الأزرق هو أكبر حيوان على وجه الأرض.", a: "صح" },
+          { q: "عدد أسنان الإنسان البالغ هو 32 سِناً.", a: "صح" },
+          { q: "الفراشة تتذوق الطعام بأقدامها.", a: "صح" },
+          { q: "النعامة تدفن رأسها في الرمال لتختبئ من الخطر.", a: "خطأ (شائعة غير صحيحة)" },
+          { q: "القرش ليس لديه أي عظام في جسمه.", a: "صح (هيكله غضروفي)" },
+          { q: "قارة أستراليا أكبر مساحة من قارة إفريقيا.", a: "خطأ" },
+          { q: "الصين هي أكثر دولة في العالم إنتاجاً للشاي.", a: "صح" },
+          { q: "القلب هو العضو الوحيد الذي لا يستريح أبداً.", a: "صح" },
+          { q: "البرق لا يضرب نفس المكان مرتين أبداً.", a: "خطأ (يمكن أن يضربه مراراً)" },
+          { q: "الماء يتكون من أكسجين وهيدروجين.", a: "صح" },
+          { q: "الخفاش حيوان أعمى كلياً ولا يرى.", a: "خطأ (يرى لكنه يفضل الصدى)" },
+          { q: "الصلب/الحديد يطفو فوق سطح الماء.", a: "خطأ" },
+          { q: "صوت البط لا يصدر صداً.", a: "خطأ (خرافة مثبت خطؤها)" },
+          { q: "نابليون بونابرت كان قصير القامة بشكل خيالي.", a: "خطأ (كان متوسط القامة)" },
+          { q: "تستطيع الأفاعي أكل أطعمة أكبر من رأسها.", a: "صح" },
+          { q: "القمر يبعث ضوءه الخاص به.", a: "خطأ (يعكس ضوء الشمس)" },
+          { q: "تفرز الجمال الحليب ذو اللون الوردي.", a: "خطأ (فرس النهر هو من يفرز السائل الوردي)" },
+          { q: "تعتبر الطماطم من الفواكه وليست من الخضروات علمياً.", a: "صح" },
+          { q: "لغة العصفور الدوري هي الأكثر انتشاراً بين الطيور.", a: "خطأ" },
+          { q: "الدم البشري لونه أزرق داخل العروق.", a: "خطأ (لونه أحمر دائماً)" },
+          { q: "أكبر صحراء في العالم هي الصحراء الكبرى في إفريقيا.", a: "خطأ (القارة القطبية الجنوبية هي أكبر صحراء)" },
+          { q: "يستطيع النمل رفع أوزان تفوق وزنه بعشرات المرات.", a: "صح" },
+          { q: "تتنفس الأسماك بواسطة الرئتين.", a: "خطأ (بواسطة الخياشيم)" },
+          { q: "درجة غليان الماء هي 100 مئوية.", a: "صح" },
+          { q: "يوجد 50 نجمة في علم الولايات المتحدة الأمريكية.", a: "صح" },
+          { q: "تنام الزرافة أقل من ساعتين فقط يومياً.", a: "صح" },
+          { q: "الكوكب الأحمر هو لقب كوكب زحل.", a: "خطأ (لقب كوكب المريخ)" },
+          { q: "اليابان تتكون من أرخبيل من الجزر.", a: "صح" },
+          { q: "حاساسة الشم عند الكلب أضعف من الإنسان.", a: "خطأ (أقوى بأضعاف)" }
+        ]
+      },
+      {
+        id: "countries",
+        title: "خمن الدولة",
+        icon: "🗺️",
+        rules: "اقرأ الوصف المتوفر وخمن اسم الدولة المطلوب قبل غيرك.",
+        questions: [
+          { q: "دولة تشتهر بالأهرامات وتقع في شمال إفريقيا؟", a: "مصر" },
+          { q: "دولة شكلها يشبه البوت (الحذاء) في أوروبا؟", a: "إيطاليا" },
+          { q: "دولة تسمى ببلاد الشمس المشرقة؟", a: "اليابان" },
+          { q: "دولة تشتهر ببرج إيفل والموضة؟", a: "فرنسا" },
+          { q: "دولة فيها تاج محل وتشتهر بالبهارات؟", a: "الهند" },
+          { q: "دولة تحتوي على سور الصين العظيم؟", a: "الصين" },
+          { q: "دولة تسمى أم الدنيا وتطل على البحرين الأبيض والأحمر؟", a: "مصر" },
+          { q: "دولة تشتهر بكرة القدم وغابات الأمازون؟", a: "البرازيل" },
+          { q: "دولة مشهورة بساعات الفاخرة والشوكولاتة وجبال الألب؟", a: "سويسرا" },
+          { q: "دولة عربية تشتهر ببرج خليفة؟", a: "الإمارات العربية المتحدة" },
+          { q: "دولة أوروبية تشتهر بطواحين الهواء والزهور الهولندية؟", a: "هولندا" },
+          { q: "دولة تشتهر بالكانغر والدببة الكوالا؟", a: "أستراليا" },
+          { q: "دولة تقع في القارة الأمريكية تشتهر بالتاكو والمارياتشي؟", a: "المكسيك" },
+          { q: "دولة موطن السامبا وتفازت بكأس العالم 5 مرات؟", a: "البرازيل" },
+          { q: "دولة فيها مضيق جبل طارق وتشرب الشاي بالنعناع؟", a: "المغرب" },
+          { q: "دولة تشتهر بصناعة السيارات مثل بي إم دبليو ومرسيدس؟", a: "ألمانيا" },
+          { q: "دولة تشتهر بالمافل والشوكولاتة وعاصمتها بروكسل؟", a: "بلجيكا" },
+          { q: "دولة آسيوسة شكل علمها غير مستطيل (مثلثين)؟", a: "نيبال" },
+          { q: "دولة تشتهر بالبيتزا والمعكرونة والكولوسيوم؟", a: "إيطاليا" },
+          { q: "دولة عاصمتها مدريد وتشتهر بسباق الثيران؟", a: "إسبانيا" },
+          { q: "دولة خليجية عاصمتها الدوحة ورعت كأس العالم 2022؟", a: "قطر" },
+          { q: "دولة شمالية تسمى أرض الثلج والنار لكثرة البراكين بها؟", a: "آيسلندا" },
+          { q: "دولة تشتهر بتمثال الحرية ومدينة نيويورك؟", a: "الولايات المتحدة الأمريكية" },
+          { q: "دولة تسمى بلد المليون ونصف المليون شهيد؟", a: "الجزائر" },
+          { q: "دولة موطن الفايكنج وعاصمتها أوسلو؟", a: "النرويج" },
+          { q: "دولة آسيوسة عاصمتها سيول وتشتهر بالكيبوب والتكنولوجيا؟", a: "كوريا الجنوبية" },
+          { q: "دولة فيها نهر الفرات والدجلة وتاريخ بابل؟", a: "العراق" },
+          { q: "دولة تحتوي على أطول برج ومسجد للحرمين الشريفين؟", a: "المملكة العربية السعودية" },
+          { q: "دولة تقع شرق إفريقيا وتشتهر بسباقات الجري والماراثون؟", a: "كينيا" },
+          { q: "دولة تشتهر بالأهرامات المايية ورقصة التانغو؟", a: "الأرجنتين" }
+        ]
+      },
+      {
+        id: "proverbs",
+        title: "أكمل المثل",
+        icon: "📜",
+        rules: "اقرأ بداية المثل وعلى المتسابقين إكمال الجزء المتبقي منه بشكل صحيح.",
+        questions: [
+          { q: "من طلب العلا ......", a: "سهر الليالي" },
+          { q: "الصديق وقت ......", a: "الضيق" },
+          { q: "إذا كان الكلام من فضة فالسكوت من ......", a: "ذهب" },
+          { q: "من حفر حفرة لأخيه ......", a: "وقع فيها" },
+          { q: "اطبخ يا جاري ......", a: "كلف يا سيدي / كلف يا مبارك" },
+          { q: "الربيع ظهر من ...... ", a: "عنوانه / أوله" },
+          { q: "رب ضارة ......", a: "نافعة" },
+          { q: "عصفور في اليد خير من ......", a: "عشرة على الشجرة" },
+          { q: "لا تؤجل عمل اليوم إلى ......", a: "الغد" },
+          { q: "على قدر أهل العزم تأتي ......", a: "العزائم" },
+          { q: "خير الأمور ......", a: "أوسطها" },
+          { q: "من جاد ......", a: "ساد" },
+          { q: "من تدخل فيما لا يعنيه ......", a: "لقي ما لا يرضيه" },
+          { q: "يد واحدة لا ......", a: "تصفق" },
+          { q: "مصائب قوم عند قوم ......", a: "فوائد" },
+          { q: "إن غداً لناظره ......", a: "قريب" },
+          { q: "الحاجة أم ......", a: "الابتكار / الاختراع" },
+          { q: "اتق شر من ...... إليه", a: "أحسنت" },
+          { q: "رب رمية من غير ......", a: "رام" },
+          { q: "حبل الكذب ......", a: "قصير" },
+          { q: "الطس في الماء ولا ......", a: "تسأل عن السبب" },
+          { q: "من يتعب في صغره ......", a: "يرتح في كبره" },
+          { q: "كل فتاة بأبيها ......", a: "معجبة" },
+          { q: "لسانك حصانك إن صنته صانك وإن ...... خانك", a: "خنته" },
+          { q: "أول الغيث ......", a: "قطرة" },
+          { q: "الباب الذي يأتيك منه الريح ......", a: "سده واستريح" },
+          { q: "التكرار يعلم ......", a: "الشطار / الحمار" },
+          { q: "من يزرع الشوك لا يجني ......", a: "العنب" },
+          { q: "الطيور على أشكالها ......", a: "تقع" },
+          { q: "يا جبل ما يهزك ......", a: "ريح" }
+        ]
+      }
+    ];
+
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+      if(timerInterval) clearInterval(timerInterval);
     }
 
-    if (tierOfficers.length > 0) activeRanksCount++;
-
-    totalOfficers += tierOfficers.length;
-    totalVacant += tierOfficers.filter(o => !o.name || o.name.trim() === '' || o.name === '-').length;
-
-    if (query && tierOfficers.length === 0) return;
-    hasMatches = true;
-
-    const cardsHtml = tierOfficers.length > 0 
-      ? tierOfficers.map(cardHTML).join('') 
-      : `<div class="empty-tier">لا يوجد أعضاء مستجّلون في هذه الرتبة</div>`;
-
-    const tierEl = document.createElement('div');
-    tierEl.className = 'tier';
-    tierEl.innerHTML = `
-      <div class="tier-marker">${index + 1}</div>
-      <div class="tier-head">
-        <h2>${escapeHTML(t.key)}</h2>
-        <span class="tier-ar">${escapeHTML(t.ar)}</span>
-        <span class="count">(${tierOfficers.length})</span>
-        <button class="tier-add" onclick="openAddModal('${t.key}')">+ إضافة للرتبة</button>
-      </div>
-      <div class="roster">${cardsHtml}</div>
-    `;
-    chainEl.appendChild(tierEl);
-  });
-
-  $('stat-ranks').textContent = activeRanksCount;
-  $('stat-officers').textContent = totalOfficers;
-  $('stat-vacant').textContent = totalVacant;
-
-  $('noResults').classList.toggle('hidden', hasMatches);
-}
-
-$('search').addEventListener('input', render);
-
-/* ============================================================
-   MODALS & CRUD OPERATIONS
-   ============================================================ */
-function populateTierDropdown(selectedKey = '') {
-  const select = $('f-tier');
-  select.innerHTML = TIER_ORDER.map(t => 
-    `<option value="${t.key}" ${t.key === selectedKey ? 'selected' : ''}>${t.key} (${t.ar})</option>`
-  ).join('');
-}
-
-function openAddModal(tierKey = TIER_ORDER[0].key) {
-  $('officerForm').reset();
-  $('f-id').value = '';
-  $('officerModalTitle').textContent = 'إضافة عضو جديد';
-  populateTierDropdown(tierKey);
-  $('officerModalOverlay').classList.add('open');
-}
-
-function openEditModal(id) {
-  const o = officers.find(item => item.id === id);
-  if (!o) return;
-  
-  $('f-id').value = o.id;
-  populateTierDropdown(o.tier);
-  $('f-badge').value = o.badge || '';
-  $('f-name').value = o.name || '';
-  $('f-rank').value = o.rank || '';
-  $('f-points').value = o.points || '';
-  $('f-user').value = o.user || '';
-  $('f-discord').value = o.discord || '';
-
-  $('officerModalTitle').textContent = 'تعديل بيانا العضو';
-  $('officerModalOverlay').classList.add('open');
-}
-
-function closeModal() {
-  $('officerModalOverlay').classList.remove('open');
-}
-
-$('fabAdd').addEventListener('click', () => openAddModal());
-$('officerModalClose').addEventListener('click', closeModal);
-$('officerCancelBtn').addEventListener('click', closeModal);
-
-$('officerForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const id = $('f-id').value;
-  const data = {
-    tier: $('f-tier').value,
-    badge: $('f-badge').value.trim(),
-    name: $('f-name').value.trim(),
-    rank: $('f-rank').value.trim(),
-    points: $('f-points').value.trim(),
-    user: $('f-user').value.trim(),
-    discord: $('f-discord').value.trim()
-  };
-
-  try {
-    if (id) {
-      await officersRef.doc(id).update(data);
-      toast('تم تحديث العضو بنجاح');
-      logToDiscord('تعديل', data);
-    } else {
-      await officersRef.add(data);
-      toast('تم إضافة العضو بنجاح');
-      logToDiscord('إضافة', data);
+    function renderPlayers() {
+      const list = document.getElementById('players-list');
+      list.innerHTML = '';
+      players.forEach((p, idx) => {
+        list.innerHTML += `
+          <div class="player-tag">
+            ${p}
+            <span onclick="removePlayer(${idx})">✕</span>
+          </div>
+        `;
+      });
     }
-    closeModal();
-  } catch (err) {
-    toast('حدث خطأ أثناء الحفظ: ' + err.message, true);
-  }
-});
 
-async function deleteOfficer(id) {
-  const o = officers.find(item => item.id === id);
-  if (!confirm(`هل أنت تأكد من حذف (${o ? o.name || o.badge : 'العضو'})؟`)) return;
-
-  try {
-    await officersRef.doc(id).delete();
-    toast('تم الحذف بنجاح');
-    if (o) logToDiscord('حذف', o);
-  } catch (err) {
-    toast('فشل الحذف: ' + err.message, true);
-  }
-}
-
-/* ============================================================
-   EDITORS MANAGEMENT (OWNER ONLY)
-   ============================================================ */
-$('manageEditorsBtn').addEventListener('click', async () => {
-  $('editorsModalOverlay').classList.add('open');
-  loadEditorsList();
-});
-$('editorsModalClose').addEventListener('click', () => {
-  $('editorsModalOverlay').classList.remove('open');
-});
-
-async function loadEditorsList() {
-  const list = $('editorsList');
-  list.innerHTML = 'جارِ التحميل...';
-  try {
-    const snap = await editorsRef.get();
-    if (snap.empty) {
-      list.innerHTML = '<div style="color:var(--muted-2); font-size:12px;">لا يوجد محرّرين مضافين بعد</div>';
-      return;
+    function addPlayer() {
+      const input = document.getElementById('player-input');
+      const val = input.value.trim();
+      if(val && players.length < 20) {
+        players.push(val);
+        input.value = '';
+        renderPlayers();
+      }
     }
-    list.innerHTML = snap.docs.map(doc => `
-      <div class="editor-row">
-        <span>${escapeHTML(doc.id)}</span>
-        <button class="btn btn-sm btn-danger" onclick="removeEditor('${doc.id}')">إزالة</button>
-      </div>
-    `).join('');
-  } catch (e) {
-    list.innerHTML = 'فشل تحميل القائمة';
-  }
-}
 
-$('addEditorBtn').addEventListener('click', async () => {
-  const email = ($('newEditorEmail').value || '').trim().toLowerCase();
-  if (!email) return;
-  try {
-    await editorsRef.doc(email).set({ addedAt: firebase.firestore.FieldValue.serverTimestamp() });
-    $('newEditorEmail').value = '';
-    toast('تمت إضافة المحرر بنجاح');
-    loadEditorsList();
-  } catch (e) {
-    toast('فشل الإضافة: ' + e.message, true);
-  }
-});
+    function removePlayer(index) {
+      if(players.length > 2) {
+        players.splice(index, 1);
+        renderPlayers();
+      } else {
+        alert("يجب أن يكون هناك لاعبان على الأقل!");
+      }
+    }
 
-async function removeEditor(email) {
-  try {
-    await editorsRef.doc(email).delete();
-    toast('تم إزالة المحرر');
-    loadEditorsList();
-  } catch (e) {
-    toast('فشل الإزالة: ' + e.message, true);
-  }
-}
-</script>
+    function goToGameSelect() {
+      if(players.length < 2) {
+        alert("يرجى إضافة أربعة أو لاعبين على الأقل للبدء!");
+        return;
+      }
+      renderGames();
+      showScreen('screen-games');
+    }
+
+    function renderGames() {
+      const grid = document.getElementById('games-grid');
+      grid.innerHTML = '';
+      gamesData.forEach(game => {
+        grid.innerHTML += `
+          <div class="game-card" onclick="openGameRules('${game.id}')">
+            <div class="game-icon">${game.icon}</div>
+            <h3>${game.title}</h3>
+            <p style="color:var(--text-muted); margin-top:5px;">${game.questions.length} تحديات متوفرة</p>
+          </div>
+        `;
+      });
+    }
+
+    function openGameRules(gameId) {
+      selectedGameData = gamesData.find(g => g.id === gameId);
+      document.getElementById('rules-title').innerText = `📖 شرح لعبة: ${selectedGameData.title}`;
+      document.getElementById('rules-text').innerText = selectedGameData.rules;
+      document.getElementById('rules-modal').classList.add('active');
+    }
+
+    function confirmStartGame() {
+      document.getElementById('rules-modal').classList.remove('active');
+      currentGame = selectedGameData;
+      currentQuestionIndex = 0;
+      document.getElementById('current-game-title').innerText = currentGame.title;
+      showScreen('screen-play');
+      nextQuestion();
+    }
+
+    function nextQuestion() {
+      document.getElementById('answer-text').style.display = 'none';
+      if(currentQuestionIndex < currentGame.questions.length) {
+        const item = currentGame.questions[currentQuestionIndex];
+        document.getElementById('question-text').innerText = item.q;
+        document.getElementById('answer-text').innerText = "الجواب: " + item.a;
+        currentQuestionIndex++;
+        startTimer();
+      } else {
+        document.getElementById('question-text').innerText = "🎉 انتهت الأسئلة لهذا الوضع!";
+        document.getElementById('answer-text').style.display = 'none';
+        if(timerInterval) clearInterval(timerInterval);
+      }
+    }
+
+    function toggleAnswer() {
+      const ans = document.getElementById('answer-text');
+      ans.style.display = ans.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function startTimer() {
+      if(timerInterval) clearInterval(timerInterval);
+      const defaultTime = parseInt(document.getElementById('timer-select').value) || 30;
+      timeLeft = defaultTime;
+      document.getElementById('timer').innerText = timeLeft;
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').innerText = timeLeft;
+        if(timeLeft <= 0) {
+          clearInterval(timerInterval);
+          document.getElementById('timer').innerText = "⏰ انتهى الوقت!";
+        }
+      }, 1000);
+    }
+
+    function shareGame() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'لعبة لعبني',
+          text: 'تعال نلعب مع بعض في لعبة لعبني الجماعية!',
+          url: window.location.href,
+        });
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert("تم نسخ رابط اللعبة بنجاح! يمكنك إرساله لأصدقائك الآن.");
+      }
+    }
+
+    function openSettings() {
+      document.getElementById('settings-modal').classList.add('active');
+    }
+
+    function closeSettings() {
+      document.getElementById('settings-modal').classList.remove('active');
+    }
+
+    renderPlayers();
+  </script>
 </body>
 </html>
