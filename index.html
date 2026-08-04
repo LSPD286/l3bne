@@ -4,771 +4,262 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🎮 لعبة لعبني - Laabni</title>
-  
-  <!-- Favicon (أيقونة الموقع في التبويب والشاشة الرئيسية) -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230d0a1a'/><path d='M30,35 C20,35 15,50 15,65 C15,75 22,80 28,80 C33,80 37,73 42,65 C45,60 55,60 58,65 C63,73 67,80 72,80 C78,80 85,75 85,65 C85,50 80,35 70,35 C58,35 54,42 50,42 C46,42 42,35 30,35 Z' fill='url(%23grad)'/><circle cx='32' cy='52' r='4' fill='white'/><circle cx='40' cy='52' r='4' fill='white'/><circle cx='36' cy='48' r='4' fill='white'/><circle cx='36' cy='56' r='4' fill='white'/><circle cx='68' cy='50' r='5' fill='white'/><circle cx='60' cy='58' r='5' fill='white'/><defs><linearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%238b5cf6'/><stop offset='100%25' stop-color='%23ec4899'/></linearGradient></defs></svg>">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230d0a1a'/><path d='M30,35 C20,35 15,50 15,65 C15,75 22,80 28,80 C33,80 37,73 42,65 C45,60 55,60 58,65 C63,73 67,80 72,80 C78,80 85,75 85,65 C85,50 80,35 70,35 C58,35 54,42 50,42 C46,42 42,35 30,35 Z' fill='url(%23grad)'/><defs><linearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%238b5cf6'/><stop offset='100%25' stop-color='%23ec4899'/></linearGradient></defs></svg>">
-
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-main: #0d0a1a;
       --card-bg: rgba(255, 255, 255, 0.05);
-      --card-border: rgba(255, 255, 255, 0.12);
+      --card-border: rgba(255, 255, 255, 0.15);
       --primary: #8b5cf6;
-      --primary-hover: #7c3aed;
       --accent: #ec4899;
+      --red-btn: #e11d48;
       --text-main: #f3f4f6;
       --text-muted: #9ca3af;
-      --glow: 0 0 20px rgba(139, 92, 246, 0.4);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Tajawal', sans-serif;
-      user-select: none;
-    }
-
-    body {
-      background-color: var(--bg-main);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-      overflow-x: hidden;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; user-select: none; }
+    body { background-color: var(--bg-main); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 15px; }
 
     .navbar {
-      width: 100%;
-      max-width: 900px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 20px;
-      background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      margin-bottom: 25px;
+      width: 100%; max-width: 1000px; display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 20px; background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--card-border);
+      border-radius: 16px; margin-bottom: 20px;
     }
+    .brand { font-size: 1.6rem; font-weight: 900; background: linear-gradient(135deg, #a78bfa, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    .nav-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--card-border); color: white; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    .nav-btn:hover { background: var(--primary); }
 
-    .brand {
-      font-size: 1.8rem;
-      font-weight: 900;
-      background: linear-gradient(135deg, #a78bfa, #ec4899);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .container { width: 100%; max-width: 1000px; }
+    .screen { display: none; }
+    .screen.active { display: block; }
 
-    .nav-btn {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid var(--card-border);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: all 0.2s ease;
-    }
+    .hero { text-align: center; padding: 40px 20px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; }
+    .btn-main { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; border: none; padding: 14px 32px; font-size: 1.2rem; font-weight: bold; border-radius: 12px; cursor: pointer; margin-top: 20px; }
+    .btn-main:hover { transform: scale(1.03); }
 
-    .nav-btn:hover {
-      background: var(--primary);
-      box-shadow: var(--glow);
+    /* Scoreboard Footer */
+    .scoreboard {
+      position: fixed; bottom: 0; left: 0; width: 100%; background: #15102a; border-top: 2px solid var(--primary);
+      padding: 10px 20px; display: flex; justify-content: space-around; align-items: center; z-index: 90;
     }
+    .team-score { text-align: center; display: flex; align-items: center; gap: 15px; }
+    .score-val { font-size: 1.8rem; font-weight: 900; color: #34d399; min-width: 60px; }
+    .score-btn { width: 32px; height: 32px; border-radius: 50%; border: none; font-weight: bold; font-size: 1.2rem; cursor: pointer; }
+    .btn-add { background: #10b981; color: white; }
+    .btn-sub { background: #ef4444; color: white; }
 
-    .container {
-      width: 100%;
-      max-width: 900px;
-    }
+    /* Grid Categories (Jeopardy Style) */
+    .grid-board { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px; margin-bottom: 90px; }
+    .cat-column { background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 12px; padding: 10px; text-align: center; }
+    .cat-header { background: var(--accent); color: white; padding: 10px; font-weight: bold; border-radius: 8px; margin-bottom: 10px; font-size: 1.1rem; }
+    .point-card { background: rgba(255,255,255,0.08); border: 1px solid var(--card-border); border-radius: 8px; padding: 12px; margin-bottom: 8px; font-weight: 900; font-size: 1.2rem; color: #f59e0b; cursor: pointer; transition: 0.2s; }
+    .point-card:hover { background: var(--primary); color: white; }
+    .point-card.disabled { opacity: 0.2; cursor: not-allowed; background: #000; color: #555; }
 
-    .screen {
-      display: none;
-      animation: fadeIn 0.3s ease-in-out forwards;
-    }
-
-    .screen.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .hero {
-      text-align: center;
-      padding: 40px 20px;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 24px;
-      backdrop-filter: blur(10px);
-    }
-
-    .hero h1 {
-      font-size: 3rem;
-      margin-bottom: 10px;
-    }
-
-    .hero p {
-      color: var(--text-muted);
-      margin-bottom: 30px;
-      font-size: 1.1rem;
-    }
-
-    .btn-main {
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      color: white;
-      border: none;
-      padding: 14px 36px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      border-radius: 12px;
-      cursor: pointer;
-      box-shadow: var(--glow);
-      transition: transform 0.2s ease;
-    }
-
-    .btn-main:hover {
-      transform: scale(1.05);
-    }
-
-    .mode-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
-
-    .mode-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 30px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.25s ease;
-    }
-
-    .mode-card:hover {
-      border-color: var(--primary);
-      transform: translateY(-5px);
-      box-shadow: var(--glow);
-    }
-
-    .mode-icon {
-      font-size: 3rem;
-      margin-bottom: 15px;
-    }
-
-    .setup-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 25px;
-      margin-bottom: 20px;
-    }
-
-    .input-group {
-      display: flex;
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    input[type="text"] {
-      flex: 1;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid var(--card-border);
-      background: rgba(0,0,0,0.3);
-      color: white;
-      font-size: 1rem;
-    }
-
-    .players-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    .player-tag {
-      background: var(--primary);
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 0.95rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .player-tag span {
-      cursor: pointer;
-      color: #fca5a5;
-      font-weight: bold;
-    }
-
-    .games-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 18px;
-    }
-
-    .game-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.25s ease;
-    }
-
-    .game-card:hover {
-      border-color: var(--primary);
-      transform: translateY(-5px);
-      box-shadow: var(--glow);
-    }
-
-    .game-icon {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-    }
-
-    .playground {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 24px;
-      padding: 30px;
-      text-align: center;
-    }
-
-    .timer-display {
-      font-size: 3.5rem;
-      font-weight: 900;
-      color: var(--accent);
-      margin: 20px 0;
-    }
-
-    .question-box {
-      font-size: 1.5rem;
-      font-weight: bold;
-      min-height: 100px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,0,0,0.2);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-      line-height: 1.5;
-    }
-
-    .answer-box {
-      font-size: 1.2rem;
-      color: #34d399;
-      margin-bottom: 20px;
-      display: none;
-    }
-
-    .controls {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .btn-sec {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid var(--card-border);
-      color: white;
-      padding: 10px 20px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .btn-sec:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    .modal {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.75);
-      backdrop-filter: blur(8px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-    }
-
-    .modal.active {
-      display: flex;
-    }
-
-    .modal-content {
-      background: #15102a;
-      border: 1px solid var(--card-border);
-      padding: 25px;
-      border-radius: 20px;
-      width: 90%;
-      max-width: 480px;
-      text-align: center;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .setting-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-      font-size: 1.05rem;
-    }
-
-    .rules-list {
-      text-align: right;
-      margin: 15px 0;
-      line-height: 1.6;
-      color: var(--text-muted);
-    }
+    /* Modal for Questions */
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(5px); }
+    .modal.active { display: flex; }
+    .modal-box { background: #1a1532; border: 2px solid var(--primary); padding: 25px; border-radius: 20px; width: 90%; max-width: 550px; text-align: center; }
+    .q-points { font-size: 1rem; color: #f59e0b; margin-bottom: 10px; font-weight: bold; }
+    .q-text { font-size: 1.4rem; font-weight: bold; margin: 20px 0; min-height: 80px; display: flex; align-items: center; justify-content: center; }
+    .q-ans { font-size: 1.2rem; color: #34d399; margin-bottom: 20px; display: none; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; }
   </style>
 </head>
 <body>
 
-  <!-- Navbar -->
   <div class="navbar">
-    <div class="brand">
-      <span>لعبني</span>
-      <span style="font-size:1.5rem;">🎮</span>
-    </div>
-    <div style="display: flex; gap: 10px;">
-      <button class="nav-btn" onclick="shareGame()">🔗 مشاركة</button>
+    <div class="brand">🎮 لعبني (شبكة التحدي)</div>
+    <div>
       <button class="nav-btn" onclick="showScreen('screen-home')">الرئيسية</button>
-      <button class="nav-btn" onclick="openSettings()">⚙️ الإعدادات</button>
     </div>
   </div>
 
   <div class="container">
 
-    <!-- Screen 1: Home -->
+    <!-- الصفحة الرئيسية -->
     <div id="screen-home" class="screen active">
       <div class="hero">
-        <h1>مرحباً بك في «لعبني»</h1>
-        <p>مجموعة ألعاب جماعية ممتعة تعمل على جهاز واحد للجمعات والعائلات!</p>
-        <button class="btn-main" onclick="showScreen('screen-mode')">ابدأ اللعب الان 🚀</button>
+        <h1>تحدي شبكة النقاط 🏆</h1>
+        <p>اختر الأقسام وقيمة النقاط، أجب عن الأسئلة واجمع النقاط للوصول لـ 2500 نقطة للفوز!</p>
+        <button class="btn-main" onclick="startNewGame()">ابدأ اللعب الآن 🚀</button>
       </div>
     </div>
 
-    <!-- Screen 1.5: Mode Select (Solo vs Teams) -->
-    <div id="screen-mode" class="screen">
-      <div class="hero">
-        <h2 style="margin-bottom: 15px;">اختر نظام اللعب</h2>
-        <p>كيف تفضل أن تلعب اليوم مع أصدقائك؟</p>
-        <div class="mode-grid">
-          <div class="mode-card" onclick="selectMode('solo')">
-            <div class="mode-icon">👤</div>
-            <h3>سولو (فردي)</h3>
-            <p style="color:var(--text-muted); margin-top:8px; font-size:0.9rem;">منافسة فردية بين اللاعبين (تتضمن لعبة من الشاطح)</p>
-          </div>
-          <div class="mode-card" onclick="selectMode('teams')">
-            <div class="mode-icon">👥</div>
-            <h3>اتيام (فرق)</h3>
-            <p style="color:var(--text-muted); margin-top:8px; font-size:0.9rem;">مواجهة بين فريقين أو أكثر</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Screen 2: Players/Teams Setup -->
-    <div id="screen-players" class="screen">
-      <div class="setup-card">
-        <h2 id="setup-title">👥 إضافة المشاركين</h2>
-        <div class="input-group">
-          <input type="text" id="player-input" placeholder="اكتب الاسم هنا..." onkeypress="if(event.key==='Enter') addParticipant()">
-          <button class="btn-sec" onclick="addParticipant()">إضافة</button>
-        </div>
-        <div class="players-list" id="players-list"></div>
-      </div>
-      <div style="text-align: center;">
-        <button class="btn-main" onclick="goToGameSelect()">الانتقال لتحديد اللعبة 🎲</button>
-      </div>
-    </div>
-
-    <!-- Screen 3: Game Select -->
-    <div id="screen-games" class="screen">
-      <h2 style="margin-bottom: 20px; text-align: center;">اختر اللعبة المناسبة</h2>
-      <div class="games-grid" id="games-grid"></div>
-    </div>
-
-    <!-- Screen 4: Active Game Playground -->
-    <div id="screen-play" class="screen">
-      <div class="playground">
-        <h2 id="current-game-title">اسم اللعبة</h2>
-        <div class="timer-display" id="timer">30</div>
-        <div class="question-box" id="question-text">اضغط "السؤال التالي" للبدء</div>
-        <div class="answer-box" id="answer-text">الجواب: ...</div>
-
-        <div class="controls">
-          <button class="btn-main" onclick="nextQuestion()" id="next-btn">السؤال التالي ➡️</button>
-          <button class="btn-sec" id="ans-btn" onclick="toggleAnswer()">كشف الجواب 👁️</button>
-          <button class="btn-sec" onclick="startTimer()">إعادة العداد ⏱️</button>
-          <button class="btn-sec" style="border-color: #ef4444; color: #f87171;" onclick="showScreen('screen-games')">إنهاء اللعبة ❌</button>
-        </div>
-      </div>
+    <!-- شبكة الأسئلة والنقاط -->
+    <div id="screen-board" class="screen">
+      <h2 style="text-align: center; margin-bottom: 10px;">اختر الخانة وجمع النقاط</h2>
+      <div class="grid-board" id="grid-board"></div>
     </div>
 
   </div>
 
-  <!-- Game Instructions Modal -->
-  <div class="modal" id="rules-modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="rules-title" style="width:100%; text-align:center;">📖 قواعد وشرح اللعبة</h3>
-      </div>
-      <div class="rules-list" id="rules-text"></div>
-      <div style="text-align: center; margin-top: 20px;">
-        <button class="btn-main" onclick="confirmStartGame()">فهمت، ابدأ اللعب 🎮</button>
-      </div>
+  <!-- لوحة النتيجة السفلية -->
+  <div class="scoreboard" id="scoreboard" style="display:none;">
+    <div class="team-score">
+      <span>🔴 الفريق الأول:</span>
+      <button class="score-btn btn-sub" onclick="changeScore('team1', -200)">-</button>
+      <span class="score-val" id="score-team1">0</span>
+      <button class="score-btn btn-add" onclick="changeScore('team1', 200)">+</button>
+    </div>
+    <div style="font-weight: bold; color: var(--accent);">هدف الفوز: 2500</div>
+    <div class="team-score">
+      <span>🔵 الفريق الثاني:</span>
+      <button class="score-btn btn-sub" onclick="changeScore('team2', -200)">-</button>
+      <span class="score-val" id="score-team2">0</span>
+      <button class="score-btn btn-add" onclick="changeScore('team2', 200)">+</button>
     </div>
   </div>
 
-  <!-- Spy Game Pass Modal (For "من الشاطح") -->
-  <div class="modal" id="spy-modal">
-    <div class="modal-content">
-      <h3 id="spy-modal-title" style="margin-bottom: 15px; color: var(--accent);">🕵️‍♂️ توزيع الأدوار</h3>
-      <p id="spy-modal-desc" style="margin-bottom: 20px; font-size: 1.1rem; color: var(--text-muted);">أعط الجوال إلى اللاعب...</p>
-      <div id="spy-content-box" style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; margin-bottom: 20px; min-height: 80px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: bold;">
-        <button class="btn-sec" onclick="revealSpyRole()">اضغط هنا لرؤية دورك سراً 🤫</button>
-      </div>
-      <button class="btn-main" id="spy-next-btn" onclick="nextSpyStep()" style="display:none;">تم، أعط الجوال لغيري ✓</button>
-    </div>
-  </div>
-
-  <!-- Settings Modal -->
-  <div class="modal" id="settings-modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>⚙️ إعدادات اللعبة</h3>
-        <button class="nav-btn" onclick="closeSettings()">✕</button>
-      </div>
-      <div class="setting-item">
-        <span>وقت المؤقت الإفتراضي (ثواني)</span>
-        <select id="timer-select" class="nav-btn" style="background:#000;">
-          <option value="15">15 ثانية</option>
-          <option value="30" selected>30 ثانية</option>
-          <option value="60">60 ثانية</option>
-        </select>
-      </div>
-      <div style="text-align: center; margin-top: 20px;">
-        <button class="btn-main" onclick="closeSettings()">حفظ</button>
+  <!-- نافذة عرض السؤال -->
+  <div class="modal" id="q-modal">
+    <div class="modal-box">
+      <div class="q-points" id="q-points-label">سؤال بقيمة 200 نقطة</div>
+      <div class="q-text" id="q-text-content">السؤال هنا...</div>
+      <div class="q-ans" id="q-ans-content">الجواب: ...</div>
+      
+      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <button class="nav-btn" style="background:#059669;" onclick="toggleAnswer()">إظهار الجواب 👁️</button>
+        <button class="nav-btn" style="background:var(--primary);" onclick="awardPoints('team1')">+ نقاط للفريق الأول 🔴</button>
+        <button class="nav-btn" style="background:var(--accent);" onclick="awardPoints('team2')">+ نقاط للفريق الثاني 🔵</button>
+        <button class="nav-btn" style="background:#4b5563;" onclick="closeQuestion()">إغلاق ✕</button>
       </div>
     </div>
   </div>
 
   <script>
-    let gameMode = 'solo';
-    let participants = ["لاعب 1", "لاعب 2"];
-    let currentGame = null;
-    let selectedGameData = null;
-    let currentQuestionIndex = 0;
-    let timerInterval = null;
-    let timeLeft = 30;
-    let shuffledQuestions = [];
+    let scores = { team1: 0, team2: 0 };
+    let currentActivePoints = 0;
+    let currentCardElem = null;
 
-    let spyCurrentIndex = 0;
-    let spyActiveTopic = "";
-    let spyImpostorIndex = 0;
-
-    const gamesData = [
+    // بنك الألعاب والأسئلة المتنوعة والمصنفة
+    const categoriesData = [
       {
-        id: "sg",
-        title: "سين جيم",
-        icon: "❓",
-        rules: "اقرأ السؤال على اللاعبين، وأول لاعب يجيب إجابة صحيحة يحصل على نقطة.",
-        questions: [
-          { q: "ما هي عاصمة المملكة العربية السعودية؟", a: "الرياض" },
-          { q: "كم عدد ألوان قوس قزح؟", a: "7 ألوان" },
-          { q: "ما هو أكبر كوكب في المجموعة الشمسية؟", a: "المشتري" },
-          { q: "ما هو أطول نهر في العالم؟", a: "نهر النيل" },
-          { q: "ما هي عاصمة أستراليا؟", a: "كانبرا" },
-          { q: "كم عدد أضلاع الشكل الثماني؟", a: "8 أضلاع" },
-          { q: "ما هو الحيوان الملقب بسفينة الصحراء؟", a: "الجمل" },
-          { q: "ما هو أسرع حيوان بري في العالم؟", a: "الفهد" },
-          { q: "ما هي عاصمة اليابان؟", a: "طوكيو" },
-          { q: "ما هو أثقل عضو في جسم الإنسان؟", a: "الجلد" }
+        name: "سبيستون 📺",
+        cards: [
+          { pts: 200, q: "ما اسم المحقق الذي تقلص حجمه في أنمي شهير؟", a: "كونان" },
+          { pts: 400, q: "ما هي الأغنية المشهورة التي تقول 'أمي كم أهواها'؟", a: "أغنية أبطال الديجيتال / صقور الأرض" },
+          { pts: 600, q: "ما اسم القط الأزرق القادم من المستقبل؟", a: "دوريمون" }
         ]
       },
       {
-        id: "charades",
-        title: "بدون كلام",
-        icon: "🎭",
-        rules: "يقوم لاعب بتمثيل الجملة أو المشهد بدون أي كلام أو صوت، ويجب على بقية اللاعبين التخمين!",
-        questions: [
-          { q: "تمثيل: شخص يحاول صيد سمكة كبيرة", a: "مشهد تمثيلي" },
-          { q: "تمثيل: طباخ يحترق طعامه على النار", a: "مشهد تمثيلي" },
-          { q: "تمثيل: لاعب كرة قدم ضيع ركلة جزاء", a: "مشهد تمثيلي" },
-          { q: "تمثيل: شخص يهرب من كلب في الشارع", a: "مشهد تمثيلي" }
+        name: "بباي قديم ⚓",
+        cards: [
+          { pts: 200, q: "ما هو الطعام الذي يعطي بباوي القوة الخارقة؟", a: "السبانخ" },
+          { pts: 400, q: "ما اسم زوجة بباوي؟", a: "زيتونة (Olive Oyl)" },
+          { pts: 600, q: "ما اسم عدو بباوي الضخم والمنافس له؟", a: "بلوتو (Bluto)" }
         ]
       },
       {
-        id: "seconds3",
-        title: "3 ثوانٍ",
-        icon: "⚡",
-        rules: "يجب على اللاعب الإجابة وذكر 3 أشياء مطلوبة في التحدي خلال العداد الزمني المحدد فقط!",
-        questions: [
-          { q: "اذكر 3 أطعمة لونها أصفر", a: "مثل: موز، ليمون، جبن" },
-          { q: "اذكر 3 دول عربية تبدأ بحرف الميم", a: "مثل: مصر، المغرب، موريتانيا" },
-          { q: "اذكر 3 أشكال هندسية", a: "مثل: مثلث، مربع، دائرة" }
+        name: "Call of Duty 🔫",
+        cards: [
+          { pts: 200, q: "ما اسم شخصية الكابتن المشهور ببراعته وقبعته المميزة؟", a: "كابتن برايس (Captain Price)" },
+          { pts: 400, q: "ما هو الاسم الشهير لطور الزومبي في السلسلة؟", a: "Zombies" },
+          { pts: 600, q: "ما اسم الخريطة الشهيرة جداً والمحبوكة في المساحات الضيقة (Nuk...)؟", a: "Nuketown" }
         ]
       },
       {
-        id: "spy",
-        title: "من الشاطح؟",
-        icon: "💣",
-        rules: "سيتم إعطاء موضوع سري للجميع ما عدا شخص واحد (الشاطح). يمر الجوال على الجميع سراً ليعرفوا الموضوع، ثم تبدأ المناقشة!",
-        isSpyGame: true,
-        questions: [
-          { q: "الموضوع: المطبخ والأواني", a: "الشاطح: لا يعرف الموضوع!" },
-          { q: "الموضوع: السفر والمطار", a: "الشاطح: لا يعرف الموضوع!" },
-          { q: "الموضوع: مستشفى وعيادة", a: "الشاطح: لا يعرف الموضوع!" }
+        name: "Resident Evil 🧟",
+        cards: [
+          { pts: 200, q: "ما اسم بطل الجزء الرابع الذى يذهب لإنقاذ ابنة الرئيس؟", a: "ليون كينيدي (Leon Kennedy)" },
+          { pts: 400, q: "ما هي الشركة المتسببة في انتشار الفيروس والزومبي؟", a: "شركة أمبريلا (Umbrella Corporation)" },
+          { pts: 600, q: "ما اسم الوحش الضخم القاتل في الجزء الثالث الذي يصرخ باسم S.T.A.R.S؟", a: "نميسس (Nemesis)" }
+        ]
+      },
+      {
+        name: "Valorant 🎯",
+        cards: [
+          { pts: 200, q: "ما هي الأداة أو القنبلة التي يسعى المهاجمون لزرعها في الجولة؟", a: "Spike (السبيك)" },
+          { pts: 400, q: "ما اسم الشخصية الكورية السريعة التي تستخدم السكاكين (Jett)؟", a: "جيت (Jett)" },
+          { pts: 600, q: "كم عدد اللاعبين في الفريق الواحد في المباراة الأساسية؟", a: "5 لاعبين" }
         ]
       }
     ];
 
-    function showScreen(screenId) {
+    function showScreen(id) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.getElementById(screenId).classList.add('active');
-      if(timerInterval) clearInterval(timerInterval);
+      document.getElementById(id).classList.add('active');
     }
 
-    function selectMode(mode) {
-      gameMode = mode;
-      if (mode === 'solo') {
-        participants = ["لاعب 1", "لاعب 2"];
-        document.getElementById('setup-title').innerText = "👥 إضافة اللاعبين (2 - 20)";
-        document.getElementById('player-input').placeholder = "اكتب اسم اللاعب هنا...";
-      } else {
-        participants = ["فريق أ", "فريق ب"];
-        document.getElementById('setup-title').innerText = "🏁 إضافة أسماء الفرق (2 - 10)";
-        document.getElementById('player-input').placeholder = "اكتب اسم الفريق هنا...";
-      }
-      renderParticipants();
-      showScreen('screen-players');
+    function startNewGame() {
+      scores = { team1: 0, team2: 0 };
+      updateScoreUI();
+      document.getElementById('scoreboard').style.display = 'flex';
+      renderGrid();
+      showScreen('screen-board');
     }
 
-    function renderParticipants() {
-      const list = document.getElementById('players-list');
-      list.innerHTML = '';
-      participants.forEach((p, idx) => {
-        list.innerHTML += `
-          <div class="player-tag">
-            ${p}
-            <span onclick="removeParticipant(${idx})">✕</span>
-          </div>
-        `;
+    function renderGrid() {
+      const board = document.getElementById('grid-board');
+      board.innerHTML = '';
+
+      categoriesData.forEach((cat) => {
+        let colHtml = `<div class="cat-column"><div class="cat-header">${cat.name}</div>`;
+        
+        cat.cards.forEach((card) => {
+          colHtml += `
+            <div class="point-card" onclick="openQuestion(this, '${card.q}', '${card.a}', ${card.pts})">
+              ${card.pts}
+            </div>
+          `;
+        });
+
+        colHtml += `</div>`;
+        board.innerHTML += colHtml;
       });
     }
 
-    function addParticipant() {
-      const input = document.getElementById('player-input');
-      const val = input.value.trim();
-      if(val && participants.length < 20) {
-        participants.push(val);
-        input.value = '';
-        renderParticipants();
-      }
-    }
+    function openQuestion(elem, qText, aText, pts) {
+      if(elem.classList.contains('disabled')) return;
 
-    function removeParticipant(index) {
-      if(participants.length > 2) {
-        participants.splice(index, 1);
-        renderParticipants();
-      } else {
-        alert("يجب أن يكون هناك عنصران على الأقل!");
-      }
-    }
+      currentCardElem = elem;
+      currentActivePoints = pts;
 
-    function goToGameSelect() {
-      if(participants.length < 2) {
-        alert("يرجى إضافة عنصرين على الأقل للبدء!");
-        return;
-      }
-      renderGames();
-      showScreen('screen-games');
-    }
+      document.getElementById('q-points-label').innerText = `سؤال بقيمة ${pts} نقطة`;
+      document.getElementById('q-text-content').innerText = qText;
+      document.getElementById('q-ans-content').innerText = "الجواب: " + aText;
+      document.getElementById('q-ans-content').style.display = 'none';
 
-    function renderGames() {
-      const grid = document.getElementById('games-grid');
-      grid.innerHTML = '';
-      
-      const availableGames = gamesData.filter(game => {
-        if (game.isSpyGame && gameMode === 'teams') return false;
-        return true;
-      });
-
-      availableGames.forEach(game => {
-        grid.innerHTML += `
-          <div class="game-card" onclick="openGameRules('${game.id}')">
-            <div class="game-icon">${game.icon}</div>
-            <h3>${game.title}</h3>
-            <p style="color:var(--text-muted); margin-top:5px;">${game.questions.length} تحديات متوفرة</p>
-          </div>
-        `;
-      });
-    }
-
-    function openGameRules(gameId) {
-      selectedGameData = gamesData.find(g => g.id === gameId);
-      document.getElementById('rules-title').innerText = `📖 شرح لعبة: ${selectedGameData.title}`;
-      document.getElementById('rules-text').innerText = selectedGameData.rules;
-      document.getElementById('rules-modal').classList.add('active');
-    }
-
-    function shuffleArray(array) {
-      let arr = [...array];
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
-
-    function confirmStartGame() {
-      document.getElementById('rules-modal').classList.remove('active');
-      currentGame = selectedGameData;
-      currentQuestionIndex = 0;
-      shuffledQuestions = shuffleArray(currentGame.questions);
-      
-      document.getElementById('current-game-title').innerText = currentGame.title;
-
-      if (currentGame.isSpyGame) {
-        startSpyGameSession();
-      } else {
-        document.getElementById('question-box').style.display = 'flex';
-        document.getElementById('ans-btn').style.display = 'inline-block';
-        showScreen('screen-play');
-        nextQuestion();
-      }
-    }
-
-    function nextQuestion() {
-      document.getElementById('answer-text').style.display = 'none';
-      if(currentQuestionIndex < shuffledQuestions.length) {
-        const item = shuffledQuestions[currentQuestionIndex];
-        document.getElementById('question-text').innerText = item.q;
-        document.getElementById('answer-text').innerText = "الجواب: " + item.a;
-        currentQuestionIndex++;
-        startTimer();
-      } else {
-        document.getElementById('question-text').innerText = "🎉 انتهت جميع أسئلة هذا الوضع!";
-        document.getElementById('answer-text').style.display = 'none';
-        if(timerInterval) clearInterval(timerInterval);
-      }
-    }
-
-    function startSpyGameSession() {
-      const randomTopicObj = shuffledQuestions[0];
-      spyActiveTopic = randomTopicObj.q;
-      spyImpostorIndex = Math.floor(Math.random() * participants.length);
-      spyCurrentIndex = 0;
-
-      showSpyStep();
-      document.getElementById('spy-modal').classList.add('active');
-    }
-
-    function showSpyStep() {
-      const desc = document.getElementById('spy-modal-desc');
-      const box = document.getElementById('spy-content-box');
-      const nextBtn = document.getElementById('spy-next-btn');
-
-      if (spyCurrentIndex < participants.length) {
-        desc.innerText = `أعط الجوال إلى اللاعب: ${participants[spyCurrentIndex]}`;
-        box.innerHTML = `<button class="btn-sec" onclick="revealSpyRole()">اضغط هنا لرؤية دورك سراً 🤫</button>`;
-        nextBtn.style.display = 'none';
-      } else {
-        desc.innerText = "✨ انتهى توزيع الأدوار!";
-        box.innerHTML = `<div style="color:var(--accent); font-size:1.2rem;">ابدأوا النقاش الآن واكتشفوا من هو الشاطح بينكم! 💣</div>`;
-        nextBtn.innerText = "إنهاء اللعبة والعودة للقائمة ❌";
-        nextBtn.style.display = 'inline-block';
-        nextBtn.onclick = () => {
-          document.getElementById('spy-modal').classList.remove('active');
-          showScreen('screen-games');
-        };
-      }
-    }
-
-    function revealSpyRole() {
-      const box = document.getElementById('spy-content-box');
-      const nextBtn = document.getElementById('spy-next-btn');
-
-      if (spyCurrentIndex === spyImpostorIndex) {
-        box.innerHTML = `<div style="color: #ef4444; font-size: 1.4rem;">🤫 أنت الشاطح!<br><span style="font-size:1rem; color:var(--text-muted)">لا تعرف الموضوع، حاول التمويه ومجاراة البقية!</span></div>`;
-      } else {
-        box.innerHTML = `<div style="color: #34d399; font-size: 1.3rem;">📋 ${spyActiveTopic}</div>`;
-      }
-      nextBtn.style.display = 'inline-block';
-    }
-
-    function nextSpyStep() {
-      spyCurrentIndex++;
-      const nextBtn = document.getElementById('spy-next-btn');
-      nextBtn.onclick = nextSpyStep;
-      showSpyStep();
+      document.getElementById('q-modal').classList.add('active');
     }
 
     function toggleAnswer() {
-      const ans = document.getElementById('answer-text');
-      ans.style.display = ans.style.display === 'none' ? 'block' : 'none';
+      const ans = document.getElementById('q-ans-content');
+      ans.style.display = (ans.style.display === 'none') ? 'block' : 'none';
     }
 
-    function startTimer() {
-      if(timerInterval) clearInterval(timerInterval);
-      const defaultTime = parseInt(document.getElementById('timer-select').value) || 30;
-      timeLeft = defaultTime;
-      document.getElementById('timer').innerText = timeLeft;
-
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        document.getElementById('timer').innerText = timeLeft;
-        if(timeLeft <= 0) {
-          clearInterval(timerInterval);
-          document.getElementById('timer').innerText = "⏰ انتهى الوقت!";
-        }
-      }, 1000);
+    function awardPoints(team) {
+      scores[team] += currentActivePoints;
+      updateScoreUI();
+      closeQuestion();
+      checkWin();
     }
 
-    function shareGame() {
-      if (navigator.share) {
-        navigator.share({
-          title: 'لعبة لعبني',
-          text: 'تعال نلعب مع بعض في لعبة لعبني الجماعية!',
-          url: window.location.href,
-        });
-      } else {
-        navigator.clipboard.writeText(window.location.href);
-        alert("تم نسخ رابط اللعبة بنجاح! يمكنك إرساله لأصدقائك الآن.");
+    function closeQuestion() {
+      if(currentCardElem) {
+        currentCardElem.classList.add('disabled');
+        currentCardElem.innerText = "✕";
       }
+      document.getElementById('q-modal').classList.remove('active');
     }
 
-    function openSettings() {
-      document.getElementById('settings-modal').classList.add('active');
+    function changeScore(team, val) {
+      scores[team] = Math.max(0, scores[team] + val);
+      updateScoreUI();
+      checkWin();
     }
 
-    function closeSettings() {
-      document.getElementById('settings-modal').classList.remove('active');
+    function updateScoreUI() {
+      document.getElementById('score-team1').innerText = scores.team1;
+      document.getElementById('score-team2').innerText = scores.team2;
+    }
+
+    function checkWin() {
+      if(scores.team1 >= 2500) {
+        alert("🎉 مبروك! فاز الفريق الأول بالوصول إلى 2500 نقطة!");
+      } else if(scores.team2 >= 2500) {
+        alert("🎉 مبروك! فاز الفريق الثاني بالوصول إلى 2500 نقطة!");
+      }
     }
   </script>
 </body>
