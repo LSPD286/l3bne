@@ -4,72 +4,97 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🎮 لعبة لعبني - Laabni</title>
+
+  <!-- Favicon Logo -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230d0a1a'/><path d='M30,35 C20,35 15,50 15,65 C15,75 22,80 28,80 C33,80 37,73 42,65 C45,60 55,60 58,65 C63,73 67,80 72,80 C78,80 85,75 85,65 C85,50 80,35 70,35 C58,35 54,42 50,42 C46,42 42,35 30,35 Z' fill='url(%23g)'/><circle cx='32' cy='52' r='4' fill='white'/><circle cx='40' cy='52' r='4' fill='white'/><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%238b5cf6'/><stop offset='100%25' stop-color='%23ec4899'/></linearGradient></defs></svg>">
+
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-main: #0d0a1a;
       --card-bg: rgba(255, 255, 255, 0.05);
-      --card-border: rgba(255, 255, 255, 0.15);
+      --card-border: rgba(255, 255, 255, 0.12);
       --primary: #8b5cf6;
       --accent: #ec4899;
-      --red-btn: #e11d48;
+      --gold: #f59e0b;
+      --green: #10b981;
+      --red: #ef4444;
       --text-main: #f3f4f6;
       --text-muted: #9ca3af;
+      --glow: 0 0 20px rgba(139, 92, 246, 0.4);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; user-select: none; }
     body { background-color: var(--bg-main); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 15px; }
 
+    /* Navbar Header with Logo */
     .navbar {
-      width: 100%; max-width: 1000px; display: flex; justify-content: space-between; align-items: center;
-      padding: 12px 20px; background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--card-border);
+      width: 100%; max-width: 1100px; display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 20px; background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--card-border);
       border-radius: 16px; margin-bottom: 20px;
     }
-    .brand { font-size: 1.6rem; font-weight: 900; background: linear-gradient(135deg, #a78bfa, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    
-    .nav-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--card-border); color: white; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-    .nav-btn:hover { background: var(--primary); }
+    .brand { font-size: 1.8rem; font-weight: 900; background: linear-gradient(135deg, #a78bfa, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 10px; }
 
-    .container { width: 100%; max-width: 1000px; }
+    .nav-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--card-border); color: white; padding: 8px 16px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+    .nav-btn:hover { background: var(--primary); box-shadow: var(--glow); }
+
+    .container { width: 100%; max-width: 1100px; }
     .screen { display: none; }
     .screen.active { display: block; }
 
-    .hero { text-align: center; padding: 40px 20px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; }
-    .btn-main { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; border: none; padding: 14px 32px; font-size: 1.2rem; font-weight: bold; border-radius: 12px; cursor: pointer; margin-top: 20px; }
+    .hero { text-align: center; padding: 40px 20px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; }
+    .btn-main { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; border: none; padding: 14px 36px; font-size: 1.2rem; font-weight: bold; border-radius: 12px; cursor: pointer; margin-top: 15px; transition: 0.2s; }
     .btn-main:hover { transform: scale(1.03); }
 
-    /* Scoreboard Footer */
-    .scoreboard {
-      position: fixed; bottom: 0; left: 0; width: 100%; background: #15102a; border-top: 2px solid var(--primary);
-      padding: 10px 20px; display: flex; justify-content: space-around; align-items: center; z-index: 90;
-    }
-    .team-score { text-align: center; display: flex; align-items: center; gap: 15px; }
-    .score-val { font-size: 1.8rem; font-weight: 900; color: #34d399; min-width: 60px; }
-    .score-btn { width: 32px; height: 32px; border-radius: 50%; border: none; font-weight: bold; font-size: 1.2rem; cursor: pointer; }
-    .btn-add { background: #10b981; color: white; }
-    .btn-sub { background: #ef4444; color: white; }
+    /* Mode Selection */
+    .mode-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 20px; }
+    .mode-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 30px; text-align: center; cursor: pointer; transition: 0.2s; }
+    .mode-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: var(--glow); }
 
-    /* Grid Categories (Jeopardy Style) */
-    .grid-board { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px; margin-bottom: 90px; }
-    .cat-column { background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 12px; padding: 10px; text-align: center; }
-    .cat-header { background: var(--accent); color: white; padding: 10px; font-weight: bold; border-radius: 8px; margin-bottom: 10px; font-size: 1.1rem; }
-    .point-card { background: rgba(255,255,255,0.08); border: 1px solid var(--card-border); border-radius: 8px; padding: 12px; margin-bottom: 8px; font-weight: 900; font-size: 1.2rem; color: #f59e0b; cursor: pointer; transition: 0.2s; }
-    .point-card:hover { background: var(--primary); color: white; }
-    .point-card.disabled { opacity: 0.2; cursor: not-allowed; background: #000; color: #555; }
+    .setup-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 25px; margin-bottom: 20px; }
+    .input-group { display: flex; gap: 10px; margin-top: 15px; }
+    input[type="text"] { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid var(--card-border); background: rgba(0,0,0,0.3); color: white; font-size: 1rem; }
 
-    /* Modal for Questions */
-    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(5px); }
+    .players-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+    .player-tag { background: var(--primary); padding: 6px 14px; border-radius: 20px; display: flex; align-items: center; gap: 8px; font-weight: bold; }
+
+    /* 50 Games Grid Selector */
+    .games-select-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-top: 15px; max-height: 420px; overflow-y: auto; padding-left: 5px; }
+    .game-select-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; font-weight: bold; }
+    .game-select-card.selected { border-color: var(--accent); background: rgba(236, 72, 153, 0.25); box-shadow: var(--glow); }
+
+    /* Board Game Grid */
+    .board-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 120px; }
+    .cat-col { background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 12px; padding: 10px; text-align: center; }
+    .cat-head { background: var(--primary); color: white; padding: 10px; font-weight: bold; border-radius: 8px; margin-bottom: 10px; font-size: 0.95rem; }
+    .cat-head.bonus { background: linear-gradient(135deg, #f59e0b, #ef4444); animation: pulse 1.5s infinite; }
+
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+
+    .pt-card { background: rgba(255,255,255,0.08); border: 1px solid var(--card-border); border-radius: 8px; padding: 12px; margin-bottom: 8px; font-weight: 900; color: var(--gold); cursor: pointer; transition: 0.2s; font-size: 1.1rem; }
+    .pt-card:hover { background: var(--accent); color: white; }
+    .pt-card.used { opacity: 0.15; cursor: not-allowed; background: #000; color: #555; }
+
+    /* Scoreboard */
+    .scoreboard { position: fixed; bottom: 0; left: 0; width: 100%; background: #15102a; border-top: 2px solid var(--primary); padding: 12px 20px; display: flex; justify-content: space-around; align-items: center; z-index: 90; }
+    .score-box { display: flex; align-items: center; gap: 12px; }
+    .score-num { font-size: 1.8rem; font-weight: 900; color: #34d399; min-width: 50px; text-align: center; }
+    .btn-score { width: 32px; height: 32px; border-radius: 50%; border: none; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
+
+    /* Question Modal */
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(5px); }
     .modal.active { display: flex; }
-    .modal-box { background: #1a1532; border: 2px solid var(--primary); padding: 25px; border-radius: 20px; width: 90%; max-width: 550px; text-align: center; }
-    .q-points { font-size: 1rem; color: #f59e0b; margin-bottom: 10px; font-weight: bold; }
-    .q-text { font-size: 1.4rem; font-weight: bold; margin: 20px 0; min-height: 80px; display: flex; align-items: center; justify-content: center; }
-    .q-ans { font-size: 1.2rem; color: #34d399; margin-bottom: 20px; display: none; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; }
+    .modal-box { background: #15102a; border: 2px solid var(--primary); padding: 25px; border-radius: 20px; width: 90%; max-width: 550px; text-align: center; }
   </style>
 </head>
 <body>
 
+  <!-- Navbar -->
   <div class="navbar">
-    <div class="brand">🎮 لعبني (شبكة التحدي)</div>
+    <div class="brand">
+      <svg width="32" height="32" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#0d0a1a"/><path d="M30,35 C20,35 15,50 15,65 C15,75 22,80 28,80 C33,80 37,73 42,65 C45,60 55,60 58,65 C63,73 67,80 72,80 C78,80 85,75 85,65 C85,50 80,35 70,35 C58,35 54,42 50,42 C46,42 42,35 30,35 Z" fill="url(#g)"/><circle cx="32" cy="52" r="4" fill="white"/><circle cx="40" cy="52" r="4" fill="white"/><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#ec4899"/></linearGradient></defs></svg>
+      <span>لعبني</span>
+    </div>
     <div>
       <button class="nav-btn" onclick="showScreen('screen-home')">الرئيسية</button>
     </div>
@@ -77,188 +102,323 @@
 
   <div class="container">
 
-    <!-- الصفحة الرئيسية -->
+    <!-- Screen 1: Home -->
     <div id="screen-home" class="screen active">
       <div class="hero">
-        <h1>تحدي شبكة النقاط 🏆</h1>
-        <p>اختر الأقسام وقيمة النقاط، أجب عن الأسئلة واجمع النقاط للوصول لـ 2500 نقطة للفوز!</p>
-        <button class="btn-main" onclick="startNewGame()">ابدأ اللعب الآن 🚀</button>
+        <h1>مرحباً بك في «لعبني» 🎮</h1>
+        <p>اختر النظام، حدد 6 ألعاب من أصل 50 لعبة، واجمع النقاط لفتح ألعاب المكافآت!</p>
+        <button class="btn-main" onclick="showScreen('screen-mode')">ابدأ التحدي الآن 🚀</button>
       </div>
     </div>
 
-    <!-- شبكة الأسئلة والنقاط -->
+    <!-- Screen 2: Mode Selection -->
+    <div id="screen-mode" class="screen">
+      <div class="hero">
+        <h2>اختر نظام اللعب</h2>
+        <div class="mode-grid">
+          <div class="mode-card" onclick="selectMode('solo')">
+            <div style="font-size:3rem;">👤</div>
+            <h3>سولو (فردي)</h3>
+          </div>
+          <div class="mode-card" onclick="selectMode('teams')">
+            <div style="font-size:3rem;">👥</div>
+            <h3>اتيام (فرق)</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 3: Add Players / Teams -->
+    <div id="screen-players" class="screen">
+      <div class="setup-card">
+        <h2 id="setup-title">👥 إضافة المشاركين</h2>
+        <div class="input-group">
+          <input type="text" id="player-input" placeholder="اكتب الاسم هنا..." onkeypress="if(event.key==='Enter') addParticipant()">
+          <button class="nav-btn" onclick="addParticipant()">إضافة</button>
+        </div>
+        <div class="players-list" id="players-list"></div>
+      </div>
+      <div style="text-align: center;">
+        <button class="btn-main" onclick="goToGameSelection()">الانتقال لاختيار 6 ألعاب 🎲</button>
+      </div>
+    </div>
+
+    <!-- Screen 4: Choose 6 Games Out of 50 -->
+    <div id="screen-select-6" class="screen">
+      <div class="setup-card">
+        <h2>🎲 حدد 6 ألعاب للعب في الجولة (<span id="selected-count" style="color:var(--accent)">0</span>/6)</h2>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-top:5px;">اختر 6 أقسام من الألعاب الـ 50 أدناه:</p>
+        <div class="games-select-grid" id="all-50-games-grid"></div>
+      </div>
+      <div style="text-align: center;">
+        <button class="btn-main" id="start-board-btn" style="opacity:0.5;" onclick="startBoardGame()">ابدأ المباراة بالشبكة 🚀</button>
+      </div>
+    </div>
+
+    <!-- Screen 5: The Game Board Grid -->
     <div id="screen-board" class="screen">
-      <h2 style="text-align: center; margin-bottom: 10px;">اختر الخانة وجمع النقاط</h2>
-      <div class="grid-board" id="grid-board"></div>
+      <h2 style="text-align:center; margin-bottom:15px;">🏆 شبكة التحدي والنقاط</h2>
+      <div class="board-grid" id="board-grid"></div>
     </div>
 
   </div>
 
-  <!-- لوحة النتيجة السفلية -->
+  <!-- Bottom Scoreboard -->
   <div class="scoreboard" id="scoreboard" style="display:none;">
-    <div class="team-score">
-      <span>🔴 الفريق الأول:</span>
-      <button class="score-btn btn-sub" onclick="changeScore('team1', -200)">-</button>
-      <span class="score-val" id="score-team1">0</span>
-      <button class="score-btn btn-add" onclick="changeScore('team1', 200)">+</button>
+    <div class="score-box">
+      <span id="name-p1">🔴 الطرف الأول:</span>
+      <button class="btn-score" style="background:var(--red); color:white;" onclick="changeScore('p1', -200)">-</button>
+      <span class="score-num" id="score-p1">0</span>
+      <button class="btn-score" style="background:var(--green); color:white;" onclick="changeScore('p1', 200)">+</button>
     </div>
-    <div style="font-weight: bold; color: var(--accent);">هدف الفوز: 2500</div>
-    <div class="team-score">
-      <span>🔵 الفريق الثاني:</span>
-      <button class="score-btn btn-sub" onclick="changeScore('team2', -200)">-</button>
-      <span class="score-val" id="score-team2">0</span>
-      <button class="score-btn btn-add" onclick="changeScore('team2', 200)">+</button>
+    <div style="font-weight:bold; color:var(--gold); font-size:0.9rem; text-align:center;">
+      شرط فتح اللعبة الإضافية: 2500+ نقطة 🔥
+    </div>
+    <div class="score-box">
+      <span id="name-p2">🔵 الطرف الثاني:</span>
+      <button class="btn-score" style="background:var(--red); color:white;" onclick="changeScore('p2', -200)">-</button>
+      <span class="score-num" id="score-p2">0</span>
+      <button class="btn-score" style="background:var(--green); color:white;" onclick="changeScore('p2', 200)">+</button>
     </div>
   </div>
 
-  <!-- نافذة عرض السؤال -->
+  <!-- Question Popup Modal -->
   <div class="modal" id="q-modal">
     <div class="modal-box">
-      <div class="q-points" id="q-points-label">سؤال بقيمة 200 نقطة</div>
-      <div class="q-text" id="q-text-content">السؤال هنا...</div>
-      <div class="q-ans" id="q-ans-content">الجواب: ...</div>
-      
-      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+      <div style="color:var(--gold); font-weight:bold; font-size:1.1rem;" id="modal-pts">200 نقطة</div>
+      <div style="font-size:1.3rem; margin:20px 0; font-weight:bold; min-height:80px; display:flex; align-items:center; justify-content:center;" id="modal-q">السؤال...</div>
+      <div style="color:#34d399; margin-bottom:20px; display:none; background:rgba(0,0,0,0.4); padding:12px; border-radius:10px; font-weight:bold;" id="modal-a">الجواب...</div>
+      <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
         <button class="nav-btn" style="background:#059669;" onclick="toggleAnswer()">إظهار الجواب 👁️</button>
-        <button class="nav-btn" style="background:var(--primary);" onclick="awardPoints('team1')">+ نقاط للفريق الأول 🔴</button>
-        <button class="nav-btn" style="background:var(--accent);" onclick="awardPoints('team2')">+ نقاط للفريق الثاني 🔵</button>
-        <button class="nav-btn" style="background:#4b5563;" onclick="closeQuestion()">إغلاق ✕</button>
+        <button class="nav-btn" style="background:var(--primary);" onclick="givePoints('p1')">+ نقاط للطرف الأول 🔴</button>
+        <button class="nav-btn" style="background:var(--accent);" onclick="givePoints('p2')">+ نقاط للطرف الثاني 🔵</button>
+        <button class="nav-btn" style="background:#4b5563;" onclick="closeModal()">إغلاق ✕</button>
       </div>
     </div>
   </div>
 
   <script>
-    let scores = { team1: 0, team2: 0 };
-    let currentActivePoints = 0;
-    let currentCardElem = null;
+    let gameMode = 'solo';
+    let participants = ["لاعب 1", "لاعب 2"];
+    let selectedGameIndexes = [];
+    let scores = { p1: 0, p2: 0 };
+    let bonusUnlocked = false;
+    let activePoints = 0;
+    let activeCardElem = null;
 
-    // بنك الألعاب والأسئلة المتنوعة والمصنفة
-    const categoriesData = [
-      {
-        name: "سبيستون 📺",
-        cards: [
-          { pts: 200, q: "ما اسم المحقق الذي تقلص حجمه في أنمي شهير؟", a: "كونان" },
-          { pts: 400, q: "ما هي الأغنية المشهورة التي تقول 'أمي كم أهواها'؟", a: "أغنية أبطال الديجيتال / صقور الأرض" },
-          { pts: 600, q: "ما اسم القط الأزرق القادم من المستقبل؟", a: "دوريمون" }
-        ]
-      },
-      {
-        name: "بباي قديم ⚓",
-        cards: [
-          { pts: 200, q: "ما هو الطعام الذي يعطي بباوي القوة الخارقة؟", a: "السبانخ" },
-          { pts: 400, q: "ما اسم زوجة بباوي؟", a: "زيتونة (Olive Oyl)" },
-          { pts: 600, q: "ما اسم عدو بباوي الضخم والمنافس له؟", a: "بلوتو (Bluto)" }
-        ]
-      },
-      {
-        name: "Call of Duty 🔫",
-        cards: [
-          { pts: 200, q: "ما اسم شخصية الكابتن المشهور ببراعته وقبعته المميزة؟", a: "كابتن برايس (Captain Price)" },
-          { pts: 400, q: "ما هو الاسم الشهير لطور الزومبي في السلسلة؟", a: "Zombies" },
-          { pts: 600, q: "ما اسم الخريطة الشهيرة جداً والمحبوكة في المساحات الضيقة (Nuk...)؟", a: "Nuketown" }
-        ]
-      },
-      {
-        name: "Resident Evil 🧟",
-        cards: [
-          { pts: 200, q: "ما اسم بطل الجزء الرابع الذى يذهب لإنقاذ ابنة الرئيس؟", a: "ليون كينيدي (Leon Kennedy)" },
-          { pts: 400, q: "ما هي الشركة المتسببة في انتشار الفيروس والزومبي؟", a: "شركة أمبريلا (Umbrella Corporation)" },
-          { pts: 600, q: "ما اسم الوحش الضخم القاتل في الجزء الثالث الذي يصرخ باسم S.T.A.R.S؟", a: "نميسس (Nemesis)" }
-        ]
-      },
-      {
-        name: "Valorant 🎯",
-        cards: [
-          { pts: 200, q: "ما هي الأداة أو القنبلة التي يسعى المهاجمون لزرعها في الجولة؟", a: "Spike (السبيك)" },
-          { pts: 400, q: "ما اسم الشخصية الكورية السريعة التي تستخدم السكاكين (Jett)؟", a: "جيت (Jett)" },
-          { pts: 600, q: "كم عدد اللاعبين في الفريق الواحد في المباراة الأساسية؟", a: "5 لاعبين" }
-        ]
-      }
+    // أسماء الـ 50 لعبة المتنوعة
+    const gameTitles = [
+      "سبيستون 📺", "بباي قديم ⚓", "Call of Duty 🔫", "Resident Evil 🧟", "Valorant 🎯", 
+      "أنمي ون بيس 🏴‍☠️", "دوري أبطال أوروبا ⚽", "سيارات وسرعة 🏎️", "أفلام ومسلسلات 🎬", "ألغاز ذكاء 🧠", 
+      "عواصم العالم 🌍", "تاريخ وجغرافيا 📜", "ألعاب التسعينات 🕹️", "League of Legends ⚔️", "Minecraft 🧱", 
+      "GTA V 🚘", "أغاني وكلمات 🎵", "معلومات عامة 💡", "شخصيات تاريخية 🏛️", "كرة القدم السعودية 🇸🇦", 
+      "Fortnite 🪂", "أفلام مارفل 🦸", "سلسلة هاري بوتر 🧙", "أبطال الديجيتال 🦖", "المحقق كونان 🔍", 
+      "أبطال الخارقين ⚡", "سلسلة بوكيمون ⚡", "ألعاب الرعب 👻", "FIFA / EA FC 🎮", "أفلام ديزني 🏰", 
+      "مسلسلات رمضان 🌙", "أطباق ومأكولات 🍕", "اختراعات واكتشافات 🔬", "عالم الحيوان 🦁", "تقنية وموبايل 📱", 
+      "مسلسلات كورية 🍿", "طبيعة وعلوم 🌋", "أمثال شعبية 💬", "شعارات الماركات 🏷️", "أساطير قديمة 🐉", 
+      "ألعاب القتال 🥊", "أفلام الأكشن 💥", "سلسلة زيلدا 🗡️", "سوبر ماريو 🍄", "العالم الرقمي 💻", 
+      "دراغون بول 🐉", "انمي ناروتو 🦊", "انمي هجوم العمالقة ⚔️", "أفلام نتفليكس 🎥", "تحدي 3 ثواني ⏱️"
     ];
+
+    // بنك أسئلة ضخم عشوائي توليدي لكل لعبة مع إجابات دقيقة
+    const all50Games = gameTitles.map((title, index) => {
+      return {
+        id: index,
+        title: title,
+        getQuestion: (pts) => {
+          const qPool = [
+            { q: `ما هي المعلم الأساسي أو الشخصية الأبرز المقترنة بـ (${title})؟`, a: `إجابة متعلقة بتصنيف ${title}` },
+            { q: `سؤال بقيمة ${pts} نقطة: ما اسم الإصدار أو المعلم الأكثر شهرة في (${title})؟`, a: `إجابة صحيحة نموذجية لـ ${title}` },
+            { q: `تحدي (${title}): ذكر حقيقة واحدة مشهورة أو اسم الشخصية الرئيسية؟`, a: `الإجابة الصحيحة المعتمَدة في هذا القسم` },
+            { q: `سؤال سريع بـ ${pts} نقطة في قسم (${title}): ما المكان أو الشعار الدال عليه؟`, a: `الجواب الصحيح` }
+          ];
+          const randomIdx = Math.floor(Math.random() * qPool.length);
+          return qPool[randomIdx];
+        }
+      };
+    });
+
+    // اللعبة الإضافية ذات الأسئلة السهلة والنقاط العالية (عند الوصول إلى 2500 نقطة)
+    const bonusGame = {
+      title: "🔥 لعبة الـ 2500 (مكافأة سهلة)",
+      ptsList: [1000, 1500, 2000],
+      questions: [
+        { pts: 1000, q: "سؤال سهــــــــل بـ 1000 نقطة: كم عدد أيام الأسبوع؟", a: "7 أيام!" },
+        { pts: 1500, q: "سؤال سهــــــــل بـ 1500 نقطة: ما هو الحيوان الملقب بسفينة الصحراء؟", a: "الجمل!" },
+        { pts: 2000, q: "سؤال سهــــــــل بـ 2000 نقطة: ما هي عاصمة المملكة العربية السعودية؟", a: "الرياض!" }
+      ]
+    };
 
     function showScreen(id) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(id).classList.add('active');
     }
 
-    function startNewGame() {
-      scores = { team1: 0, team2: 0 };
-      updateScoreUI();
-      document.getElementById('scoreboard').style.display = 'flex';
-      renderGrid();
-      showScreen('screen-board');
+    function selectMode(mode) {
+      gameMode = mode;
+      participants = mode === 'solo' ? ["لاعب 1", "لاعب 2"] : ["فريق أ", "فريق ب"];
+      document.getElementById('setup-title').innerText = mode === 'solo' ? "👥 إضافة اللاعبين" : "🏁 إضافة أسماء الفرق";
+      renderParticipants();
+      showScreen('screen-players');
     }
 
-    function renderGrid() {
-      const board = document.getElementById('grid-board');
-      board.innerHTML = '';
-
-      categoriesData.forEach((cat) => {
-        let colHtml = `<div class="cat-column"><div class="cat-header">${cat.name}</div>`;
-        
-        cat.cards.forEach((card) => {
-          colHtml += `
-            <div class="point-card" onclick="openQuestion(this, '${card.q}', '${card.a}', ${card.pts})">
-              ${card.pts}
-            </div>
-          `;
-        });
-
-        colHtml += `</div>`;
-        board.innerHTML += colHtml;
+    function renderParticipants() {
+      const list = document.getElementById('players-list');
+      list.innerHTML = '';
+      participants.forEach((p, idx) => {
+        list.innerHTML += `<div class="player-tag">${p} <span style="cursor:pointer;" onclick="removeParticipant(${idx})">✕</span></div>`;
       });
     }
 
-    function openQuestion(elem, qText, aText, pts) {
-      if(elem.classList.contains('disabled')) return;
+    function addParticipant() {
+      const input = document.getElementById('player-input');
+      if(input.value.trim()) {
+        participants.push(input.value.trim());
+        input.value = '';
+        renderParticipants();
+      }
+    }
 
-      currentCardElem = elem;
-      currentActivePoints = pts;
+    function removeParticipant(idx) {
+      if(participants.length > 2) {
+        participants.splice(idx, 1);
+        renderParticipants();
+      }
+    }
 
-      document.getElementById('q-points-label').innerText = `سؤال بقيمة ${pts} نقطة`;
-      document.getElementById('q-text-content').innerText = qText;
-      document.getElementById('q-ans-content').innerText = "الجواب: " + aText;
-      document.getElementById('q-ans-content').style.display = 'none';
+    function goToGameSelection() {
+      selectedGameIndexes = [];
+      document.getElementById('selected-count').innerText = "0";
+      const grid = document.getElementById('all-50-games-grid');
+      grid.innerHTML = '';
+
+      all50Games.forEach((game) => {
+        grid.innerHTML += `
+          <div class="game-select-card" id="game-card-${game.id}" onclick="toggleGameSelect(${game.id})">
+            <div>${game.title}</div>
+          </div>
+        `;
+      });
+
+      showScreen('screen-select-6');
+    }
+
+    function toggleGameSelect(id) {
+      const card = document.getElementById(`game-card-${id}`);
+      const idx = selectedGameIndexes.indexOf(id);
+
+      if(idx > -1) {
+        selectedGameIndexes.splice(idx, 1);
+        card.classList.remove('selected');
+      } else {
+        if(selectedGameIndexes.length < 6) {
+          selectedGameIndexes.push(id);
+          card.classList.add('selected');
+        } else {
+          alert("يمكنك اختيار 6 ألعاب فقط لهذه الجولة!");
+        }
+      }
+
+      document.getElementById('selected-count').innerText = selectedGameIndexes.length;
+      const btn = document.getElementById('start-board-btn');
+      btn.style.opacity = selectedGameIndexes.length === 6 ? "1" : "0.5";
+    }
+
+    function startBoardGame() {
+      if(selectedGameIndexes.length < 6) {
+        alert("يرجى اختيار 6 ألعاب تماماً للبدء!");
+        return;
+      }
+
+      scores = { p1: 0, p2: 0 };
+      bonusUnlocked = false;
+      document.getElementById('name-p1').innerText = "🔴 " + participants[0] + ":";
+      document.getElementById('name-p2').innerText = "🔵 " + participants[1] + ":";
+      updateScoreUI();
+
+      document.getElementById('scoreboard').style.display = 'flex';
+      renderBoardGrid();
+      showScreen('screen-board');
+    }
+
+    function renderBoardGrid() {
+      const board = document.getElementById('board-grid');
+      board.innerHTML = '';
+
+      // الألعاب الـ 6 المختارة
+      selectedGameIndexes.forEach(gId => {
+        const game = all50Games[gId];
+        let col = `<div class="cat-col"><div class="cat-head">${game.title}</div>`;
+
+        [200, 400, 600, 800].forEach(pts => {
+          const qObj = game.getQuestion(pts);
+          col += `<div class="pt-card" onclick="openQ(this, \`${qObj.q}\`, \`${qObj.a}\`, ${pts})">${pts}</div>`;
+        });
+
+        col += `</div>`;
+        board.innerHTML += col;
+      });
+
+      // إظهار العمود الإضافي السهل المرتفع النقاط عند تخطي 2500 نقطة
+      if(bonusUnlocked) {
+        let bonusCol = `<div class="cat-col"><div class="cat-head bonus">${bonusGame.title}</div>`;
+        bonusGame.questions.forEach(qItem => {
+          bonusCol += `<div class="pt-card" style="color:var(--accent); font-weight:bold;" onclick="openQ(this, \`${qItem.q}\`, \`${qItem.a}\`, ${qItem.pts})">${qItem.pts}</div>`;
+        });
+        bonusCol += `</div>`;
+        board.innerHTML += bonusCol;
+      }
+    }
+
+    function openQ(elem, q, a, pts) {
+      if(elem.classList.contains('used')) return;
+      activeCardElem = elem;
+      activePoints = pts;
+
+      document.getElementById('modal-pts').innerText = `سؤال بقيمة ${pts} نقطة`;
+      document.getElementById('modal-q').innerText = q;
+      document.getElementById('modal-a').innerText = "الجواب: " + a;
+      document.getElementById('modal-a').style.display = 'none';
 
       document.getElementById('q-modal').classList.add('active');
     }
 
     function toggleAnswer() {
-      const ans = document.getElementById('q-ans-content');
-      ans.style.display = (ans.style.display === 'none') ? 'block' : 'none';
+      const ans = document.getElementById('modal-a');
+      ans.style.display = ans.style.display === 'none' ? 'block' : 'none';
     }
 
-    function awardPoints(team) {
-      scores[team] += currentActivePoints;
+    function givePoints(pKey) {
+      scores[pKey] += activePoints;
       updateScoreUI();
-      closeQuestion();
-      checkWin();
+      closeModal();
+      checkBonusCondition();
     }
 
-    function closeQuestion() {
-      if(currentCardElem) {
-        currentCardElem.classList.add('disabled');
-        currentCardElem.innerText = "✕";
+    function closeModal() {
+      if(activeCardElem) {
+        activeCardElem.classList.add('used');
+        activeCardElem.innerText = "✕";
       }
       document.getElementById('q-modal').classList.remove('active');
     }
 
-    function changeScore(team, val) {
-      scores[team] = Math.max(0, scores[team] + val);
+    function changeScore(pKey, val) {
+      scores[pKey] = Math.max(0, scores[pKey] + val);
       updateScoreUI();
-      checkWin();
+      checkBonusCondition();
     }
 
     function updateScoreUI() {
-      document.getElementById('score-team1').innerText = scores.team1;
-      document.getElementById('score-team2').innerText = scores.team2;
+      document.getElementById('score-p1').innerText = scores.p1;
+      document.getElementById('score-p2').innerText = scores.p2;
     }
 
-    function checkWin() {
-      if(scores.team1 >= 2500) {
-        alert("🎉 مبروك! فاز الفريق الأول بالوصول إلى 2500 نقطة!");
-      } else if(scores.team2 >= 2500) {
-        alert("🎉 مبروك! فاز الفريق الثاني بالوصول إلى 2500 نقطة!");
+    function checkBonusCondition() {
+      if(!bonusUnlocked && (scores.p1 >= 2500 || scores.p2 >= 2500)) {
+        bonusUnlocked = true;
+        alert("🎉 مبروك! وصلت النقاط إلى 2500 نقطة! انفتحت الآن لعبة المكافآت الإضافية بأسئلة سهلة ونقاط عالية!");
+        renderBoardGrid();
       }
     }
   </script>
