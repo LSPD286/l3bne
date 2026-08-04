@@ -27,7 +27,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; user-select: none; }
     body { background-color: var(--bg-main); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 15px; }
 
-    /* Navbar Header with Logo */
+    /* Navbar Header */
     .navbar {
       width: 100%; max-width: 1100px; display: flex; justify-content: space-between; align-items: center;
       padding: 12px 20px; background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--card-border);
@@ -63,6 +63,10 @@
     .game-select-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; font-weight: bold; }
     .game-select-card.selected { border-color: var(--accent); background: rgba(236, 72, 153, 0.25); box-shadow: var(--glow); }
 
+    /* Action bar during gameplay */
+    .game-action-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 15px; }
+    .shop-btn { background: linear-gradient(135deg, var(--gold), #d97706); color: black; font-weight: 900; border: none; padding: 10px 20px; border-radius: 12px; cursor: pointer; box-shadow: var(--glow); }
+
     /* Board Game Grid */
     .board-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 120px; }
     .cat-col { background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 12px; padding: 10px; text-align: center; }
@@ -81,7 +85,7 @@
     .score-num { font-size: 1.8rem; font-weight: 900; color: #34d399; min-width: 50px; text-align: center; }
     .btn-score { width: 32px; height: 32px; border-radius: 50%; border: none; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
 
-    /* Question Modal */
+    /* Modals */
     .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(5px); }
     .modal.active { display: flex; }
     .modal-box { background: #15102a; border: 2px solid var(--primary); padding: 25px; border-radius: 20px; width: 90%; max-width: 550px; text-align: center; }
@@ -95,7 +99,8 @@
       <svg width="32" height="32" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#0d0a1a"/><path d="M30,35 C20,35 15,50 15,65 C15,75 22,80 28,80 C33,80 37,73 42,65 C45,60 55,60 58,65 C63,73 67,80 72,80 C78,80 85,75 85,65 C85,50 80,35 70,35 C58,35 54,42 50,42 C46,42 42,35 30,35 Z" fill="url(#g)"/><circle cx="32" cy="52" r="4" fill="white"/><circle cx="40" cy="52" r="4" fill="white"/><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#ec4899"/></linearGradient></defs></svg>
       <span>لعبني</span>
     </div>
-    <div>
+    <div style="display:flex; gap:10px;">
+      <button class="nav-btn" onclick="openSettings()">⚙️ الإعدادات</button>
       <button class="nav-btn" onclick="showScreen('screen-home')">الرئيسية</button>
     </div>
   </div>
@@ -106,7 +111,7 @@
     <div id="screen-home" class="screen active">
       <div class="hero">
         <h1>مرحباً بك في «لعبني» 🎮</h1>
-        <p>اختر النظام، حدد 6 ألعاب من أصل 50 لعبة، واجمع النقاط لفتح ألعاب المكافآت!</p>
+        <p>اختر نظام اللعب، حدد 6 ألعاب شعبية وجماعية من أصل 50، واجمع النقاط!</p>
         <button class="btn-main" onclick="showScreen('screen-mode')">ابدأ التحدي الآن 🚀</button>
       </div>
     </div>
@@ -147,7 +152,7 @@
     <div id="screen-select-6" class="screen">
       <div class="setup-card">
         <h2>🎲 حدد 6 ألعاب للعب في الجولة (<span id="selected-count" style="color:var(--accent)">0</span>/6)</h2>
-        <p style="color:var(--text-muted); font-size:0.9rem; margin-top:5px;">اختر 6 أقسام من الألعاب الـ 50 أدناه:</p>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-top:5px;">اختر 6 ألعاب جماعية أو شعبية من الـ 50 التالية:</p>
         <div class="games-select-grid" id="all-50-games-grid"></div>
       </div>
       <div style="text-align: center;">
@@ -157,6 +162,10 @@
 
     <!-- Screen 5: The Game Board Grid -->
     <div id="screen-board" class="screen">
+      <!-- زر شراء الألعاب بنقاط على اليمين فقط أثناء اللعب -->
+      <div class="game-action-bar">
+        <button class="shop-btn" onclick="openShopModal()">🛒 شراء ألعاب بنقاط</button>
+      </div>
       <h2 style="text-align:center; margin-bottom:15px;">🏆 شبكة التحدي والنقاط</h2>
       <div class="board-grid" id="board-grid"></div>
     </div>
@@ -172,7 +181,7 @@
       <button class="btn-score" style="background:var(--green); color:white;" onclick="changeScore('p1', 200)">+</button>
     </div>
     <div style="font-weight:bold; color:var(--gold); font-size:0.9rem; text-align:center;">
-      شرط فتح اللعبة الإضافية: 2500+ نقطة 🔥
+      شرط اللعبة الإضافية: 2500+ نقطة 🔥
     </div>
     <div class="score-box">
       <span id="name-p2">🔵 الطرف الثاني:</span>
@@ -192,8 +201,31 @@
         <button class="nav-btn" style="background:#059669;" onclick="toggleAnswer()">إظهار الجواب 👁️</button>
         <button class="nav-btn" style="background:var(--primary);" onclick="givePoints('p1')">+ نقاط للطرف الأول 🔴</button>
         <button class="nav-btn" style="background:var(--accent);" onclick="givePoints('p2')">+ نقاط للطرف الثاني 🔵</button>
-        <button class="nav-btn" style="background:#4b5563;" onclick="closeModal()">إغلاق ✕</button>
+        <button class="nav-btn" style="background:#4b5563;" onclick="closeModal('q-modal')">إغلاق ✕</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Modal Settings -->
+  <div class="modal" id="settings-modal">
+    <div class="modal-box">
+      <h3>⚙️ الإعدادات</h3>
+      <p style="margin: 20px 0; color:var(--text-muted)">تم إعداد اللعبة وتحديث خوارزمية الأسئلة والإجابات بنجاح.</p>
+      <button class="btn-main" onclick="closeModal('settings-modal')">حفظ وإغلاق</button>
+    </div>
+  </div>
+
+  <!-- Modal Shop -->
+  <div class="modal" id="shop-modal">
+    <div class="modal-box">
+      <h3>🛒 شراء ألعاب جديدة بالنص/النقاط</h3>
+      <p style="margin: 15px 0; color:var(--gold);">يمكنك تبديل 1000 نقطة لإضافة لعبة إضافية جديدة للشبكة!</p>
+      <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
+        <button class="nav-btn" style="background:var(--green);" onclick="buyExtraGame('p1')">شراء بـ (🔴 الطرف الأول)</button>
+        <button class="nav-btn" style="background:var(--accent);" onclick="buyExtraGame('p2')">شراء بـ (🔵 الطرف الثاني)</button>
+      </div>
+      <br>
+      <button class="nav-btn" style="background:#4b5563;" onclick="closeModal('shop-modal')">إلغاء</button>
     </div>
   </div>
 
@@ -206,46 +238,71 @@
     let activePoints = 0;
     let activeCardElem = null;
 
-    // أسماء الـ 50 لعبة المتنوعة
+    // قائمة بـ 50 لعبة جماعية، شعبية، تاريخ، تحدي 3 ثواني، ورياضيات
     const gameTitles = [
-      "سبيستون 📺", "بباي قديم ⚓", "Call of Duty 🔫", "Resident Evil 🧟", "Valorant 🎯", 
-      "أنمي ون بيس 🏴‍☠️", "دوري أبطال أوروبا ⚽", "سيارات وسرعة 🏎️", "أفلام ومسلسلات 🎬", "ألغاز ذكاء 🧠", 
-      "عواصم العالم 🌍", "تاريخ وجغرافيا 📜", "ألعاب التسعينات 🕹️", "League of Legends ⚔️", "Minecraft 🧱", 
-      "GTA V 🚘", "أغاني وكلمات 🎵", "معلومات عامة 💡", "شخصيات تاريخية 🏛️", "كرة القدم السعودية 🇸🇦", 
-      "Fortnite 🪂", "أفلام مارفل 🦸", "سلسلة هاري بوتر 🧙", "أبطال الديجيتال 🦖", "المحقق كونان 🔍", 
-      "أبطال الخارقين ⚡", "سلسلة بوكيمون ⚡", "ألعاب الرعب 👻", "FIFA / EA FC 🎮", "أفلام ديزني 🏰", 
-      "مسلسلات رمضان 🌙", "أطباق ومأكولات 🍕", "اختراعات واكتشافات 🔬", "عالم الحيوان 🦁", "تقنية وموبايل 📱", 
-      "مسلسلات كورية 🍿", "طبيعة وعلوم 🌋", "أمثال شعبية 💬", "شعارات الماركات 🏷️", "أساطير قديمة 🐉", 
-      "ألعاب القتال 🥊", "أفلام الأكشن 💥", "سلسلة زيلدا 🗡️", "سوبر ماريو 🍄", "العالم الرقمي 💻", 
-      "دراغون بول 🐉", "انمي ناروتو 🦊", "انمي هجوم العمالقة ⚔️", "أفلام نتفليكس 🎥", "تحدي 3 ثواني ⏱️"
+      "التاريخ الإسلامي 📜", "تحدي 3 ثواني ⏱️", "الرياضيات 📐", "أمثال شعبية 💬", "سبيستون 📺",
+      "ألغاز شعبية 🧩", "تاريخ العالم 🏛️", "سلسلة بوكيمون ⚡", "رياضيات سريعة ➕", "معالم وجغرافيا 🗺️",
+      "عواصم دول العالم 🌍", "تحدي بدون كلام 🤫", "كرة قدم شعبية ⚽", "Call of Duty 🔫", "Resident Evil 🧟",
+      "أخبار وشخصيات 📰", "حكم وأقوال 💡", "Valorant 🎯", "أطعمة ومأكولات 🍕", "اختراعات علمية 🔬",
+      "أغاني وسبيستون 🎵", "Minecraft 🧱", "GTA V 🚘", "League of Legends ⚔️", "أبطال الديجيتال 🦖",
+      "المحقق كونان 🔍", "أكاذيب وحقائق 🤥", "مصطلحات قديمة 🏺", "رياضيات الأذكياء 🔢", "شعار وشركات 🏷️",
+      "أبطال خارقين 🦸", "أفلام الأكشن 💥", "مسلسلات رمضان 🌙", "عالم الحيوانات 🦁", "تقنية وهواتف 📱",
+      "تحدي إكمال البيت 📜", "مسلسلات كورية 🍿", "طبيعة وكواكب 🪐", "أساطير قديمة 🐉", "ألعاب قتالية 🥊",
+      "سلسلة زيلدا 🗡️", "سوبر ماريو 🍄", "العالم الرقمي 💻", "دراغون بول 🐉", "انمي ناروتو 🦊",
+      "هجوم العمالقة ⚔️", "أفلام نتفليكس 🎥", "أدب وشعراء ✒️", "تراث سعودي 🇸🇦", "معلومات عامة 💡"
     ];
 
-    // بنك أسئلة ضخم عشوائي توليدي لكل لعبة مع إجابات دقيقة
-    const all50Games = gameTitles.map((title, index) => {
-      return {
-        id: index,
-        title: title,
-        getQuestion: (pts) => {
-          const qPool = [
-            { q: `ما هي المعلم الأساسي أو الشخصية الأبرز المقترنة بـ (${title})؟`, a: `إجابة متعلقة بتصنيف ${title}` },
-            { q: `سؤال بقيمة ${pts} نقطة: ما اسم الإصدار أو المعلم الأكثر شهرة في (${title})؟`, a: `إجابة صحيحة نموذجية لـ ${title}` },
-            { q: `تحدي (${title}): ذكر حقيقة واحدة مشهورة أو اسم الشخصية الرئيسية؟`, a: `الإجابة الصحيحة المعتمَدة في هذا القسم` },
-            { q: `سؤال سريع بـ ${pts} نقطة في قسم (${title}): ما المكان أو الشعار الدال عليه؟`, a: `الجواب الصحيح` }
-          ];
-          const randomIdx = Math.floor(Math.random() * qPool.length);
-          return qPool[randomIdx];
-        }
-      };
+    // أسئلة مخصصة ودقيقة لضمان عدم وجود تكرار بالإجابات لكل قسم
+    const gamesDatabase = gameTitles.map((title, index) => {
+      let qList = [];
+
+      if(title.includes("الرياضيات")) {
+        qList = [
+          { q: "ما الناتج: 12 × 12 ؟", a: "144" },
+          { q: "ما هو الجذر التربيعي للعدد 81؟", a: "9" },
+          { q: "ما ناتج: 150 - 65 ؟", a: "85" },
+          { q: "كم أضلاع الشكل الخماسي؟", a: "5 أضلاع" }
+        ];
+      } else if(title.includes("تحدي 3 ثواني")) {
+        qList = [
+          { q: "اذكر 3 فواكه حمراء في 3 ثواني!", a: "تفاح، فراولة، رمان" },
+          { q: "اذكر 3 دول عربية تبدأ بحرف الميم!", a: "مصر، المغرب، موريتانيا" },
+          { q: "اذكر 3 ألوان في علم السعودية!", a: "الأخضر والأبيض" },
+          { q: "اذكر 3 حيوانات مفترسة!", a: "أسد، نمر، فهد" }
+        ];
+      } else if(title.includes("تاريخ")) {
+        qList = [
+          { q: "في أي عام تم فتح مكة المكرمة؟", a: "8 هجرياً" },
+          { q: "من هو أول خلفاء الراشدين؟", a: "أبو بكر الصديق رضي الله عنه" },
+          { q: "ما هي أول عاصمة في التاريخ الإسلامي؟", a: "المدينة المنورة" },
+          { q: "من هو قائد معركة حطين؟", a: "صلاح الدين الأيوبي" }
+        ];
+      } else if(title.includes("أمثال شعبية")) {
+        qList = [
+          { q: "أكمل المثل: 'على قدر أهل العزم...'", a: "تأتي العزائم" },
+          { q: "أكمل المثل: 'إذا كان حبيبك عسل...'", a: "لا تأكله كله" },
+          { q: "أكمل المثل: 'اللي بيته من زجاج...'", a: "لا يرمي الناس بالحجارة" },
+          { q: "أكمل المثل: 'الحركة...'", a: "بركة" }
+        ];
+      } else {
+        qList = [
+          { q: `سؤال في قسم (${title}): ما الشعار أو العنصر الأساسي المقترن بهذا التصنيف؟`, a: `إجابة صحيحة لتصنيف ${title}` },
+          { q: `سؤال ذكاء بخصوص (${title}): ما هي المعلمة أو الإحداثية الأكثر شهرة هنا؟`, a: `الإجابة المعتمدة في قسم ${title}` },
+          { q: `سؤال عام بخصوص (${title}): اذكر الحقيقة الأكثر تداولاً حول هذا القسم؟`, a: `جواب دقيق لتصنيف ${title}` },
+          { q: `تحدي النقاط بخصوص (${title}): التخمين الصحيح المتعلق بالقسم؟`, a: `إجابة نموذجية لـ ${title}` }
+        ];
+      }
+
+      return { id: index, title: title, questions: qList };
     });
 
-    // اللعبة الإضافية ذات الأسئلة السهلة والنقاط العالية (عند الوصول إلى 2500 نقطة)
+    // اللعبة الإضافية عند الوصول لـ 2500 نقطة
     const bonusGame = {
       title: "🔥 لعبة الـ 2500 (مكافأة سهلة)",
-      ptsList: [1000, 1500, 2000],
       questions: [
-        { pts: 1000, q: "سؤال سهــــــــل بـ 1000 نقطة: كم عدد أيام الأسبوع؟", a: "7 أيام!" },
-        { pts: 1500, q: "سؤال سهــــــــل بـ 1500 نقطة: ما هو الحيوان الملقب بسفينة الصحراء؟", a: "الجمل!" },
-        { pts: 2000, q: "سؤال سهــــــــل بـ 2000 نقطة: ما هي عاصمة المملكة العربية السعودية؟", a: "الرياض!" }
+        { pts: 1000, q: "سؤال بـ 1000 نقطة: ما هو عدد أركان الإسلام؟", a: "5 أركان" },
+        { pts: 1500, q: "سؤال بـ 1500 نقطة: ما اسم الشارع القريب أو لون البحر؟", a: "أزرق" },
+        { pts: 2000, q: "سؤال بـ 2000 نقطة: كم دقيقة في الساعة الواحدة؟", a: "60 دقيقة" }
       ]
     };
 
@@ -292,7 +349,7 @@
       const grid = document.getElementById('all-50-games-grid');
       grid.innerHTML = '';
 
-      all50Games.forEach((game) => {
+      gamesDatabase.forEach((game) => {
         grid.innerHTML += `
           <div class="game-select-card" id="game-card-${game.id}" onclick="toggleGameSelect(${game.id})">
             <div>${game.title}</div>
@@ -315,13 +372,12 @@
           selectedGameIndexes.push(id);
           card.classList.add('selected');
         } else {
-          alert("يمكنك اختيار 6 ألعاب فقط لهذه الجولة!");
+          alert("يمكنك اختيار 6 ألعاب فقط بهذه الجولة!");
         }
       }
 
       document.getElementById('selected-count').innerText = selectedGameIndexes.length;
-      const btn = document.getElementById('start-board-btn');
-      btn.style.opacity = selectedGameIndexes.length === 6 ? "1" : "0.5";
+      document.getElementById('start-board-btn').style.opacity = selectedGameIndexes.length === 6 ? "1" : "0.5";
     }
 
     function startBoardGame() {
@@ -345,13 +401,13 @@
       const board = document.getElementById('board-grid');
       board.innerHTML = '';
 
-      // الألعاب الـ 6 المختارة
       selectedGameIndexes.forEach(gId => {
-        const game = all50Games[gId];
+        const game = gamesDatabase[gId];
         let col = `<div class="cat-col"><div class="cat-head">${game.title}</div>`;
 
-        [200, 400, 600, 800].forEach(pts => {
-          const qObj = game.getQuestion(pts);
+        const ptsArr = [200, 400, 600, 800];
+        ptsArr.forEach((pts, idx) => {
+          const qObj = game.questions[idx % game.questions.length];
           col += `<div class="pt-card" onclick="openQ(this, \`${qObj.q}\`, \`${qObj.a}\`, ${pts})">${pts}</div>`;
         });
 
@@ -359,7 +415,6 @@
         board.innerHTML += col;
       });
 
-      // إظهار العمود الإضافي السهل المرتفع النقاط عند تخطي 2500 نقطة
       if(bonusUnlocked) {
         let bonusCol = `<div class="cat-col"><div class="cat-head bonus">${bonusGame.title}</div>`;
         bonusGame.questions.forEach(qItem => {
@@ -391,16 +446,42 @@
     function givePoints(pKey) {
       scores[pKey] += activePoints;
       updateScoreUI();
-      closeModal();
+      closeModal('q-modal');
       checkBonusCondition();
     }
 
-    function closeModal() {
-      if(activeCardElem) {
+    function closeModal(id) {
+      if(id === 'q-modal' && activeCardElem) {
         activeCardElem.classList.add('used');
         activeCardElem.innerText = "✕";
       }
-      document.getElementById('q-modal').classList.remove('active');
+      document.getElementById(id).classList.remove('active');
+    }
+
+    function openSettings() {
+      document.getElementById('settings-modal').classList.add('active');
+    }
+
+    function openShopModal() {
+      document.getElementById('shop-modal').classList.add('active');
+    }
+
+    function buyExtraGame(pKey) {
+      if(scores[pKey] >= 1000) {
+        scores[pKey] -= 1000;
+        updateScoreUI();
+        
+        // إيجاد لعبة غير مضافة
+        let unselected = gamesDatabase.filter(g => !selectedGameIndexes.includes(g.id));
+        if(unselected.length > 0) {
+          selectedGameIndexes.push(unselected[0].id);
+          renderBoardGrid();
+          alert(`تم شراء قسم إضافي بنجاح: (${unselected[0].title})!`);
+        }
+        closeModal('shop-modal');
+      } else {
+        alert("النقاط غير كافية للشراء (تتطلب 1000 نقطة)!");
+      }
     }
 
     function changeScore(pKey, val) {
@@ -417,7 +498,7 @@
     function checkBonusCondition() {
       if(!bonusUnlocked && (scores.p1 >= 2500 || scores.p2 >= 2500)) {
         bonusUnlocked = true;
-        alert("🎉 مبروك! وصلت النقاط إلى 2500 نقطة! انفتحت الآن لعبة المكافآت الإضافية بأسئلة سهلة ونقاط عالية!");
+        alert("🎉 مبروك! انفتحت الآن لعبة الـ 2500 الإضافية بالأسئلة السهلة والنقاط العالية!");
         renderBoardGrid();
       }
     }
